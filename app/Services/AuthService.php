@@ -1,0 +1,229 @@
+<?php
+
+namespace App\Services;
+
+use App\Exceptions\InvalidOtpException;
+use App\Exceptions\TooManyOtpRequestsException;
+use App\Exceptions\UserBlockedException;
+use App\Models\LoginHistory;
+use App\Models\NurseProfile;
+use App\Models\OtpVerification;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class AuthService
+{
+    private const OTP_COOLDOWN_SECONDS = 60;
+
+    private const OTP_EXPIRY_MINUTES = 10;
+
+    private const OTP_MAX_ATTEMPTS = 3;
+
+    public function sendOtp(string $phone)
+    {
+        $cooldownTime = now()->subSeconds(self::OTP_COOLDOWN_SECONDS);
+
+        $recentOtpExists = OtpVerification::where('phone', $phone)
+            ->where('created_at', '>=', $cooldownTime)
+            ->exists();
+
+        if ($recentOtpExists) {
+            throw new TooManyOtpRequestsException(
+                'Please wait before requesting another OTP.'
+            );
+        }
+
+        OtpVerification::clearPhoneOtps($phone);
+
+        $otp = (string) random_int(100000, 999999);
+
+        $expiryTime = now()->addMinutes(self::OTP_EXPIRY_MINUTES);
+
+        //store otp in database
+        OtpVerification::create([
+            'phone' => $phone,
+            'otp' => bcrypt($otp),
+            'expires_at' => $expiryTime,
+            'status' => OtpVerification::STATUS_ACTIVE,
+        ]);
+
+        $isRegistered = User::where('phone', $phone)->exists();
+
+        // Dispatch SMS Job Here
+
+        return [
+            'otp' => $otp,
+            'is_registered' => $isRegistered,
+        ];
+    }
+
+    public function verifyOtp(
+        array $data,
+        string $ip,
+        string $userAgent
+    ) {
+
+        $otpRecord = OtpVerification::getValidOtp(
+            $data['phone']
+        );
+
+        if (!$otpRecord) {
+
+            throw new InvalidOtpException(
+                'OTP expired or invalid.'
+            );
+        }
+
+        if (
+            $otpRecord->attempts >=
+            self::OTP_MAX_ATTEMPTS
+        ) {
+
+            $otpRecord->deactivate();
+
+            throw new InvalidOtpException(
+                'Too many invalid attempts.'
+            );
+        }
+
+        $isValidOtp = Hash::check(
+            $data['otp'],
+            $otpRecord->otp
+        );
+
+        if (!$isValidOtp) {
+
+            $otpRecord->incrementOtpAttempts();
+
+            throw new InvalidOtpException(
+                'Invalid OTP.'
+            );
+        }
+
+        $otpRecord->markAsUsed();
+
+        $user = User::where(
+            'phone',
+            $data['phone']
+        )->first();
+
+        if (!$user) {
+
+            $user = DB::transaction(
+                function () use ($data) {
+
+                    $user = User::create([
+
+                        'name' =>
+                            $data['name'],
+
+                        'phone' =>
+                            $data['phone'],
+
+                        'role' =>
+                            $data['role'],
+
+                        'status' =>
+                            User::STATUS_ACTIVE,
+
+                        'phone_verified_at' =>
+                            now(),
+
+                        'fcm_token' =>
+                            $data['fcm_token'] ?? null,
+                    ]);
+
+                    // Nurse Profile
+    
+                    if (
+                        $user->role ===
+                        User::ROLE_NURSE
+                    ) {
+
+                        NurseProfile::create([
+
+                            'user_id' =>
+                                $user->id,
+
+                            'status' =>
+                                NurseProfile::STATUS_PENDING,
+
+                            'onboarding_step' =>
+                                NurseProfile::STEP_BASIC_PROFILE,
+                        ]);
+                    }
+
+                    return $user;
+                }
+            );
+        }
+
+        if (
+            $user->status ===
+            User::STATUS_BLOCKED
+        ) {
+
+            throw new UserBlockedException(
+                $user->blocked_reason
+                ?? 'Your account has been blocked.'
+            );
+        }
+
+        $user->tokens()->delete();
+
+        $user->update([
+
+            'last_login_at' => now(),
+
+            'phone_verified_at' => now(),
+
+            'fcm_token' =>
+                $data['fcm_token']
+                ?? $user->fcm_token,
+        ]);
+
+        $this->saveLoginHistory(
+            user: $user,
+            ip: $ip,
+            userAgent: $userAgent
+        );
+
+        $token = $this->generateToken(
+            $user
+        );
+
+        return [
+
+            'token' => $token,
+
+            'user' => $user,
+        ];
+    }
+
+    public function logout(User $user)
+    {
+        $user->currentAccessToken()?->delete();
+    }
+
+    public function logoutAllDevices(User $user)
+    {
+        $user->tokens()->delete();
+    }
+
+    private function generateToken(User $user)
+    {
+        return $user->createToken('auth-token')->plainTextToken;
+    }
+
+    private function saveLoginHistory(User $user, string $ip, string $userAgent)
+    {
+        LoginHistory::create([
+            'user_id' => $user->id,
+            'ip_address' => $ip,
+            'user_agent' => $userAgent,
+            'logged_in_at' => now(),
+            'status' => LoginHistory::STATUS_ACTIVE,
+        ]);
+    }
+}
