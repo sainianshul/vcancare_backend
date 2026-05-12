@@ -1,9 +1,18 @@
 <?php
 
+use App\Http\Controllers\Api\CareTypeController;
 use App\Http\Controllers\Api\Nurse\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\Auth\AuthController;
+
+
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'API is running',
+    ]);
+});
 
 Route::prefix('v1')->group(function () {
 
@@ -24,6 +33,10 @@ Route::prefix('v1')->group(function () {
             Route::post('logout', [AuthController::class, 'logout']);
         });
 
+        Route::get(
+            'care-types',
+            [CareTypeController::class, 'index']
+        );
         // User Routes
 
         // Nurse Routes

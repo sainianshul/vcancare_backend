@@ -1,0 +1,684 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "VCanCare API",
+        "description": "VCanCare Backend APIs",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/auth/send-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send OTP",
+                "operationId": "sendOtp",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/verify-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify OTP",
+                "operationId": "verifyOtp",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone",
+                                    "otp",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Harry",
+                                        "nullable": true
+                                    },
+                                    "role": {
+                                        "description": "1 = User, 2 = Nurse",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "fcm_token": {
+                                        "type": "string",
+                                        "example": "fcm_xxxxxxxxx",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout",
+                "operationId": "logout",
+                "requestBody": {
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authenticated user",
+                "operationId": "me",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/care-types": {
+            "get": {
+                "tags": [
+                    "Care Types"
+                ],
+                "summary": "Get Care Types",
+                "operationId": "getCareTypes",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/basic-profile": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Save Basic Profile",
+                "operationId": "saveBasicProfile",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "years_of_experience",
+                                    "license_number",
+                                    "license_expiry_date",
+                                    "latitude",
+                                    "longitude",
+                                    "address",
+                                    "city",
+                                    "state",
+                                    "country",
+                                    "pincode"
+                                ],
+                                "properties": {
+                                    "profile_photo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "Experienced ICU nurse.",
+                                        "nullable": true
+                                    },
+                                    "years_of_experience": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "license_number": {
+                                        "type": "string",
+                                        "example": "RN123456"
+                                    },
+                                    "license_expiry_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2030-12-31"
+                                    },
+                                    "latitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 30.7333
+                                    },
+                                    "longitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 76.7794
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Sector 17"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Chandigarh"
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "example": "Punjab"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "India"
+                                    },
+                                    "pincode": {
+                                        "type": "string",
+                                        "example": "160017"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/care-type": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Save Care Types",
+                "operationId": "saveCareTypes",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "care_type_ids"
+                                ],
+                                "properties": {
+                                    "care_type_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/education": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Save Education",
+                "operationId": "saveEducation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "educations"
+                                ],
+                                "properties": {
+                                    "educations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "degree_or_course": {
+                                                    "type": "string",
+                                                    "example": "B.Sc Nursing"
+                                                },
+                                                "institute_name": {
+                                                    "type": "string",
+                                                    "example": "PGI Chandigarh"
+                                                },
+                                                "field_of_study": {
+                                                    "type": "string",
+                                                    "example": "Nursing"
+                                                },
+                                                "start_year": {
+                                                    "type": "integer",
+                                                    "example": 2018
+                                                },
+                                                "end_year": {
+                                                    "type": "integer",
+                                                    "example": 2022,
+                                                    "nullable": true
+                                                },
+                                                "is_currently_studying": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/work-history": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Save Work History",
+                "operationId": "saveWorkHistory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "work_histories"
+                                ],
+                                "properties": {
+                                    "work_histories": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "role_or_position": {
+                                                    "type": "string",
+                                                    "example": "ICU Nurse"
+                                                },
+                                                "organization_name": {
+                                                    "type": "string",
+                                                    "example": "PGI Chandigarh"
+                                                },
+                                                "location": {
+                                                    "type": "string",
+                                                    "example": "Chandigarh"
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2020-01-01"
+                                                },
+                                                "end_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2023-12-31",
+                                                    "nullable": true
+                                                },
+                                                "is_currently_working": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Worked in ICU department.",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/documents": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Save Documents",
+                "operationId": "saveDocuments",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "aadhar_document": {
+                                        "description": "Aadhar document (jpg, jpeg, png, pdf, max 10MB)",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "pan_document": {
+                                        "description": "PAN document (jpg, jpeg, png, pdf, max 10MB)",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "marksheet_10_document": {
+                                        "description": "10th marksheet document (jpg, jpeg, png, pdf, max 10MB)",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "marksheet_12_document": {
+                                        "description": "12th marksheet document (jpg, jpeg, png, pdf, max 10MB)",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "nursing_certificate_document": {
+                                        "description": "Nursing certificate document (jpg, jpeg, png, pdf, max 10MB)",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/availability": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Save Availability",
+                "operationId": "saveAvailability",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "available_from",
+                                    "available_to",
+                                    "available_days"
+                                ],
+                                "properties": {
+                                    "available_from": {
+                                        "type": "string",
+                                        "example": "09:00"
+                                    },
+                                    "available_to": {
+                                        "type": "string",
+                                        "example": "18:00"
+                                    },
+                                    "available_days": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "monday",
+                                            "tuesday",
+                                            "friday"
+                                        ]
+                                    },
+                                    "is_available": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/submit": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Submit For Review",
+                "operationId": "submitForReview",
+                "requestBody": {
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/reapply": {
+            "post": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Reapply",
+                "operationId": "reapply",
+                "requestBody": {
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/onboarding/step-data/{step}": {
+            "get": {
+                "tags": [
+                    "Nurse Onboarding"
+                ],
+                "summary": "Get Step Data",
+                "operationId": "getStepData",
+                "parameters": [
+                    {
+                        "name": "step",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "General"
+                ],
+                "summary": "Health Check",
+                "description": "Returns API health status",
+                "operationId": "3d27eefe2c0badf7b50833a39cb21684",
+                "responses": {
+                    "200": {
+                        "description": "API is running"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8000",
+                        "description": "Local Server"
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Care Types",
+            "description": "Care Types"
+        },
+        {
+            "name": "Nurse Onboarding",
+            "description": "Nurse Onboarding"
+        },
+        {
+            "name": "General",
+            "description": "General"
+        }
+    ]
+}

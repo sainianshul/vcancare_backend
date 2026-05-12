@@ -1,11 +1,11 @@
 <?php
-// app/Http/Controllers/Api/Nurse/OnboardingController.php
+
 namespace App\Http\Controllers\Api\Nurse;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Nurse\Onboarding\AvailabilityRequest;
 use App\Http\Requests\Api\Nurse\Onboarding\BasicProfileRequest;
-use App\Helpers\ApiResponse;
 use App\Http\Requests\Api\Nurse\Onboarding\CareTypeRequest;
 use App\Http\Requests\Api\Nurse\Onboarding\DocumentRequest;
 use App\Http\Requests\Api\Nurse\Onboarding\EducationRequest;
@@ -14,28 +14,73 @@ use App\Models\NurseProfile;
 use App\Services\Nurse\OnboardingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class OnboardingController extends Controller
 {
 
-    public function __construct(private OnboardingService $onboardingService)
-    {
+    public function __construct(
+        private readonly OnboardingService $onboardingService
+    ) {
     }
 
-    /**
-     * Save Basic Profile
-     *
-     * Save nurse basic profile information.
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     * @multipart
-     */
+    //Save nurse basic profile.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/basic-profile',
+        operationId: 'saveBasicProfile',
+        summary: 'Save Basic Profile',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    required: [
+                        'email',
+                        'years_of_experience',
+                        'license_number',
+                        'license_expiry_date',
+                        'latitude',
+                        'longitude',
+                        'address',
+                        'city',
+                        'state',
+                        'country',
+                        'pincode'
+                    ],
+                    properties: [
+                        new OA\Property(property: 'profile_photo', type: 'string', format: 'binary'),
+                        new OA\Property(property: 'email', type: 'string', example: 'test@gmail.com'),
+                        new OA\Property(property: 'bio', type: 'string', nullable: true, example: 'Experienced ICU nurse.'),
+                        new OA\Property(property: 'years_of_experience', type: 'integer', example: 5),
+                        new OA\Property(property: 'license_number', type: 'string', example: 'RN123456'),
+                        new OA\Property(property: 'license_expiry_date', type: 'string', format: 'date', example: '2030-12-31'),
+                        new OA\Property(property: 'latitude', type: 'number', format: 'float', example: 30.7333),
+                        new OA\Property(property: 'longitude', type: 'number', format: 'float', example: 76.7794),
+                        new OA\Property(property: 'address', type: 'string', example: 'Sector 17'),
+                        new OA\Property(property: 'city', type: 'string', example: 'Chandigarh'),
+                        new OA\Property(property: 'state', type: 'string', example: 'Punjab'),
+                        new OA\Property(property: 'country', type: 'string', example: 'India'),
+                        new OA\Property(property: 'pincode', type: 'string', example: '160017'),
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function saveBasicProfile(BasicProfileRequest $request)
     {
-        $this->onboardingService->saveBasicProfile($request->user(), $request->validated());
+        $this->onboardingService->saveBasicProfile(
+            $request->user(),
+            $request->validated()
+        );
 
-        $nurseProfile = $request->user()->nurseProfile->fresh();
+        $nurseProfile = $request->user()
+            ->nurseProfile
+            ->fresh();
 
         return ApiResponse::success(
             message: 'Profile saved successfully.',
@@ -45,26 +90,41 @@ class OnboardingController extends Controller
         );
     }
 
-
-    /**
-     * Save Care Types
-     *
-     * Save nurse care types.
-     *
-     * @bodyParam care_type_ids array required Array of care type IDs.
-     * Example request:
-     * {
-     *   "care_type_ids": [1,2,3]
-     * }
-     * 
-     * @group Nurse Onboarding
-     * @authenticated
-     */
+    //Save nurse care types.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/care-type',
+        operationId: 'saveCareTypes',
+        summary: 'Save Care Types',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['care_type_ids'],
+                properties: [
+                    new OA\Property(
+                        property: 'care_type_ids',
+                        type: 'array',
+                        items: new OA\Items(type: 'integer'),
+                        example: [1, 2]
+                    ),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function saveCareTypes(CareTypeRequest $request)
     {
-        $this->onboardingService->saveCareTypes($request->user(), $request->validated());
+        $this->onboardingService->saveCareTypes(
+            $request->user(),
+            $request->validated()
+        );
 
-        $nurseProfile = $request->user()->nurseProfile->fresh();
+        $nurseProfile = $request->user()
+            ->nurseProfile
+            ->fresh();
 
         return ApiResponse::success(
             message: 'Care types saved successfully.',
@@ -74,191 +134,220 @@ class OnboardingController extends Controller
         );
     }
 
-    /**
-     * Save Education
-     *
-     * Save nurse education details.
-     *
-     * Example Request:
-     *
-     * {
-     *   "educations": [
-     *     {
-     *       "degree_or_course": "B.Sc Nursing",
-     *       "institute_name": "PGI Chandigarh",
-     *       "field_of_study": "Nursing",
-     *       "start_year": 2018,
-     *       "end_year": 2022,
-     *       "is_currently_studying": false
-     *     },
-     *     {
-     *       "degree_or_course": "ICU Certification",
-     *       "institute_name": "AIIMS Delhi",
-     *       "field_of_study": "Critical Care",
-     *       "start_year": 2023,
-     *       "end_year": null,
-     *       "is_currently_studying": true
-     *     }
-     *   ]
-     * }
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     */
+    //Save nurse education details.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/education',
+        operationId: 'saveEducation',
+        summary: 'Save Education',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['educations'],
+                properties: [
+                    new OA\Property(
+                        property: 'educations',
+                        type: 'array',
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(property: 'degree_or_course', type: 'string', example: 'B.Sc Nursing'),
+                                new OA\Property(property: 'institute_name', type: 'string', example: 'PGI Chandigarh'),
+                                new OA\Property(property: 'field_of_study', type: 'string', example: 'Nursing'),
+                                new OA\Property(property: 'start_year', type: 'integer', example: 2018),
+                                new OA\Property(property: 'end_year', type: 'integer', nullable: true, example: 2022),
+                                new OA\Property(property: 'is_currently_studying', type: 'boolean', example: false),
+                            ]
+                        )
+                    ),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function saveEducation(EducationRequest $request)
     {
-        $this->onboardingService->saveEducation($request->user(), $request->validated());
+        $this->onboardingService->saveEducation(
+            $request->user(),
+            $request->validated()
+        );
 
-        $nurseProfile = $request->user()->nurseProfile->fresh();
+        $nurseProfile = $request->user()
+            ->nurseProfile
+            ->fresh();
 
         return ApiResponse::success(
             message: 'Education details saved successfully.',
             data: [
                 'onboarding' => $nurseProfile->getOnboardingResponse(),
-            ],
+            ]
         );
     }
 
-
-    /**
-     * Save Work History
-     *
-     * Save nurse work history details.
-     *
-     * Example Request:
-     *
-     * {
-     *   "work_histories": [
-     *     {
-     *       "role_or_position": "ICU Nurse",
-     *       "organization_name": "PGI Chandigarh",
-     *       "location": "Chandigarh",
-     *       "start_date": "2020-01-01",
-     *       "end_date": "2023-12-31",
-     *       "is_currently_working": false,
-     *       "description": "Worked in ICU department."
-     *     },
-     *     {
-     *       "role_or_position": "Senior Nurse",
-     *       "organization_name": "AIIMS Delhi",
-     *       "location": "Delhi",
-     *       "start_date": "2024-01-01",
-     *       "end_date": null,
-     *       "is_currently_working": true,
-     *       "description": "Currently working in emergency ward."
-     *     }
-     *   ]
-     * }
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     */
+    //Save nurse work history.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/work-history',
+        operationId: 'saveWorkHistory',
+        summary: 'Save Work History',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['work_histories'],
+                properties: [
+                    new OA\Property(
+                        property: 'work_histories',
+                        type: 'array',
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(property: 'role_or_position', type: 'string', example: 'ICU Nurse'),
+                                new OA\Property(property: 'organization_name', type: 'string', example: 'PGI Chandigarh'),
+                                new OA\Property(property: 'location', type: 'string', example: 'Chandigarh'),
+                                new OA\Property(property: 'start_date', type: 'string', format: 'date', example: '2020-01-01'),
+                                new OA\Property(property: 'end_date', type: 'string', format: 'date', nullable: true, example: '2023-12-31'),
+                                new OA\Property(property: 'is_currently_working', type: 'boolean', example: false),
+                                new OA\Property(property: 'description', type: 'string', nullable: true, example: 'Worked in ICU department.'),
+                            ]
+                        )
+                    ),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function saveWorkHistory(WorkHistoryRequest $request): JsonResponse
     {
-        $this->onboardingService->saveWorkHistory($request->user(), $request->validated());
+        $this->onboardingService->saveWorkHistory(
+            $request->user(),
+            $request->validated()
+        );
 
-        $nurseProfile = $request->user()->nurseProfile->fresh();
+        $nurseProfile = $request->user()
+            ->nurseProfile
+            ->fresh();
 
         return ApiResponse::success(
             message: 'Work history saved successfully.',
             data: [
-                'onboarding' => $nurseProfile->getOnboardingResponse()
-            ],
+                'onboarding' => $nurseProfile->getOnboardingResponse(),
+            ]
         );
     }
 
-    /**
-     * Save Documents
-     *
-     * Save nurse verification documents.
-     *
-     * Example Request:
-     *
-     * multipart/form-data
-     *
-     * aadhar_document = <file>
-     * pan_document = <file>
-     * nursing_certificate_document = <file>
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     * @multipart
-     */
-    public function saveDocuments(
-        DocumentRequest $request
-    ) {
-        $this->onboardingService
-            ->saveDocuments(
-                $request->user(),
-                $request->validated()
-            );
+    //Save nurse documents.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/documents',
+        operationId: 'saveDocuments',
+        summary: 'Save Documents',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    properties: [
+                        new OA\Property(property: 'aadhar_document', type: 'string', format: 'binary', nullable: true, description: 'Aadhar document (jpg, jpeg, png, pdf, max 10MB)'),
+                        new OA\Property(property: 'pan_document', type: 'string', format: 'binary', nullable: true, description: 'PAN document (jpg, jpeg, png, pdf, max 10MB)'),
+                        new OA\Property(property: 'marksheet_10_document', type: 'string', format: 'binary', nullable: true, description: '10th marksheet document (jpg, jpeg, png, pdf, max 10MB)'),
+                        new OA\Property(property: 'marksheet_12_document', type: 'string', format: 'binary', nullable: true, description: '12th marksheet document (jpg, jpeg, png, pdf, max 10MB)'),
+                        new OA\Property(property: 'nursing_certificate_document', type: 'string', format: 'binary', nullable: true, description: 'Nursing certificate document (jpg, jpeg, png, pdf, max 10MB)'),
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
+    public function saveDocuments(DocumentRequest $request)
+    {
+        $this->onboardingService->saveDocuments(
+            $request->user(),
+            $request->validated()
+        );
 
-        $nurseProfile = $request->user()->nurseProfile->fresh();
+        $nurseProfile = $request->user()
+            ->nurseProfile
+            ->fresh();
 
         return ApiResponse::success(
             message: 'Documents uploaded successfully.',
             data: [
-                'onboarding' => $nurseProfile->getOnboardingResponse()
+                'onboarding' => $nurseProfile->getOnboardingResponse(),
             ]
         );
     }
 
-    /**
-     * Save Availability
-     *
-     * Save nurse availability details.
-     *
-     * Example Request:
-     *
-     * ```json
-     * {
-     *   "available_from": "09:00",
-     *   "available_to": "18:00",
-     *   "available_days": [
-     *     "monday",
-     *     "tuesday",
-     *     "wednesday",
-     *     "thursday",
-     *     "friday"
-     *   ],
-     *   "is_available": true
-     * }
-     * ```
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     */
-    public function saveAvailability(
-        AvailabilityRequest $request
-    ) {
-        $this->onboardingService
-            ->saveAvailability(
-                $request->user(),
-                $request->validated()
-            );
+    //Save nurse availability.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/availability',
+        operationId: 'saveAvailability',
+        summary: 'Save Availability',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['available_from', 'available_to', 'available_days'],
+                properties: [
+                    new OA\Property(property: 'available_from', type: 'string', example: '09:00'),
+                    new OA\Property(property: 'available_to', type: 'string', example: '18:00'),
+                    new OA\Property(
+                        property: 'available_days',
+                        type: 'array',
+                        items: new OA\Items(type: 'string'),
+                        example: ['monday', 'tuesday', 'friday']
+                    ),
+                    new OA\Property(property: 'is_available', type: 'boolean', example: true),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
+    public function saveAvailability(AvailabilityRequest $request)
+    {
+        $this->onboardingService->saveAvailability(
+            $request->user(),
+            $request->validated()
+        );
 
-        $nurseProfile = $request->user()->nurseProfile->fresh();
+        $nurseProfile = $request->user()
+            ->nurseProfile
+            ->fresh();
 
         return ApiResponse::success(
             message: 'Availability saved successfully.',
             data: [
-                'onboarding' => $nurseProfile->getOnboardingResponse()
+                'onboarding' => $nurseProfile->getOnboardingResponse(),
             ]
         );
     }
 
-
-    /**
-     * Submit For Review
-     *
-     * Submit nurse onboarding profile for admin review.
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     */
+    //Submit profile for review.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/submit',
+        operationId: 'submitForReview',
+        summary: 'Submit For Review',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(required: false),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function submitForReview(Request $request)
     {
-        $this->onboardingService->submitForReview($request->user());
+        $this->onboardingService->submitForReview(
+            $request->user()
+        );
 
         return ApiResponse::success(
             message: 'Profile submitted for review successfully.',
@@ -270,69 +359,67 @@ class OnboardingController extends Controller
         );
     }
 
-
-    /**
-     * Reapply
-     *
-     * Re-submit rejected onboarding profile.
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     */
+    //Reapply onboarding profile.
+    #[OA\Post(
+        path: '/api/v1/nurse/onboarding/reapply',
+        operationId: 'reapply',
+        summary: 'Reapply',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        requestBody: new OA\RequestBody(required: false),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function reapply(Request $request)
     {
-        $this->onboardingService->reapply($request->user());
+        $this->onboardingService->reapply(
+            $request->user()
+        );
 
-        $nurseProfile = $request->user()->nurseProfile->fresh();
+        $nurseProfile = $request->user()
+            ->nurseProfile
+            ->fresh();
 
         return ApiResponse::success(
             message: 'Profile reapplication started successfully.',
             data: [
                 'onboarding' => $nurseProfile->getOnboardingResponse(),
-                'profile_status' =>
-                    NurseProfile::STATUS_PENDING,
-                'profile_status_name' =>
-                    NurseProfile::getStatusList()[
-                        NurseProfile::STATUS_PENDING
-                    ],
+                'profile_status' => NurseProfile::STATUS_PENDING,
+                'profile_status_name' => NurseProfile::getStatusList()[NurseProfile::STATUS_PENDING],
             ]
         );
     }
 
-    /**
-     * Get Step Data
-     *
-     * Get onboarding step data for edit or prefill.
-     *
-     * @urlParam step integer required Onboarding step number. Example: 3
-     *
-     * Available Steps:
-     *
-     * 1 = Basic Profile
-     * 2 = Care Types
-     * 3 = Education
-     * 4 = Work History
-     * 5 = Documents
-     * 6 = Availability
-     *
-     * @group Nurse Onboarding
-     * @authenticated
-     */
+    //Get onboarding step data.
+    #[OA\Get(
+        path: '/api/v1/nurse/onboarding/step-data/{step}',
+        operationId: 'getStepData',
+        summary: 'Get Step Data',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Onboarding'],
+        parameters: [
+            new OA\Parameter(
+                name: 'step',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 3)
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function getStepData(Request $request, int $step)
     {
-        $data = $this->onboardingService
-            ->getStepData(
-                $request->user(),
-                $step
-            );
+        $data = $this->onboardingService->getStepData(
+            $request->user(),
+            $step
+        );
 
         return ApiResponse::success(
             message: 'Step data fetched successfully.',
             data: $data
         );
     }
-
-
-
-
 }

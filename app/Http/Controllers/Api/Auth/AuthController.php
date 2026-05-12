@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Auth\SendOtpRequest;
 use App\Http\Requests\Api\Auth\VerifyOtpRequest;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class AuthController extends Controller
 {
@@ -16,25 +17,32 @@ class AuthController extends Controller
     ) {
     }
 
-    /**
-     * Send OTP
-     *
-     * Send OTP to mobile number.
-     *
-     * @group Authentication
-     * @unauthenticated
-     */
+    //Send OTP to mobile number.
+    #[OA\Post(
+        path: '/api/v1/auth/send-otp',
+        operationId: 'sendOtp',
+        summary: 'Send OTP',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['phone'],
+                properties: [
+                    new OA\Property(property: 'phone', type: 'string', example: '9876543210'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function sendOtp(SendOtpRequest $request)
     {
-
         $result = $this->authService->sendOtp(
             $request->string('phone')->value()
         );
-
         $message = 'OTP sent successfully';
-
         if (config('auth.show_test_otp')) {
-
             $message .= " ({$result['otp']})";
         }
 
@@ -46,14 +54,29 @@ class AuthController extends Controller
         );
     }
 
-    /**
-     * Verify OTP
-     *
-     * Verify OTP and authenticate user.
-     *
-     * @group Authentication
-     * @unauthenticated
-     */
+    //Verify OTP and authenticate user.
+    #[OA\Post(
+        path: '/api/v1/auth/verify-otp',
+        operationId: 'verifyOtp',
+        summary: 'Verify OTP',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['phone', 'otp', 'role'],
+                properties: [
+                    new OA\Property(property: 'phone', type: 'string', example: '9876543210'),
+                    new OA\Property(property: 'otp', type: 'string', example: '123456'),
+                    new OA\Property(property: 'name', type: 'string', nullable: true, example: 'Harry'),
+                    new OA\Property(property: 'role', type: 'integer', example: 2, description: '1 = User, 2 = Nurse'),
+                    new OA\Property(property: 'fcm_token', type: 'string', nullable: true, example: 'fcm_xxxxxxxxx'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function verifyOtp(VerifyOtpRequest $request)
     {
         $result = $this->authService->verifyOtp(
@@ -72,13 +95,20 @@ class AuthController extends Controller
         );
     }
 
-    /**
-     * Logout
-     *
-     * Logout current user.
-     *
-     * @group Authentication
-     */
+    //Logout current user.
+    #[OA\Post(
+        path: '/api/v1/auth/logout',
+        operationId: 'logout',
+        summary: 'Logout',
+        security: [['bearerAuth' => []]],
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: false
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function logout(Request $request)
     {
         $this->authService->logout(
@@ -90,33 +120,17 @@ class AuthController extends Controller
         );
     }
 
-    /**
-     * Me
-     *
-     * Get authenticated user details.
-     *
-     * Nurse onboarding steps:
-     *
-     * 1 = Basic Profile,
-     * 2 = Care Types,
-     * 3 = Education,
-     * 4 = Work History,
-     * 5 = Documents,
-     * 6 = Availability,
-     * 7 = Submit For Review,
-     * 8 = Completed,
-     *
-     * Nurse profile statuses:
-     *
-     * 0 = Pending,
-     * 1 = Under Review,
-     * 2 = Approved,
-     * 3 = Rejected,
-     * 4 = Suspended
-     *
-     * @group Authentication
-     * @authenticated
-     */
+    //Get authenticated user.
+    #[OA\Get(
+        path: '/api/v1/auth/me',
+        operationId: 'me',
+        summary: 'Get authenticated user',
+        security: [['bearerAuth' => []]],
+        tags: ['Authentication'],
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+        ]
+    )]
     public function me(Request $request)
     {
         return ApiResponse::success(
@@ -127,5 +141,4 @@ class AuthController extends Controller
             ]
         );
     }
-
 }

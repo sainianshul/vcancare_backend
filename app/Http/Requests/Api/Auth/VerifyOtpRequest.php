@@ -50,7 +50,7 @@ class VerifyOtpRequest extends FormRequest
             ],
 
             'fcm_token' => [
-                'nullable',
+                'required',
                 'string',
             ],
         ];
