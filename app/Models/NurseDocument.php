@@ -19,7 +19,6 @@ class NurseDocument extends Model
     const TYPE_MARKSHEET_10 = 3;
     const TYPE_MARKSHEET_12 = 4;
     const TYPE_NURSING_CERTIFICATE = 5;
-    const TYPE_OTHER = 6;
 
     protected $fillable = [
         'nurse_id',
@@ -56,7 +55,6 @@ class NurseDocument extends Model
             self::TYPE_MARKSHEET_10 => '10th Marksheet',
             self::TYPE_MARKSHEET_12 => '12th Marksheet',
             self::TYPE_NURSING_CERTIFICATE => 'Nursing Certificate',
-            self::TYPE_OTHER => 'Other',
         ];
     }
 

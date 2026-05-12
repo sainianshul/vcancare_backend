@@ -16,29 +16,33 @@ class OnboardingService
 {
     public function saveBasicProfile(User $user, array $data): void
     {
-
         $nurseProfile = $user->nurseProfile;
+
+        // Pehli baar — profile banao
+        if (!$nurseProfile) {
+            $nurseProfile = NurseProfile::create([
+                'user_id' => $user->id,
+                'onboarding_step' => NurseProfile::STEP_BASIC_PROFILE,
+                'status' => NurseProfile::STATUS_PENDING,
+            ]);
+        }
 
         $nurseProfile->canSaveStep(NurseProfile::STEP_BASIC_PROFILE);
 
         DB::transaction(function () use ($user, $nurseProfile, $data) {
 
+            // User update
             $userData = ['email' => $data['email']];
 
             if (isset($data['profile_photo'])) {
-
-                // Upload new photo first
                 $photoPath = Storage::disk('public')->put(
                     'users/profile-photos',
                     $data['profile_photo']
                 );
 
-                // Delete old photo
-                if ($user->profile_photo) {
-                    Storage::disk('public')
-                        ->delete(
-                            $user->profile_photo
-                        );
+                // Upload success ke baad hi purana delete karo
+                if ($photoPath && $user->profile_photo) {
+                    Storage::disk('public')->delete($user->profile_photo);
                 }
 
                 $userData['profile_photo'] = $photoPath;
@@ -46,9 +50,9 @@ class OnboardingService
 
             $user->update($userData);
 
-            // Nurse Profile
+            // Nurse profile update
             $nurseProfile->update([
-                'bio' => $data['bio'],
+                'bio' => $data['bio'] ?? null,
                 'years_of_experience' => $data['years_of_experience'],
                 'license_number' => $data['license_number'],
                 'license_expiry_date' => $data['license_expiry_date'],
@@ -61,19 +65,14 @@ class OnboardingService
                 'pincode' => $data['pincode'],
             ]);
 
-            // Move onboarding forward
-            $nurseProfile->updateOnboardingStep(
-                NurseProfile::STEP_CARE_TYPES
-            );
+            $nurseProfile->updateOnboardingStep(NurseProfile::STEP_CARE_TYPES);
         });
     }
 
     public function saveCareTypes(User $user, array $data)
     {
         $nurseProfile = $user->nurseProfile;
-
         $nurseProfile->canSaveStep(NurseProfile::STEP_CARE_TYPES);
-
         DB::transaction(function () use ($nurseProfile, $data) {
 
             $attachData = [];
@@ -96,7 +95,6 @@ class OnboardingService
     {
         $nurseProfile = $user->nurseProfile;
         $nurseProfile->canSaveStep(NurseProfile::STEP_EDUCATION);
-
         DB::transaction(function () use ($nurseProfile, $data) {
 
             // Remove Existing Education
@@ -104,7 +102,6 @@ class OnboardingService
 
             // Save Education
             foreach ($data['educations'] as $education) {
-
                 $nurseProfile->educations()->create([
                     'degree_or_course' => $education['degree_or_course'],
                     'institute_name' => $education['institute_name'],

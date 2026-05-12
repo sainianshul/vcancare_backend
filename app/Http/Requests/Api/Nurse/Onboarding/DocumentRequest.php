@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Nurse\Onboarding;
 
+use App\Models\NurseDocument;
 use Illuminate\Foundation\Http\FormRequest;
 
 class DocumentRequest extends FormRequest
@@ -11,90 +12,62 @@ class DocumentRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Body parameters.
-     */
-    public function bodyParameters(): array
+    public function rules(): array
     {
+        $nurseProfile = $this->user()->nurseProfile;
+
+        $uploadedTypes = $nurseProfile
+            ? $nurseProfile->documents()->pluck('document_type')->toArray()
+            : [];
+
+        $rule = fn(string $type) =>
+            in_array($type, $uploadedTypes) ? 'nullable' : 'required';
+
         return [
-
             'aadhar_document' => [
-                'description' => 'Aadhar document.',
-                'example' => null,
-            ],
-
-            'pan_document' => [
-                'description' => 'PAN document.',
-                'example' => null,
-            ],
-
-            'marksheet_10_document' => [
-                'description' => '10th marksheet.',
-                'example' => null,
-            ],
-
-            'marksheet_12_document' => [
-                'description' => '12th marksheet.',
-                'example' => null,
+                $rule(NurseDocument::TYPE_AADHAR),
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:10240',
             ],
 
             'nursing_certificate_document' => [
-                'description' => 'Nursing certificate.',
-                'example' => null,
+                $rule(NurseDocument::TYPE_NURSING_CERTIFICATE),
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:10240',
             ],
 
-            'other_document' => [
-                'description' => 'Other supporting document.',
-                'example' => null,
+            'pan_document' => [
+                $rule(NurseDocument::TYPE_PAN),
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:10240',
             ],
+            'marksheet_10_document' => [
+                $rule(NurseDocument::TYPE_MARKSHEET_10),
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:10240',
+            ],
+            'marksheet_12_document' => [
+                $rule(NurseDocument::TYPE_MARKSHEET_12),
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:10240',
+            ]
         ];
     }
 
-    public function rules(): array
+    public function messages(): array
     {
         return [
-
-            'aadhar_document' => [
-                'nullable',
-                'file',
-                'mimes:jpg,jpeg,png,pdf',
-                'max:10240',
-            ],
-
-            'pan_document' => [
-                'nullable',
-                'file',
-                'mimes:jpg,jpeg,png,pdf',
-                'max:10240',
-            ],
-
-            'marksheet_10_document' => [
-                'nullable',
-                'file',
-                'mimes:jpg,jpeg,png,pdf',
-                'max:10240',
-            ],
-
-            'marksheet_12_document' => [
-                'nullable',
-                'file',
-                'mimes:jpg,jpeg,png,pdf',
-                'max:10240',
-            ],
-
-            'nursing_certificate_document' => [
-                'nullable',
-                'file',
-                'mimes:jpg,jpeg,png,pdf',
-                'max:10240',
-            ],
-
-            'other_document' => [
-                'nullable',
-                'file',
-                'mimes:jpg,jpeg,png,pdf',
-                'max:10240',
-            ],
+            'aadhar_document.required' => 'Aadhar document is required.',
+            'nursing_certificate_document.required' => 'Nursing certificate is required.',
+            'aadhar_document.mimes' => 'Aadhar must be jpg, jpeg, png or pdf.',
+            'nursing_certificate_document.mimes' => 'Certificate must be jpg, jpeg, png or pdf.',
+            'aadhar_document.max' => 'Aadhar file must not exceed 10MB.',
+            'nursing_certificate_document.max' => 'Certificate file must not exceed 10MB.',
         ];
     }
 }

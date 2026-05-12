@@ -46,17 +46,11 @@ class NurseProfile extends Model
     */
 
     const STEP_BASIC_PROFILE = 1;
-
     const STEP_CARE_TYPES = 2;
-
     const STEP_EDUCATION = 3;
-
     const STEP_WORK_HISTORY = 4;
-
     const STEP_DOCUMENTS = 5;
-
     const STEP_AVAILABILITY = 6;
-
     const STEP_SUBMIT_FOR_REVIEW = 7;
 
     protected $fillable = [
@@ -382,9 +376,9 @@ class NurseProfile extends Model
 
         // State is not Under Review or Approved 
         if ($this->onboarding_step < self::STEP_SUBMIT_FOR_REVIEW) {
-            if ($step > $this->onboarding_step + 1) {
+            if ($step > $this->onboarding_step) {
                 throw new InvalidOnboardingStepException(
-                    'Please complete previous steps first.'
+                    'Please complete previous steps (' . $this->onboarding_step . ') first.'
                 );
             }
             return;
