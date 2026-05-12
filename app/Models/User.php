@@ -157,45 +157,21 @@ class User extends Authenticatable
     {
         $nurse = $this->nurseProfile;
 
-        // Profile bani hi nahi abhi tak
-        if (!$nurse) {
-            return [
-                'profile_status' => NurseProfile::STATUS_PENDING,
-                'profile_status_name' => 'Pending',
-                'onboarding' => [
-                    'is_completed' => false,
-                    'current_step' => 0,
-                    'current_step_name' => 'Not Started',
-                    'next_step' => NurseProfile::STEP_BASIC_PROFILE,
-                    'next_step_name' => 'Basic Profile',
-                    'next_step_url' => 'onboarding/basic-profile',
-                ],
-            ];
-        }
-
         $data = [
-            'profile_status' => $nurse->status,
-            'profile_status_name' => $nurse->status_name,
+            'profile_status' => $nurse->status ?? NurseProfile::STATUS_PENDING,
+            'profile_status_name' => $nurse->status_name ?? 'Pending',
             'onboarding' => [
                 'is_completed' => (bool) $nurse->is_onboarding_completed,
             ],
         ];
 
-        // Onboarding complete nahi hua — step info bhejo
         if (!$nurse->is_onboarding_completed) {
-            $nextStep = min($nurse->onboarding_step + 1, NurseProfile::STEP_SUBMIT_FOR_REVIEW);
-            $nextStepUrl = $this->getOnboardingStepUrl($nextStep);
-
             $data['onboarding'] = array_merge($data['onboarding'], [
                 'current_step' => $nurse->onboarding_step,
-                'current_step_name' => $nurse->step_name,
-                'next_step' => $nextStep,
-                'next_step_name' => NurseProfile::getOnboardingStepList()[$nextStep] ?? '',
-                'next_step_url' => $nextStepUrl,
+                'current_step_name' => $nurse->step_name
             ]);
         }
 
-        // Rejection/Suspension reason — sirf tab jab relevant ho
         if ($nurse->status === NurseProfile::STATUS_REJECTED) {
             $data['profile_reason'] = $nurse->rejection_reason;
         }
@@ -205,19 +181,5 @@ class User extends Authenticatable
         }
 
         return $data;
-    }
-
-    private function getOnboardingStepUrl(int $step): ?string
-    {
-        return match ($step) {
-            NurseProfile::STEP_BASIC_PROFILE => 'onboarding/basic-profile',
-            NurseProfile::STEP_CARE_TYPES => 'onboarding/care-type',
-            NurseProfile::STEP_EDUCATION => 'onboarding/education',
-            NurseProfile::STEP_WORK_HISTORY => 'onboarding/work-history',
-            NurseProfile::STEP_DOCUMENTS => 'onboarding/documents',
-            NurseProfile::STEP_AVAILABILITY => 'onboarding/availability',
-            NurseProfile::STEP_SUBMIT_FOR_REVIEW => 'onboarding/submit',
-            default => null,
-        };
     }
 }

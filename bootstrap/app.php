@@ -43,7 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             return ApiResponse::error('Resource not found', 404);
         });
 
-        if (app()->environment('production')) {
+        if (false) {
             // Save errors in db and return error_id to user
             $exceptions->render(function (Throwable $e, $request) {
 
