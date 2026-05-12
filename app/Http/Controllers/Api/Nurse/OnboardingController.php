@@ -36,19 +36,7 @@ class OnboardingController extends Controller
             content: new OA\MediaType(
                 mediaType: 'multipart/form-data',
                 schema: new OA\Schema(
-                    required: [
-                        'email',
-                        'years_of_experience',
-                        'license_number',
-                        'license_expiry_date',
-                        'latitude',
-                        'longitude',
-                        'address',
-                        'city',
-                        'state',
-                        'country',
-                        'pincode'
-                    ],
+                    required: ['email', 'years_of_experience', 'license_number', 'license_expiry_date', 'latitude', 'longitude', 'address', 'city', 'state', 'country', 'pincode'],
                     properties: [
                         new OA\Property(property: 'profile_photo', type: 'string', format: 'binary'),
                         new OA\Property(property: 'email', type: 'string', example: 'test@gmail.com'),
