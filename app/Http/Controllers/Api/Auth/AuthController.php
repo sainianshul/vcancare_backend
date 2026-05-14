@@ -89,7 +89,6 @@ class AuthController extends Controller
             'Authentication successful',
             [
                 'token' => $result['token'],
-
                 'user' => $result['user']->toUserResponse(),
             ]
         );

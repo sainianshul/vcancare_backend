@@ -11,7 +11,7 @@ use App\Http\Requests\Api\Nurse\Onboarding\DocumentRequest;
 use App\Http\Requests\Api\Nurse\Onboarding\EducationRequest;
 use App\Http\Requests\Api\Nurse\Onboarding\WorkHistoryRequest;
 use App\Models\NurseProfile;
-use App\Services\Nurse\OnboardingService;
+use App\Services\OnboardingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
