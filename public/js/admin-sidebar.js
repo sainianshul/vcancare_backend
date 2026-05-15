@@ -99,7 +99,7 @@
         if (overlay) return overlay;
         overlay = document.createElement('div');
         overlay.id = 'sidebar-overlay';
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:104;opacity:0;transition:opacity 0.25s ease;display:none;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:100;opacity:0;transition:opacity 0.25s ease;display:none;';
         document.body.appendChild(overlay);
         overlay.addEventListener('click', closeMobileDrawer);
         return overlay;
