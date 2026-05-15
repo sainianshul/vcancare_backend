@@ -4,14 +4,6 @@
     data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-push-header="true"
     data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" class="app-default">
 
-    <!--begin::Page Loader Overlay (must be FIRST element in body)-->
-    <div id="page-loader">
-        <span class="spinner-border text-primary" style="width:2rem;height:2rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </span>
-    </div>
-    <!--end::Page Loader Overlay-->
-
     <!--begin::Theme mode setup on page load-->
     <script>
         (function(){
@@ -20,9 +12,6 @@
             if (!mode) mode = 'light';
             if (mode === 'system') mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             d.setAttribute('data-bs-theme', mode);
-            // Match loader bg to theme immediately
-            var loader = document.getElementById('page-loader');
-            if (loader && mode === 'dark') loader.style.background = '#1e1e2d';
         })();
     </script>
     <!--end::Theme mode setup-->
