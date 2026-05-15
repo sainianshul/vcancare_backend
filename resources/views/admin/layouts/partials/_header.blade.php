@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <!--begin::Head-->
+
 <head>
     <title>@yield('title', 'VCancares')</title>
     <meta charset="utf-8" />
@@ -17,7 +18,8 @@
     <!--begin::Fonts (non-render-blocking)-->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" />
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap"
         media="print" onload="this.media='all'" />
     <noscript>
