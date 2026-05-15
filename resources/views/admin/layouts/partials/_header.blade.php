@@ -45,71 +45,8 @@
     {{-- Page-specific styles --}}
     @stack('styles')
 
-    <!--begin::Page Loader inline script (must run before body renders)-->
-    <script>
-        (function(){
-            // ── ARRIVAL: Fade-out the loader once DOM is ready ──
-            function hideLoader() {
-                var el = document.getElementById('page-loader');
-                if (!el) return;
-                el.style.opacity = '0';
-                el.style.pointerEvents = 'none';
-            }
 
-            // ── EXIT: Re-show overlay BEFORE navigating away ──
-            function showLoader() {
-                var el = document.getElementById('page-loader');
-                if (!el) return;
-                el.style.transition = 'none';
-                el.style.opacity = '1';
-                el.style.pointerEvents = 'auto';
-                void el.offsetHeight;
-                el.style.transition = 'opacity .2s ease';
-            }
 
-            // Wait for DOM, then hide the loader
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', hideLoader);
-            } else {
-                hideLoader();
-            }
-
-            // Intercept internal link clicks — show overlay before navigation
-            document.addEventListener('click', function(e) {
-                var link = e.target.closest('a[href]');
-                if (!link) return;
-                var href = link.getAttribute('href');
-                if (!href || href === '#' || href.startsWith('javascript:')
-                    || link.target === '_blank'
-                    || e.ctrlKey || e.metaKey || e.shiftKey
-                    || e.defaultPrevented) return;
-                try {
-                    var url = new URL(href, window.location.origin);
-                    if (url.origin !== window.location.origin) return;
-                } catch(ex) { return; }
-                showLoader();
-            });
-
-            // Handle form submissions
-            document.addEventListener('submit', function(e) {
-                if (!e.defaultPrevented) showLoader();
-            });
-
-            // BFCACHE: back/forward button
-            window.addEventListener('pageshow', function(e) {
-                if (e.persisted) {
-                    var el = document.getElementById('page-loader');
-                    if (!el) return;
-                    el.style.transition = 'none';
-                    el.style.opacity = '0';
-                    el.style.pointerEvents = 'none';
-                    void el.offsetHeight;
-                    el.style.transition = 'opacity .2s ease';
-                }
-            });
-        })();
-    </script>
-    <!--end::Page Loader inline script-->
 
 </head>
 <!--end::Head-->
