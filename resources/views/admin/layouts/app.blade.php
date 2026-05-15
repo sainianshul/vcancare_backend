@@ -4,12 +4,6 @@
     data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-push-header="true"
     data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" class="app-default">
 
-    <!--begin::Page loading overlay — matches theme bg, hides white flash-->
-    <div id="page-loader">
-        <div class="spinner"></div>
-    </div>
-    <!--end::Page loading overlay-->
-
     <!--begin::App-->
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
 
@@ -47,26 +41,6 @@
 
     {{-- Scripts --}}
     @include('admin.layouts.partials._scripts')
-
-    <!--begin::Fast body reveal + page-loader dismissal-->
-    <script>
-        // Reveal body immediately once DOM + CSS is ready
-        document.body.classList.add('loaded');
-
-        // Fade out the page loader
-        var loader = document.getElementById('page-loader');
-        if (loader) {
-            loader.style.opacity = '0';
-            setTimeout(function(){ loader.style.display = 'none'; }, 200);
-        }
-
-        // Show loader on next navigation (masks white flash)
-        window.addEventListener('beforeunload', function() {
-            var l = document.getElementById('page-loader');
-            if (l) { l.style.display = 'flex'; l.style.opacity = '1'; }
-        });
-    </script>
-    <!--end::Fast body reveal-->
 
 </body>
 
