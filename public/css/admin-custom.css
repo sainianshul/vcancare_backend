@@ -152,4 +152,48 @@ html, body { background: #f5f8fa; margin: 0; padding: 0; }
 .card { border: 0 !important; box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important; }
 [data-bs-theme="dark"] .card { box-shadow: 0 1px 6px rgba(0,0,0,0.15) !important; }
 
+/* ============================================
+   SIDEBAR SCROLL — Thin overlay scrollbar
+   ============================================ */
+#kt_app_sidebar_menu_wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.12) transparent;
+}
+#kt_app_sidebar_menu_wrapper::-webkit-scrollbar { width: 4px; }
+#kt_app_sidebar_menu_wrapper::-webkit-scrollbar-track { background: transparent; }
+#kt_app_sidebar_menu_wrapper::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
+#kt_app_sidebar_menu_wrapper:hover::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); }
+[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper { scrollbar-color: rgba(255,255,255,0.1) transparent; }
+[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); }
 
+/* ============================================
+   ACCORDION SUB-MENUS — Hidden by default
+   ============================================ */
+.menu-accordion .menu-sub { display: none; flex-direction: column; }
+.menu-accordion.show > .menu-sub { display: flex; }
+
+/* Arrow rotation for open accordions */
+.menu-accordion .menu-arrow { transition: transform 0.2s ease; }
+.menu-accordion.show > .menu-link > .menu-arrow,
+.menu-accordion.here > .menu-link > .menu-arrow { transform: rotate(90deg); }
+
+/* ============================================
+   MOBILE DRAWER — Slide animation
+   ============================================ */
+@media (max-width: 991.98px) {
+    #kt_app_sidebar:not(.drawer-on) {
+        display: none !important;
+    }
+    #kt_app_sidebar.drawer-on {
+        display: flex !important;
+    }
+}
+
+/* ============================================
+   DROPDOWN ANIMATION
+   ============================================ */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
