@@ -1,7 +1,7 @@
 /**
  * VCanCares Admin Sidebar — Custom Lightweight JS
  * Replaces Metronic KTMenu, KTDrawer, KTScroll plugins
- * Zero dependencies, ~3KB, runs in <1ms
+ * Zero dependencies, ~3KB minified, runs in <1ms
  */
 (function () {
     'use strict';
@@ -18,7 +18,6 @@
     function initAccordions() {
         if (!sidebar) return;
 
-        // All accordion triggers
         var accordions = sidebar.querySelectorAll('.menu-accordion > .menu-link');
         for (var i = 0; i < accordions.length; i++) {
             accordions[i].addEventListener('click', handleAccordionClick);
@@ -26,28 +25,31 @@
     }
 
     function handleAccordionClick(e) {
-        e.preventDefault();
+        // Only prevent default if it's a span trigger, not an actual <a> with href
+        var tag = e.currentTarget.tagName.toLowerCase();
+        if (tag === 'span' || (tag === 'a' && (!e.currentTarget.getAttribute('href') || e.currentTarget.getAttribute('href') === '#'))) {
+            e.preventDefault();
+        }
         e.stopPropagation();
 
         var item = this.parentElement; // .menu-item.menu-accordion
-        var sub = item.querySelector('.menu-sub');
+        var sub = item.querySelector(':scope > .menu-sub');
         if (!sub) return;
 
         var isOpen = item.classList.contains('show');
 
         if (isOpen) {
-            // Close this accordion
             closeAccordion(item, sub);
         } else {
-            // Close siblings first (single-expand behavior)
+            // Close siblings first (single-expand)
             var siblings = item.parentElement.children;
             for (var i = 0; i < siblings.length; i++) {
-                if (siblings[i] !== item && siblings[i].classList.contains('menu-accordion') && siblings[i].classList.contains('show')) {
-                    var sibSub = siblings[i].querySelector('.menu-sub');
-                    if (sibSub) closeAccordion(siblings[i], sibSub);
+                var sib = siblings[i];
+                if (sib !== item && sib.classList.contains('menu-accordion') && sib.classList.contains('show')) {
+                    var sibSub = sib.querySelector(':scope > .menu-sub');
+                    if (sibSub) closeAccordion(sib, sibSub);
                 }
             }
-            // Open this accordion
             openAccordion(item, sub);
         }
     }
@@ -59,10 +61,10 @@
         var h = sub.scrollHeight;
         sub.style.height = '0px';
         // Force reflow
-        sub.offsetHeight;
-        sub.style.transition = 'height 0.2s ease';
+        sub.offsetHeight; // jshint ignore:line
+        sub.style.transition = 'height 0.25s ease';
         sub.style.height = h + 'px';
-        // Clean up after transition
+
         var done = function () {
             sub.style.height = '';
             sub.style.overflow = '';
@@ -75,9 +77,10 @@
     function closeAccordion(item, sub) {
         sub.style.overflow = 'hidden';
         sub.style.height = sub.scrollHeight + 'px';
-        sub.offsetHeight;
-        sub.style.transition = 'height 0.2s ease';
+        sub.offsetHeight; // jshint ignore:line
+        sub.style.transition = 'height 0.25s ease';
         sub.style.height = '0px';
+
         var done = function () {
             item.classList.remove('here', 'show');
             sub.style.display = '';
@@ -105,8 +108,12 @@
     function openMobileDrawer() {
         if (!sidebar) return;
         createOverlay();
+
         sidebar.classList.add('drawer-on');
-        sidebar.style.cssText = 'display:flex !important; position:fixed; top:0; left:0; bottom:0; z-index:105; width:250px; transform:translateX(0); transition:transform 0.25s ease;';
+        // On mobile, position is already fixed from CSS; just override display + transform
+        sidebar.style.transform = 'translateX(0)';
+        sidebar.style.transition = 'transform 0.25s ease';
+
         overlay.style.display = 'block';
         requestAnimationFrame(function () {
             overlay.style.opacity = '1';
@@ -117,19 +124,22 @@
     function closeMobileDrawer() {
         if (!sidebar) return;
         sidebar.style.transform = 'translateX(-100%)';
-        if (overlay) {
-            overlay.style.opacity = '0';
-        }
+        sidebar.style.transition = 'transform 0.25s ease';
+
+        if (overlay) overlay.style.opacity = '0';
+
         setTimeout(function () {
             sidebar.classList.remove('drawer-on');
-            sidebar.style.cssText = '';
+            sidebar.style.transform = '';
+            sidebar.style.transition = '';
             if (overlay) overlay.style.display = 'none';
             document.body.style.overflow = '';
-        }, 250);
+        }, 260);
     }
 
     function initMobileDrawer() {
         if (!mobileToggle || !sidebar) return;
+
         mobileToggle.addEventListener('click', function (e) {
             e.preventDefault();
             if (sidebar.classList.contains('drawer-on')) {
@@ -140,15 +150,19 @@
         });
 
         // Close drawer on window resize to desktop
+        var resizeTimer;
         window.addEventListener('resize', function () {
-            if (window.innerWidth >= MOBILE_BP && sidebar.classList.contains('drawer-on')) {
-                closeMobileDrawer();
-            }
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                if (window.innerWidth >= MOBILE_BP && sidebar.classList.contains('drawer-on')) {
+                    closeMobileDrawer();
+                }
+            }, 100);
         });
     }
 
     // =========================================
-    // 3. USER DROPDOWN (replaces data-kt-menu on footer)
+    // 3. USER DROPDOWN (replaces data-kt-menu)
     // =========================================
     function initUserDropdown() {
         var footer = document.getElementById('kt_app_sidebar_footer');
@@ -158,14 +172,11 @@
         var dropdown = footer.querySelector('.menu-sub-dropdown');
         if (!trigger || !dropdown) return;
 
-        // Position dropdown above the trigger
         trigger.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
 
             var isOpen = dropdown.classList.contains('show');
-
-            // Close any other dropdowns first
             closeAllDropdowns();
 
             if (!isOpen) {
@@ -175,12 +186,10 @@
                 dropdown.style.left = rect.left + 'px';
                 dropdown.classList.add('show');
 
-                // Also init any nested sub-dropdown triggers inside this dropdown
                 initNestedDropdowns(dropdown);
             }
         });
 
-        // Close on outside click
         document.addEventListener('click', function (e) {
             if (!footer.contains(e.target)) {
                 closeAllDropdowns();
@@ -191,7 +200,6 @@
     function initNestedDropdowns(parentDropdown) {
         var nestedTriggers = parentDropdown.querySelectorAll('[data-kt-menu-trigger]');
         for (var i = 0; i < nestedTriggers.length; i++) {
-            // Avoid duplicate listeners
             if (nestedTriggers[i]._customInit) continue;
             nestedTriggers[i]._customInit = true;
 
@@ -202,7 +210,6 @@
                 if (!subDrop) return;
 
                 var isOpen = subDrop.classList.contains('show');
-                // Close sibling nested dropdowns
                 var siblings = this.parentElement.parentElement.querySelectorAll('.menu-sub-dropdown.show');
                 for (var j = 0; j < siblings.length; j++) {
                     if (siblings[j] !== subDrop) {
@@ -254,13 +261,11 @@
                 document.documentElement.setAttribute('data-bs-theme', resolved);
                 localStorage.setItem('data-bs-theme', value);
 
-                // Update active states
                 for (var j = 0; j < modeLinks.length; j++) {
                     modeLinks[j].classList.remove('active');
                 }
                 this.classList.add('active');
 
-                // Close the dropdown
                 closeAllDropdowns();
             });
         }
@@ -275,7 +280,7 @@
     }
 
     // =========================================
-    // 5. INIT ON DOM READY
+    // 5. INIT
     // =========================================
     function init() {
         initAccordions();
@@ -284,7 +289,6 @@
         initThemeMode();
     }
 
-    // Run immediately if DOM already loaded, else wait
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

@@ -6,7 +6,7 @@
 <!--end::Global Javascript Bundle-->
 
 <!--begin::Custom Sidebar (lightweight, replaces KTMenu/KTDrawer)-->
-<script src="{{ asset('js/admin-sidebar.js') }}?v=1"></script>
+<script src="{{ asset('js/admin-sidebar.js') }}?v=2"></script>
 <!--end::Custom Sidebar-->
 
 {{-- DataTables bundle — sirf table pages pe load hoga --}}

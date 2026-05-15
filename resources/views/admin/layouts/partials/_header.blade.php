@@ -38,7 +38,7 @@
     <!--end::Global Stylesheets Bundle-->
 
     <!--begin::Custom admin styles (browser cached static file)-->
-    <link href="{{ asset('css/admin-custom.css') }}?v=1" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/admin-custom.css') }}?v=2" rel="stylesheet" type="text/css" />
     <!--end::Custom admin styles-->
 
     {{-- DataTables CSS — global bundle ke BAAD, sirf table pages pe load hoga --}}
