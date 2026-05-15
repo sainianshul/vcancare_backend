@@ -6,7 +6,21 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Sign In — VCancares Admin</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" />
+
+    <link rel="preload" href="{{ asset('theme/dist/assets/plugins/global/fonts/keenicons/keenicons-outline.woff') }}" as="font" type="font/woff" crossorigin />
+
+    <style>
+        @font-face {
+            font-family: keenicons-outline;
+            font-display: swap;
+            src: url('{{ asset("theme/dist/assets/plugins/global/fonts/keenicons/keenicons-outline.woff") }}') format("woff"),
+                 url('{{ asset("theme/dist/assets/plugins/global/fonts/keenicons/keenicons-outline.ttf") }}') format("truetype");
+        }
+    </style>
+
     <link href="{{ asset('theme/dist/assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" />
     <link href="{{ asset('theme/dist/assets/css/style.bundle.css') }}" rel="stylesheet" />
     <link rel="shortcut icon" href="{{ asset('theme/dist/assets/media/logos/favicon.ico') }}" />

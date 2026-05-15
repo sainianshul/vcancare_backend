@@ -125,6 +125,24 @@ return new class extends Migration {
                 ->constrained('users')
                 ->nullOnDelete();
 
+            $table->timestamp('marked_for_review_at')
+                ->nullable();
+
+            $table->timestamp('rejected_at')
+                ->nullable();
+
+            $table->timestamp('suspended_at')
+                ->nullable();
+
+            $table->foreignId('rejected_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('suspended_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             // Onboarding
 
             $table->unsignedTinyInteger('onboarding_step')
