@@ -47,7 +47,7 @@
 
                 {{-- Nurses --}}
                 @php
-                    $pendingCount = cache()->remember('sidebar_pending_nurses_count', 30, function () {
+                    $pendingCount = cache()->remember('sidebar_pending_nurses_count', 300, function () {
                         return \App\Models\NurseProfile::where('status', \App\Models\NurseProfile::STATUS_UNDER_REVIEW)
                             ->whereHas('user', fn($q) => $q->where('status', 'active'))
                             ->count();

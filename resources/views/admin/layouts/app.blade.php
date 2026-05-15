@@ -4,18 +4,28 @@
     data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-push-header="true"
     data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" class="app-default">
 
-    <!--begin::Theme mode setup on page load-->
-    <script>var defaultThemeMode = "light"; var themeMode; if (document.documentElement) { if (document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if (localStorage.getItem("data-bs-theme") !== null) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
-    <!--end::Theme mode setup on page load-->
+    <!--begin::Page Loader Overlay (must be FIRST element in body)-->
+    <div id="page-loader">
+        <span class="spinner-border text-primary" style="width:2rem;height:2rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </span>
+    </div>
+    <!--end::Page Loader Overlay-->
 
+    <!--begin::Theme mode setup on page load-->
     <script>
-        // Match loader bg to current theme
-        (function () {
-            var t = document.documentElement.getAttribute('data-bs-theme');
-            if (t === 'dark') document.getElementById('page-loader').style.background = '#1e1e2d';
+        (function(){
+            var d = document.documentElement;
+            var mode = localStorage.getItem('data-bs-theme');
+            if (!mode) mode = 'light';
+            if (mode === 'system') mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            d.setAttribute('data-bs-theme', mode);
+            // Match loader bg to theme immediately
+            var loader = document.getElementById('page-loader');
+            if (loader && mode === 'dark') loader.style.background = '#1e1e2d';
         })();
     </script>
-    <!--end::Page Loader Overlay-->
+    <!--end::Theme mode setup-->
 
     <!--begin::App-->
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
