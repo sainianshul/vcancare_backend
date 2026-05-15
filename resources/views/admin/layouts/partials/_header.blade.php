@@ -4,7 +4,19 @@
 
 <head>
     <!--begin::Immediate background (prevents white flash)-->
-    <style>html,body{background:#f5f8fa;margin:0;padding:0}[data-bs-theme="dark"],[data-bs-theme="dark"] body{background:#1e1e2d}</style>
+    <style>
+        html,
+        body {
+            background: #f5f8fa;
+            margin: 0;
+            padding: 0
+        }
+
+        [data-bs-theme="dark"],
+        [data-bs-theme="dark"] body {
+            background: #1e1e2d
+        }
+    </style>
     <!--end::Immediate background-->
 
     <title>@yield('title', 'VCancares')</title>
@@ -22,9 +34,13 @@
     <!--begin::Fonts (non-render-blocking)-->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" /></noscript>
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap"
+        media="print" onload="this.media='all'" />
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" />
+    </noscript>
     <!--end::Fonts-->
 
     <!--begin::Preload critical icon font-->
@@ -393,7 +409,80 @@
         [data-bs-theme="dark"] .card {
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15) !important;
         }
+
     </style>
+
+    <script>
+        (function(){
+            // loader element is in <body>, so we MUST wait for DOM
+            var loader = null;
+
+            function getLoader() {
+                if (!loader) loader = document.getElementById('page-loader');
+                return loader;
+            }
+
+            // ── ARRIVAL: Fade-out the loader once DOM is ready ──
+            function hideLoader() {
+                var el = getLoader();
+                if (!el) return;
+                el.style.opacity = '0';
+                el.style.pointerEvents = 'none';
+            }
+
+            // ── EXIT: Re-show overlay BEFORE navigating away ──
+            function showLoader() {
+                var el = getLoader();
+                if (!el) return;
+                el.style.transition = 'none';
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'auto';
+                void el.offsetHeight;
+                el.style.transition = 'opacity .25s ease';
+            }
+
+            // Wait for DOM, then hide the loader
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', hideLoader);
+            } else {
+                hideLoader();
+            }
+
+            // Intercept internal link clicks — show overlay before navigation
+            document.addEventListener('click', function(e) {
+                var link = e.target.closest('a[href]');
+                if (!link) return;
+                var href = link.getAttribute('href');
+                if (!href || href === '#' || href.startsWith('javascript:')
+                    || link.target === '_blank'
+                    || e.ctrlKey || e.metaKey || e.shiftKey
+                    || e.defaultPrevented) return;
+                try {
+                    var url = new URL(href, window.location.origin);
+                    if (url.origin !== window.location.origin) return;
+                } catch(ex) { return; }
+                showLoader();
+            });
+
+            // Handle form submissions
+            document.addEventListener('submit', function(e) {
+                if (!e.defaultPrevented) showLoader();
+            });
+
+            // BFCACHE: back/forward button
+            window.addEventListener('pageshow', function(e) {
+                if (e.persisted) {
+                    var el = getLoader();
+                    if (!el) return;
+                    el.style.transition = 'none';
+                    el.style.opacity = '0';
+                    el.style.pointerEvents = 'none';
+                    void el.offsetHeight;
+                    el.style.transition = 'opacity .25s ease';
+                }
+            });
+        })();
+    </script>
 
 </head>
 <!--end::Head-->

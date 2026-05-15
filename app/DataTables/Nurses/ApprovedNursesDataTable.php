@@ -8,10 +8,10 @@ use App\Models\NurseProfile;
 class ApprovedNursesDataTable extends BaseNursesDataTable
 {
     protected array $profileStatuses = [
-        NurseProfile::STATUS_APPROVED, // 2
+        NurseProfile::STATUS_APPROVED,
     ];
 
-    protected string $userStatus = 'active';
+    protected $userStatus = User::STATUS_ACTIVE;
 
     public function dataTable($query)
     {

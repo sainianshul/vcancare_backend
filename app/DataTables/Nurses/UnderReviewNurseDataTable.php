@@ -2,15 +2,16 @@
 
 namespace App\DataTables\Nurses;
 
+use App\Models\User;
 use App\Models\NurseProfile;
 
 class UnderReviewNurseDataTable extends BaseNursesDataTable
 {
     protected array $profileStatuses = [
-        NurseProfile::STATUS_UNDER_REVIEW, // 1
+        NurseProfile::STATUS_UNDER_REVIEW,
     ];
 
-    protected string $userStatus = 'active';
+    protected $userStatus = User::STATUS_ACTIVE;
 
     public function dataTable($query)
     {
