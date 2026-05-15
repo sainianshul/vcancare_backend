@@ -1,8 +1,7 @@
 /* ============================================
-   IMMEDIATE BACKGROUND — Prevents white flash
+   VCanCares Admin — Custom Styles
+   Simple, stable, lightweight
    ============================================ */
-html, body { background: #f5f8fa; margin: 0; padding: 0; }
-[data-bs-theme="dark"], [data-bs-theme="dark"] body { background: #1e1e2d; }
 
 /* ============================================
    ICON FONTS — font-display:swap prevents FOIT
@@ -27,105 +26,89 @@ html, body { background: #f5f8fa; margin: 0; padding: 0; }
 }
 
 /* ============================================
-   LIGHT MODE — Crisp, Dark, Premium Text
+   ROOT — Prevent infinite scroll
    ============================================ */
-[data-bs-theme="light"] {
-    --kt-app-sidebar-menu-link-color: #1b1b29;
-    --kt-app-sidebar-menu-icon-color: #3f4254;
-    --kt-app-sidebar-menu-heading-color: #3f4254;
-}
-[data-bs-theme="light"] .app-sidebar .menu-title { color: #1b1b29 !important; font-weight: 500 !important; font-size: 14.5px !important; }
-[data-bs-theme="light"] .app-sidebar .menu-icon i,
-[data-bs-theme="light"] .app-sidebar .menu-icon .ki-outline { color: #5e6278 !important; font-size: 1.4rem !important; }
-[data-bs-theme="light"] .app-sidebar .menu-heading { color: #a1a5b7 !important; font-weight: 600 !important; font-size: 0.75rem !important; letter-spacing: 0.8px; }
-[data-bs-theme="light"] .app-sidebar .menu-arrow { color: #b5b5c3 !important; }
-[data-bs-theme="light"] .app-sidebar .bullet-dot { background-color: #b5b5c3 !important; }
-[data-bs-theme="light"] .app-sidebar .menu-sub .menu-title { font-size: 14px !important; font-weight: 400 !important; color: #3f4254 !important; }
-
-/* Global Text (Light) */
-[data-bs-theme="light"] .text-gray-400 { color: #7e8299 !important; }
-[data-bs-theme="light"] .text-gray-500 { color: #5e6278 !important; }
-[data-bs-theme="light"] .text-gray-600 { color: #3f4254 !important; }
-[data-bs-theme="light"] .text-gray-700 { color: #1e1e2d !important; }
-[data-bs-theme="light"] .text-gray-800 { color: #181c32 !important; }
-[data-bs-theme="light"] .text-gray-900 { color: #0d0d12 !important; }
-[data-bs-theme="light"] .text-muted { color: #5e6278 !important; }
-
-/* Headings & Body (Light) */
-[data-bs-theme="light"] h1,[data-bs-theme="light"] h2,[data-bs-theme="light"] h3,
-[data-bs-theme="light"] h4,[data-bs-theme="light"] h5,[data-bs-theme="light"] h6 { color: #181c32; }
-[data-bs-theme="light"] body { color: #1e1e2d; }
-
-/* Cards (Light) */
-[data-bs-theme="light"] .card .card-title,
-[data-bs-theme="light"] .card .card-header h3,
-[data-bs-theme="light"] .card-label { color: #181c32 !important; }
-
-/* Navbar (Light) */
-[data-bs-theme="light"] .app-header .page-heading,
-[data-bs-theme="light"] .app-header .page-title { color: #181c32 !important; }
-
-/* Tables (Light) */
-[data-bs-theme="light"] .table th { color: #1e1e2d !important; font-weight: 600 !important; }
-[data-bs-theme="light"] .table td { color: #3f4254 !important; }
-
-/* Forms (Light) */
-[data-bs-theme="light"] .form-label { color: #1e1e2d !important; font-weight: 500 !important; }
-[data-bs-theme="light"] .form-control { color: #1e1e2d !important; }
-[data-bs-theme="light"] .form-select { color: #1e1e2d !important; }
+html { height: 100%; overflow: hidden; }
+body { height: 100%; overflow: auto; margin: 0; padding: 0; }
 
 /* ============================================
-   DARK MODE — Bright, Readable, Premium Text
+   SIDEBAR — Fixed full-height with scroll
    ============================================ */
-[data-bs-theme="dark"] {
-    --kt-app-sidebar-menu-link-color: #cdcfe4;
-    --kt-app-sidebar-menu-icon-color: #9a9cae;
-    --kt-app-sidebar-menu-heading-color: #787a96;
+#kt_app_sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 101 !important;
+    overflow: hidden !important;
 }
-[data-bs-theme="dark"] .app-sidebar .menu-title { color: #cdcfe4 !important; font-weight: 500 !important; font-size: 14.5px !important; }
-[data-bs-theme="dark"] .app-sidebar .menu-icon i,
-[data-bs-theme="dark"] .app-sidebar .menu-icon .ki-outline { color: #9a9cae !important; font-size: 1.4rem !important; }
-[data-bs-theme="dark"] .app-sidebar .menu-heading { color: #565674 !important; font-weight: 600 !important; font-size: 0.75rem !important; letter-spacing: 0.8px; }
-[data-bs-theme="dark"] .app-sidebar .menu-arrow { color: #565674 !important; }
-[data-bs-theme="dark"] .app-sidebar .bullet-dot { background-color: #565674 !important; }
-[data-bs-theme="dark"] .app-sidebar .menu-sub .menu-title { font-size: 14px !important; font-weight: 400 !important; color: #b5b5c3 !important; }
 
-/* Global Text (Dark) */
-[data-bs-theme="dark"] .text-gray-400 { color: #9a9cae !important; }
-[data-bs-theme="dark"] .text-gray-500 { color: #a1a5b7 !important; }
-[data-bs-theme="dark"] .text-gray-600 { color: #b5b5c3 !important; }
-[data-bs-theme="dark"] .text-gray-700 { color: #cdcfe4 !important; }
-[data-bs-theme="dark"] .text-gray-800 { color: #e4e6ef !important; }
-[data-bs-theme="dark"] .text-gray-900 { color: #f5f5fa !important; }
-[data-bs-theme="dark"] .text-muted { color: #9a9cae !important; }
+/* Logo — fixed height */
+#kt_app_sidebar_logo { flex: 0 0 auto !important; }
 
-/* Headings & Body (Dark) */
-[data-bs-theme="dark"] h1,[data-bs-theme="dark"] h2,[data-bs-theme="dark"] h3,
-[data-bs-theme="dark"] h4,[data-bs-theme="dark"] h5,[data-bs-theme="dark"] h6 { color: #e4e6ef; }
-[data-bs-theme="dark"] body { color: #cdcfe4; }
+/* Menu area — fills space between logo and footer */
+#kt_app_sidebar > .app-sidebar-menu {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
 
-/* Cards (Dark) */
-[data-bs-theme="dark"] .card .card-title,
-[data-bs-theme="dark"] .card .card-header h3,
-[data-bs-theme="dark"] .card-label { color: #e4e6ef !important; }
+/* Scroll wrapper — THE scrollable part */
+#kt_app_sidebar_menu_wrapper {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
 
-/* Navbar (Dark) */
-[data-bs-theme="dark"] .app-header .page-heading,
-[data-bs-theme="dark"] .app-header .page-title { color: #e4e6ef !important; }
-
-/* Tables (Dark) */
-[data-bs-theme="dark"] .table th { color: #e4e6ef !important; font-weight: 600 !important; }
-[data-bs-theme="dark"] .table td { color: #cdcfe4 !important; }
-
-/* Forms (Dark) */
-[data-bs-theme="dark"] .form-label { color: #cdcfe4 !important; font-weight: 500 !important; }
-[data-bs-theme="dark"] .form-control { color: #cdcfe4 !important; }
-[data-bs-theme="dark"] .form-select { color: #cdcfe4 !important; }
+/* Footer — fixed height */
+#kt_app_sidebar_footer { flex: 0 0 auto !important; }
 
 /* ============================================
-   SHARED — Hover/Active (Purple Theme Color)
+   SIDEBAR SCROLLBAR — Thin & subtle
    ============================================ */
-.app-sidebar .menu-link { transition: all 0.2s ease; }
+#kt_app_sidebar_menu_wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.12) transparent;
+}
+#kt_app_sidebar_menu_wrapper::-webkit-scrollbar { width: 4px; }
+#kt_app_sidebar_menu_wrapper::-webkit-scrollbar-track { background: transparent; }
+#kt_app_sidebar_menu_wrapper::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
+#kt_app_sidebar_menu_wrapper:hover::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); }
+[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper { scrollbar-color: rgba(255,255,255,0.1) transparent; }
+[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+/* ============================================
+   ACCORDION SUB-MENUS
+   ============================================ */
+.menu-accordion .menu-sub { display: none; flex-direction: column; }
+.menu-accordion.show > .menu-sub { display: flex; }
+.menu-accordion .menu-arrow { transition: transform 0.2s ease; }
+.menu-accordion.show > .menu-link > .menu-arrow,
+.menu-accordion.here > .menu-link > .menu-arrow { transform: rotate(90deg); }
+
+/* ============================================
+   MOBILE DRAWER
+   ============================================ */
+@media (max-width: 991.98px) {
+    #kt_app_sidebar:not(.drawer-on) {
+        display: none !important;
+    }
+    #kt_app_sidebar.drawer-on {
+        display: flex !important;
+        height: 100vh !important;
+        width: 250px !important;
+    }
+}
+
+/* ============================================
+   HOVER/ACTIVE STYLES — Purple accent
+   ============================================ */
+.app-sidebar .menu-link { transition: background 0.15s ease; }
 .app-sidebar .menu-link:hover .menu-title,
 .app-sidebar .menu-link.active .menu-title { color: #7239ea !important; }
 .app-sidebar .menu-link:hover .menu-icon i,
@@ -141,109 +124,14 @@ html, body { background: #f5f8fa; margin: 0; padding: 0; }
 .app-sidebar .menu-link:hover { background-color: rgba(114,57,234,0.04) !important; }
 
 /* ============================================
-   PREMIUM LAYOUT — No Borders, Use Shadows
+   PREMIUM LAYOUT — Shadows instead of borders
    ============================================ */
 .app-sidebar { border-right: 0 !important; box-shadow: 1px 0 6px rgba(0,0,0,0.06) !important; }
 [data-bs-theme="dark"] .app-sidebar { box-shadow: 1px 0 8px rgba(0,0,0,0.2) !important; }
 .app-header { border-bottom: 0 !important; box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important; }
 [data-bs-theme="dark"] .app-header { box-shadow: 0 1px 6px rgba(0,0,0,0.15) !important; }
-.app-header .separator,
-.app-header [class*="border-bottom"] { border-bottom: 0 !important; }
 .card { border: 0 !important; box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important; }
 [data-bs-theme="dark"] .card { box-shadow: 0 1px 6px rgba(0,0,0,0.15) !important; }
-
-/* ============================================
-   SIDEBAR — Fixed full-height with scroll
-   ============================================
-   The key to making overflow-y work in a flexbox
-   layout is ensuring every ancestor has a bounded
-   height. The chain is:
-     html/body → 100vh
-     .app-sidebar → position:fixed; height:100vh
-     .app-sidebar-menu → flex-grow:1; min-height:0
-     #kt_app_sidebar_menu_wrapper → flex:1 1 0; overflow-y:auto
-   Without min-height:0, flex children default to
-   min-height:auto which prevents them from shrinking
-   below their content height, breaking overflow.
-   ============================================ */
-
-/* Ensure sidebar itself is full viewport height */
-#kt_app_sidebar {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100vh !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    z-index: 101 !important;
-}
-
-/* The menu area fills remaining space between logo and footer */
-#kt_app_sidebar > .app-sidebar-menu {
-    flex: 1 1 0 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* The scrollable wrapper inside the menu area */
-#kt_app_sidebar_menu_wrapper {
-    flex: 1 1 0 !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
-/* Logo area — fixed height, never shrinks */
-#kt_app_sidebar_logo {
-    flex: 0 0 auto !important;
-}
-
-/* Footer area — fixed height, never shrinks */
-#kt_app_sidebar_footer {
-    flex: 0 0 auto !important;
-}
-
-/* ============================================
-   SIDEBAR SCROLL — Thin overlay scrollbar
-   ============================================ */
-#kt_app_sidebar_menu_wrapper {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,0,0,0.12) transparent;
-}
-#kt_app_sidebar_menu_wrapper::-webkit-scrollbar { width: 4px; }
-#kt_app_sidebar_menu_wrapper::-webkit-scrollbar-track { background: transparent; }
-#kt_app_sidebar_menu_wrapper::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
-#kt_app_sidebar_menu_wrapper:hover::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); }
-[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper { scrollbar-color: rgba(255,255,255,0.1) transparent; }
-[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
-[data-bs-theme="dark"] #kt_app_sidebar_menu_wrapper:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); }
-
-/* ============================================
-   ACCORDION SUB-MENUS — Hidden by default
-   ============================================ */
-.menu-accordion .menu-sub { display: none; flex-direction: column; }
-.menu-accordion.show > .menu-sub { display: flex; }
-
-/* Arrow rotation for open accordions */
-.menu-accordion .menu-arrow { transition: transform 0.2s ease; }
-.menu-accordion.show > .menu-link > .menu-arrow,
-.menu-accordion.here > .menu-link > .menu-arrow { transform: rotate(90deg); }
-
-/* ============================================
-   MOBILE DRAWER — Slide animation
-   ============================================ */
-@media (max-width: 991.98px) {
-    #kt_app_sidebar:not(.drawer-on) {
-        display: none !important;
-    }
-    #kt_app_sidebar.drawer-on {
-        display: flex !important;
-        height: 100vh !important;
-        width: 250px !important;
-    }
-}
 
 /* ============================================
    DROPDOWN ANIMATION

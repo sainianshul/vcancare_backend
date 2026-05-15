@@ -18,7 +18,7 @@
 <!--end::Bootstrap 5.3 Bundle-->
 
 <!--begin::Custom Sidebar (lightweight, zero-dependency ~3KB)-->
-<script src="{{ asset('js/admin-sidebar.js') }}?v=4"></script>
+<script src="{{ asset('js/admin-sidebar.js') }}?v=5"></script>
 <!--end::Custom Sidebar-->
 
 {{-- DataTables bundle — only on table pages --}}
