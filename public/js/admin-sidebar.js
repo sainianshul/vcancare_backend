@@ -120,27 +120,37 @@
     // ===== 4. THEME MODE =====
     function initThemeMode() {
         var links = document.querySelectorAll('[data-kt-element="mode"]');
-        if (!links.length) return;
+        var selects = document.querySelectorAll('[data-kt-element="mode-select"]');
+        var current = localStorage.getItem('data-bs-theme') || 'light';
 
+        function setTheme(val) {
+            var resolved = val === 'system'
+                ? (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light')
+                : val;
+            document.documentElement.setAttribute('data-bs-theme', resolved);
+            localStorage.setItem('data-bs-theme', val);
+            closeAllDropdowns();
+        }
+
+        // Link clicks
         for (var i = 0; i < links.length; i++) {
+            if (links[i].getAttribute('data-kt-value') === current) links[i].classList.add('active');
             links[i].addEventListener('click', function (e) {
                 e.preventDefault();
                 var val = this.getAttribute('data-kt-value');
                 if (!val) return;
-                var resolved = val === 'system'
-                    ? (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light')
-                    : val;
-                document.documentElement.setAttribute('data-bs-theme', resolved);
-                localStorage.setItem('data-bs-theme', val);
                 for (var j = 0; j < links.length; j++) links[j].classList.remove('active');
                 this.classList.add('active');
-                closeAllDropdowns();
+                setTheme(val);
             });
         }
 
-        var current = localStorage.getItem('data-bs-theme') || 'light';
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].getAttribute('data-kt-value') === current) links[i].classList.add('active');
+        // Select dropdowns
+        for (var k = 0; k < selects.length; k++) {
+            selects[k].value = current;
+            selects[k].addEventListener('change', function (e) {
+                setTheme(this.value);
+            });
         }
     }
 
