@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
-@section('title', 'All Nurses')
+@section('title', 'Pending Approval')
 
 @section('content')
 
     <x-breadcrumb :items="[
             ['label' => 'Nurses', 'url' => route('admin.nurses.index')],
-            ['label' => 'All Nurses'],
+            ['label' => 'Pending Approval'],
         ]" />
 
     <div class="card shadow-sm">
@@ -13,7 +13,6 @@
         <div class="card-header border-0 pt-5 pb-3">
             <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
 
-                {{-- Search --}}
                 <div class="d-flex align-items-center position-relative">
                     <i class="ki-duotone ki-magnifier fs-5 text-gray-500 position-absolute ms-4 z-index-3">
                         <span class="path1"></span><span class="path2"></span>
@@ -24,37 +23,9 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-
-                    {{-- Status Filter — only All page --}}
-                    <div style="width: 160px;">
-                        <div class="position-relative">
-                            <i
-                                class="ki-duotone ki-filter fs-5 text-gray-500 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
-                                <span class="path1"></span><span class="path2"></span>
-                            </i>
-                            <select id="filter-profile-status"
-                                class="form-select form-select-solid form-select-sm fw-semibold ps-11 border-gray-300 text-gray-700 shadow-sm"
-                                data-control="select2" data-placeholder="All Statuses" data-allow-clear="true"
-                                data-hide-search="true">
-                                <option></option>
-                                @foreach (\App\Models\NurseProfile::getStatusList() as $value => $label)
-                                    <option value="{{ $value }}">{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
                     @include('admin.nurses.partials._export-btn')
-
-                    {{-- Add Nurse — only All page --}}
-                    <a href="#" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
-                        <i class="ki-duotone ki-plus-square fs-5 me-1">
-                            <span class="path1"></span><span class="path2"></span><span class="path3"></span>
-                        </i>
-                        Add Nurse
-                    </a>
-
                 </div>
+
             </div>
         </div>
 
@@ -69,7 +40,6 @@
                             <th class="w-50px">#</th>
                             <th class="min-w-320px">Nurse</th>
                             <th class="min-w-160px">Location</th>
-                            <th class="min-w-140px">Bookings</th>
                             <th class="min-w-170px">Profile Status</th>
                             <th class="min-w-140px">Joined</th>
                             <th class="text-end min-w-120px pe-3">Actions</th>
@@ -98,17 +68,11 @@
             var table = $('#nurses-table').DataTable({
                 serverSide: true,
                 processing: false,
-                ajax: {
-                    url: '{{ route('admin.nurses.data') }}',
-                    data: function (d) {
-                        d.profile_status = $('#filter-profile-status').val();
-                    }
-                },
+                ajax: { url: '{{ route('admin.nurses.pending.data') }}' },
                 columns: [
                     { data: 'id', name: 'id', searchable: false },
                     { data: 'nurse', name: 'nurse', orderable: false },
                     { data: 'location', name: 'location', orderable: false, searchable: false },
-                    { data: 'bookings', name: 'bookings', orderable: false, searchable: false },
                     { data: 'profile_status', name: 'profile_status', orderable: false, searchable: false },
                     { data: 'created_at', name: 'created_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end pe-3' },
@@ -134,9 +98,9 @@
                     },
                 },
                 buttons: [
-                    { extend: 'excelHtml5', name: 'excel', title: 'Nurses_{{ date("Y-m-d") }}' },
-                    { extend: 'csvHtml5', name: 'csv', title: 'Nurses_{{ date("Y-m-d") }}' },
-                    { extend: 'pdfHtml5', name: 'pdf', title: 'Nurses_{{ date("Y-m-d") }}', orientation: 'landscape', pageSize: 'A4' },
+                    { extend: 'excelHtml5', name: 'excel', title: 'Pending_Nurses_{{ date("Y-m-d") }}' },
+                    { extend: 'csvHtml5', name: 'csv', title: 'Pending_Nurses_{{ date("Y-m-d") }}' },
+                    { extend: 'pdfHtml5', name: 'pdf', title: 'Pending_Nurses_{{ date("Y-m-d") }}', orientation: 'landscape', pageSize: 'A4' },
                 ],
                 initComplete: function () {
                     $('#nurses-skeleton').fadeOut(200, function () { $(this).remove(); });
@@ -153,7 +117,6 @@
                 }
             });
 
-            // Search
             var searchTimer;
             $('#dt-search').on('input', function () {
                 clearTimeout(searchTimer);
@@ -161,15 +124,10 @@
                 searchTimer = setTimeout(function () { table.search(q).draw(); }, 400);
             });
 
-            // Status filter
-            $('#filter-profile-status').on('change', function () { table.ajax.reload(); });
-
-            // Exports
             $('#export-excel').on('click', function (e) { e.preventDefault(); table.button('excel:name').trigger(); });
             $('#export-csv').on('click', function (e) { e.preventDefault(); table.button('csv:name').trigger(); });
             $('#export-pdf').on('click', function (e) { e.preventDefault(); table.button('pdf:name').trigger(); });
 
-            // Delete
             $(document).on('click', '.btn-delete', function () {
                 var id = $(this).data('id');
                 Swal.fire({

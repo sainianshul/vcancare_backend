@@ -1,24 +1,43 @@
-@props(['items' => []])
+@props(['items' => [], 'badge' => null])
 
-<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7">
-    {{-- Home Link --}}
-    <li class="breadcrumb-item text-muted">
-        <a href="{{ route('admin.dashboard') }}" class="text-muted text-hover-primary">
-            <i class="ki-duotone ki-home fs-6 text-muted"></i>
+<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 mb-4 mt-2">
+
+    {{-- Home --}}
+    <li class="breadcrumb-item">
+        <a href="{{ route('admin.dashboard') }}" class="text-muted text-hover-primary d-flex align-items-center"
+            style="transition: color .2s">
+            <i class="ki-outline ki-home-2 fs-5"></i>
         </a>
     </li>
 
     @foreach ($items as $item)
-        <li class="breadcrumb-item">
-            <span class="bullet bg-gray-500 w-5px h-2px"></span>
+
+        {{-- Separator --}}
+        <li class="breadcrumb-item d-flex align-items-center px-1">
+            <i class="ki-outline ki-right fs-8 text-muted opacity-50"></i>
         </li>
 
-        @if (!empty($item['url']))
-            <li class="breadcrumb-item text-muted">
-                <a href="{{ $item['url'] }}" class="text-muted text-hover-primary">{{ $item['label'] }}</a>
+        @if (!$loop->last)
+            {{-- Linked middle item --}}
+            <li class="breadcrumb-item">
+                <a href="{{ $item['url'] ?? '#' }}" class="text-muted text-hover-primary fw-semibold"
+                    style="transition: color .2s">
+                    {{ $item['label'] }}
+                </a>
             </li>
         @else
-            <li class="breadcrumb-item text-gray-900">{{ $item['label'] }}</li>
+            {{-- Active last item --}}
+            <li class="breadcrumb-item d-flex align-items-center gap-2">
+                <span class="text-gray-800 fw-bold">{{ $item['label'] }}</span>
+                @if ($badge)
+                    <span class="badge badge-light-primary fs-9 fw-bold px-3 py-1 ms-1"
+                        style="border-radius: 20px; letter-spacing: .02em">
+                        {{ $badge }}
+                    </span>
+                @endif
+            </li>
         @endif
+
     @endforeach
+
 </ul>

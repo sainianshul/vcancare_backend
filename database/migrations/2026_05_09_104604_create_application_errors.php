@@ -63,6 +63,8 @@ return new class extends Migration {
             $table->timestamp('resolved_at')
                 ->nullable();
 
+            $table->tinyInteger('is_pinned')
+                ->default(0);
 
             // For Duplicate detection
             $table->string('fingerprint', 64)

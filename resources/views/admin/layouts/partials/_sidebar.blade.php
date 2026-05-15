@@ -46,23 +46,34 @@
                 </div>
 
                 {{-- Nurses --}}
+                @php
+                    $pendingCount = cache()->remember('sidebar_pending_nurses_count', 30, function () {
+                        return \App\Models\NurseProfile::where('status', \App\Models\NurseProfile::STATUS_UNDER_REVIEW)
+                            ->whereHas('user', fn($q) => $q->where('status', 'active'))
+                            ->count();
+                    });
+                @endphp
+
                 <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ request()->routeIs('admin.nurses.*') ? 'here show' : '' }}">
+
                     <span class="menu-link">
                         <span class="menu-icon">
                             <i class="ki-outline ki-profile-user fs-2"></i>
                         </span>
                         <span class="menu-title">Nurses</span>
-                        @if(2 > 0)
+                        @if($pendingCount > 0)
                             <span class="menu-badge">
                                 <span class="badge badge-sm badge-circle badge-light-warning">
-                                    2
+                                    {{ $pendingCount }}
                                 </span>
                             </span>
                         @endif
                         <span class="menu-arrow"></span>
                     </span>
+
                     <div class="menu-sub menu-sub-accordion">
+
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.nurses.index') ? 'active' : '' }}"
                                 href="{{ route('admin.nurses.index') }}">
@@ -70,20 +81,22 @@
                                 <span class="menu-title">All Nurses</span>
                             </a>
                         </div>
+
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.nurses.pending') ? 'active' : '' }}"
                                 href="{{ route('admin.nurses.pending') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Pending Approval</span>
+                                @if($pendingCount > 0)
+                                    <span class="menu-badge">
+                                        <span class="badge badge-sm badge-light-warning fw-bold">
+                                            {{ $pendingCount }}
+                                        </span>
+                                    </span>
+                                @endif
                             </a>
                         </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.nurses.review') ? 'active' : '' }}"
-                                href="{{ route('admin.nurses.review') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Under Review</span>
-                            </a>
-                        </div>
+
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.nurses.approved') ? 'active' : '' }}"
                                 href="{{ route('admin.nurses.approved') }}">
@@ -91,6 +104,7 @@
                                 <span class="menu-title">Approved</span>
                             </a>
                         </div>
+
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.nurses.rejected') ? 'active' : '' }}"
                                 href="{{ route('admin.nurses.rejected') }}">
@@ -98,13 +112,7 @@
                                 <span class="menu-title">Rejected</span>
                             </a>
                         </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.nurses.suspended') ? 'active' : '' }}"
-                                href="{{ route('admin.nurses.suspended') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Suspended</span>
-                            </a>
-                        </div>
+
                     </div>
                 </div>
 
@@ -138,8 +146,8 @@
 
                 {{-- Login History --}}
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.login-history') ? 'active' : '' }}"
-                        href="{{ route('admin.login-history') }}">
+                    <a class="menu-link {{ request()->routeIs('admin.login-history.*') ? 'active' : '' }}"
+                        href="{{ route('admin.login-history.index') }}">
                         <span class="menu-icon">
                             <i class="ki-outline ki-security-user fs-2"></i>
                         </span>

@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\NurseController;
+use App\Http\Controllers\Admin\PatientController;
+use App\Http\Controllers\Admin\System\ErrroLogsController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
-
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'showLogin'])->name('login');
@@ -25,39 +27,37 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     // =====================
     // PEOPLE — Nurses
     // =====================
-    Route::prefix('nurse')->name('nurses.')->group(function () {
+
+    Route::prefix('nurses')->name('nurses.')->group(function () {
+
         Route::get('/', [NurseController::class, 'index'])->name('index');
-        Route::get('pending', function () {
-            echo "Pending Approval";
-        })->name('pending');
-        Route::get('review', function () {
-            echo "Under Review";
-        })->name('review');
-        Route::get('approved', function () {
-            echo "Approved Nurses";
-        })->name('approved');
-        Route::get('rejected', function () {
-            echo "Rejected Nurses";
-        })->name('rejected');
-        Route::get('suspended', function () {
-            echo "Suspended Nurses";
-        })->name('suspended');
+        Route::get('/data', [NurseController::class, 'indexData'])->name('data');
+
+        Route::get('/pending', [NurseController::class, 'pending'])->name('pending');
+        Route::get('/pending/data', [NurseController::class, 'pendingData'])->name('pending.data');
+
+        Route::get('/approved', [NurseController::class, 'approved'])->name('approved');
+        Route::get('/approved/data', [NurseController::class, 'approvedData'])->name('approved.data');
+
+        Route::get('/rejected', [NurseController::class, 'rejected'])->name('rejected');
+        Route::get('/rejected/data', [NurseController::class, 'rejectedData'])->name('rejected.data');
     });
 
     // PEOPLE — Patients
     Route::prefix('patients')->name('patients.')->group(function () {
-        Route::get('/', function () {
-            echo "All Patients";
-        })->name('index');
+        Route::get('/', [PatientController::class, 'index'])->name('index');
+        Route::get('data', [PatientController::class, 'data'])->name('data');
         Route::get('blocked', function () {
             echo "Blocked Patients";
         })->name('blocked');
     });
 
     // PEOPLE — Login History
-    Route::get('login-history', function () {
-        echo "Login History";
-    })->name('login-history');
+    Route::prefix('login-history')->name('login-history.')->group(function () {
+        Route::get('/', [LoginHistoryController::class, 'index'])->name('index');
+        Route::get('data', [LoginHistoryController::class, 'data'])->name('data');
+        Route::post('empty', [LoginHistoryController::class, 'empty'])->name('empty');
+    });
 
     // =====================
     // OPERATIONS — Care Requests
@@ -134,9 +134,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     // SYSTEM
     // =====================
     Route::prefix('system')->name('system.')->group(function () {
-        Route::get('error-logs', function () {
-            echo "Error Logs";
-        })->name('error-logs');
+
+        Route::get('error-logs', [ErrroLogsController::class, 'index'])->name('error-logs');
+        Route::get('error-logs/data', [ErrroLogsController::class, 'data'])->name('errors.data');
+        Route::post('error-logs/empty', [ErrroLogsController::class, 'empty'])->name('errors.empty');
+
+
         Route::get('failed-jobs', function () {
             echo "Failed Jobs";
         })->name('failed-jobs');
@@ -160,5 +163,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
             echo "Roles & Permissions";
         })->name('roles');
     });
+
+
+
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 });
