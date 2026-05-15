@@ -35,7 +35,7 @@
     <!--end::Global Stylesheets Bundle-->
 
     <!--begin::Custom admin styles-->
-    <link href="{{ asset('css/admin-custom.css') }}?v=5" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/admin-custom.css') }}?v=10" rel="stylesheet" type="text/css" />
     <!--end::Custom admin styles-->
 
     {{-- DataTables CSS — only on table pages --}}

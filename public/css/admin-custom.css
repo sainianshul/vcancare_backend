@@ -106,6 +106,22 @@ body { height: 100%; overflow: auto; margin: 0; padding: 0; }
 }
 
 /* ============================================
+   SIDEBAR TEXT — Sharp thin black
+   ============================================ */
+[data-bs-theme="light"] .app-sidebar .menu-title {
+    color: #000000 !important;
+    font-weight: 400 !important; /* thin, sharp font */
+}
+[data-bs-theme="light"] .app-sidebar .menu-icon i,
+[data-bs-theme="light"] .app-sidebar .menu-icon .ki-outline {
+    color: #111111 !important; /* dark icon to match */
+}
+[data-bs-theme="light"] .app-sidebar .menu-heading {
+    color: #333333 !important;
+    font-weight: 500 !important;
+}
+
+/* ============================================
    HOVER/ACTIVE STYLES — Purple accent
    ============================================ */
 .app-sidebar .menu-link { transition: background 0.15s ease; }
@@ -122,6 +138,8 @@ body { height: 100%; overflow: auto; margin: 0; padding: 0; }
 .app-sidebar .menu-sub .menu-link.active .menu-title { color: #7239ea !important; }
 .app-sidebar .menu-link.active { background-color: rgba(114,57,234,0.06) !important; }
 .app-sidebar .menu-link:hover { background-color: rgba(114,57,234,0.04) !important; }
+.sidebar-footer-user { transition: background 0.15s ease; }
+.sidebar-footer-user:hover { background-color: rgba(114,57,234,0.04) !important; }
 
 /* ============================================
    PREMIUM LAYOUT — Shadows instead of borders
@@ -140,3 +158,79 @@ body { height: 100%; overflow: auto; margin: 0; padding: 0; }
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ============================================
+   PREMIUM NESTED DROPDOWN (PURE CSS)
+   ============================================ */
+.premium-dropdown-parent { position: relative; }
+.premium-dropdown-sub {
+    position: absolute;
+    top: -10px;
+    right: -160px; /* offset to the right */
+    width: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+    z-index: 105;
+    background-color: var(--bs-body-bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.premium-dropdown-parent:hover .premium-dropdown-sub {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Fix dropdown arrow overlapping issue on small screens */
+@media (max-width: 768px) {
+    .premium-dropdown-sub {
+        right: auto;
+        left: -160px;
+    }
+}
+
+/* Premium Menu Link Hover */
+.premium-menu-link {
+    color: #333333;
+    transition: all 0.2s ease;
+}
+.premium-menu-link .menu-icon i {
+    color: #a1a5b7;
+    transition: all 0.2s ease;
+}
+.premium-menu-link:hover, .premium-menu-link.active {
+    background-color: rgba(114,57,234,0.06) !important;
+    color: #7239ea !important;
+}
+.premium-menu-link:hover .menu-icon i, .premium-menu-link.active .menu-icon i {
+    color: #7239ea !important;
+}
+
+/* ============================================
+   SIDEBAR TEXT SIZE INCREASES
+   ============================================ */
+.app-sidebar .menu-title {
+    font-size: 1.05rem !important; /* Slightly larger menu text */
+}
+.app-sidebar .menu-icon i, .app-sidebar .menu-icon .ki-outline {
+    font-size: 1.35rem !important; /* Slightly larger menu icons */
+}
+
+/* ============================================
+   FOOTER TEXT COLORS (LIGHT vs DARK MODE)
+   ============================================ */
+[data-bs-theme="light"] .footer-profile-label { color: #333333 !important; }
+[data-bs-theme="light"] .footer-profile-name { color: #000000 !important; }
+[data-bs-theme="light"] .footer-profile-icon { color: #111111 !important; }
+[data-bs-theme="light"] .footer-dropdown-name { color: #000000 !important; }
+[data-bs-theme="light"] .footer-dropdown-email { color: #111111 !important; }
+[data-bs-theme="light"] .premium-menu-link { color: #333333 !important; }
+
+[data-bs-theme="dark"] .footer-profile-label { color: #99a1b7 !important; }
+[data-bs-theme="dark"] .footer-profile-name { color: #ffffff !important; }
+[data-bs-theme="dark"] .footer-profile-icon { color: #ffffff !important; }
+[data-bs-theme="dark"] .footer-dropdown-name { color: #ffffff !important; }
+[data-bs-theme="dark"] .footer-dropdown-email { color: #99a1b7 !important; }
+[data-bs-theme="dark"] .premium-menu-link { color: #ffffff !important; }
