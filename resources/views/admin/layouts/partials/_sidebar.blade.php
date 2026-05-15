@@ -12,9 +12,8 @@
     <!--end::Logo-->
 
     <!--begin::Sidebar menu-->
-    <div class="app-sidebar-menu overflow-hidden flex-column-fluid">
-        <div id="kt_app_sidebar_menu_wrapper" class="app-sidebar-wrapper my-5 mx-3"
-            style="overflow-y:auto; flex:1 1 auto;">
+    <div class="app-sidebar-menu flex-grow-1" style="min-height:0; overflow:hidden; display:flex; flex-direction:column;">
+        <div id="kt_app_sidebar_menu_wrapper" class="app-sidebar-wrapper" style="flex:1 1 0; overflow-y:auto; overflow-x:hidden; padding:1.25rem 0.75rem;">
 
             <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold px-1" id="kt_app_sidebar_menu">
 
@@ -432,7 +431,7 @@
                             <a class="menu-link {{ request()->routeIs('admin.settings.roles') ? 'active' : '' }}"
                                 href="{{ route('admin.settings.roles') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Roles & Permissions</span>
+                                <span class="menu-title">Roles &amp; Permissions</span>
                             </a>
                         </div>
                     </div>

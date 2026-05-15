@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
 
+        // Cache static assets (for php artisan serve; Apache uses .htaccess)
+        $middleware->prepend(\App\Http\Middleware\CacheStaticAssets::class);
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);

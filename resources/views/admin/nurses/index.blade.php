@@ -87,11 +87,11 @@
 @endsection
 
 @push('datatables_css')
-    <link href="{{ asset('theme/dist/assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" />
+    @include('admin.layouts.partials._datatable-cdn-css')
 @endpush
 
 @push('datatables_js')
-    <script src="{{ asset('theme/dist/assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+    @include('admin.layouts.partials._datatable-cdn-js')
     <script>
         $(function () {
 
