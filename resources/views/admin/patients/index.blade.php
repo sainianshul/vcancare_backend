@@ -172,11 +172,7 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            @include('admin.layouts.partials._table-skeleton', [
-                'id' => 'patients-skeleton'
-            ])
-
-            <div id="patients-table-wrapper" class="d-none">
+            <div id="patients-table-wrapper">
 
                 <table
                     id="patients-table"
@@ -214,6 +210,10 @@
 
                 </table>
             </div>
+
+            @include('admin.layouts.partials._table-skeleton', [
+                'id' => 'patients-skeleton'
+            ])
 
             @include('admin.layouts.partials._table-empty', [
                 'id' => 'patients-empty'

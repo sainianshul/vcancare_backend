@@ -234,3 +234,15 @@ body { height: 100%; overflow: auto; margin: 0; padding: 0; }
 [data-bs-theme="dark"] .footer-dropdown-name { color: #ffffff !important; }
 [data-bs-theme="dark"] .footer-dropdown-email { color: #99a1b7 !important; }
 [data-bs-theme="dark"] .premium-menu-link { color: #ffffff !important; }
+
+/* ============================================
+   SELECT2 FILTER ICON FIX
+   ============================================ */
+/* Fix overlap where select2 background covers the absolute positioned icon */
+.position-relative > .select2-container .select2-selection {
+    padding-left: 2.75rem !important; /* matches ps-11 */
+}
+.position-relative > i[class*="ki-"] {
+    z-index: 10 !important; /* Force icon above select2 */
+    pointer-events: none; /* Let clicks pass through to the select */
+}

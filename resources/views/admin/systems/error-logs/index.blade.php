@@ -123,11 +123,7 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            @include('admin.layouts.partials._table-skeleton', [
-                'id' => 'errors-skeleton'
-            ])
-
-            <div id="errors-table-wrapper" class="d-none">
+            <div id="errors-table-wrapper">
 
                 <table
                     id="errors-table"
@@ -173,6 +169,10 @@
                 </table>
 
             </div>
+
+            @include('admin.layouts.partials._table-skeleton', [
+                'id' => 'errors-skeleton'
+            ])
 
             @include('admin.layouts.partials._table-empty', [
                 'id' => 'errors-empty'

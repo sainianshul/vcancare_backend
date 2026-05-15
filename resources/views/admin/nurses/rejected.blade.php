@@ -31,9 +31,7 @@
 
         <div class="card-body py-4">
 
-            @include('admin.layouts.partials._table-skeleton', ['id' => 'nurses-skeleton'])
-
-            <div id="nurses-table-wrapper" class="d-none">
+            <div id="nurses-table-wrapper">
                 <table id="nurses-table" class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100">
                     <thead>
                         <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0 border-bottom border-gray-200">
@@ -49,6 +47,8 @@
                     <tbody></tbody>
                 </table>
             </div>
+
+            @include('admin.layouts.partials._table-skeleton', ['id' => 'nurses-skeleton'])
 
             @include('admin.layouts.partials._table-empty', ['id' => 'nurses-empty'])
 

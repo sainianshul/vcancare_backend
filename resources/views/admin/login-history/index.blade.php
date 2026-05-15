@@ -193,11 +193,7 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            @include('admin.layouts.partials._table-skeleton', [
-                'id' => 'login-history-skeleton'
-            ])
-
-            <div id="login-history-table-wrapper" class="d-none">
+            <div id="login-history-table-wrapper">
 
                 <table
                     id="login-history-table"
@@ -245,6 +241,10 @@
                 </table>
 
             </div>
+
+            @include('admin.layouts.partials._table-skeleton', [
+                'id' => 'login-history-skeleton'
+            ])
 
             @include('admin.layouts.partials._table-empty', [
                 'id' => 'login-history-empty'
