@@ -95,9 +95,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // OPERATIONS — Services
     Route::prefix('services')->name('services.')->group(function () {
-        Route::get('care-types', function () {
-            echo "Care Types";
-        })->name('care-types');
+        Route::resource('care-types', \App\Http\Controllers\Admin\CareTypeController::class);
     });
 
     // =====================
@@ -138,6 +136,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('error-logs', [ErrroLogsController::class, 'index'])->name('error-logs');
         Route::get('error-logs/data', [ErrroLogsController::class, 'data'])->name('errors.data');
         Route::post('error-logs/empty', [ErrroLogsController::class, 'empty'])->name('errors.empty');
+        Route::get('error-logs/{id}', [ErrroLogsController::class, 'show'])->name('errors.show');
 
 
         Route::get('failed-jobs', function () {

@@ -18,12 +18,12 @@
                         <span class="path1"></span><span class="path2"></span>
                     </i>
                     <input type="text" id="dt-search"
-                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold border border-gray-300 shadow-sm text-gray-700"
+                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search nurses..." />
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    @include('admin.nurses.partials._export-btn')
+
                 </div>
 
             </div>
@@ -31,9 +31,7 @@
 
         <div class="card-body py-4">
 
-            @include('admin.layouts.partials._table-skeleton', ['id' => 'nurses-skeleton'])
-
-            <div id="nurses-table-wrapper" class="d-none">
+            <div id="nurses-table-wrapper">
                 <table id="nurses-table" class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100">
                     <thead>
                         <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0 border-bottom border-gray-200">
@@ -48,6 +46,8 @@
                     <tbody></tbody>
                 </table>
             </div>
+
+            @include('admin.layouts.partials._table-skeleton', ['id' => 'nurses-skeleton'])
 
             @include('admin.layouts.partials._table-empty', ['id' => 'nurses-empty'])
 
@@ -88,6 +88,7 @@
                 language: {
                     emptyTable: ' ',
                     zeroRecords: ' ',
+                    loadingRecords: ' ',
                     info: 'Showing _START_–_END_ of _TOTAL_ nurses',
                     infoEmpty: 'No nurses to show',
                     infoFiltered: '(filtered from _MAX_)',
@@ -97,11 +98,7 @@
                         next: '<i class="ki-duotone ki-arrow-right"></i>',
                     },
                 },
-                buttons: [
-                    { extend: 'excelHtml5', name: 'excel', title: 'Pending_Nurses_{{ date("Y-m-d") }}' },
-                    { extend: 'csvHtml5', name: 'csv', title: 'Pending_Nurses_{{ date("Y-m-d") }}' },
-                    { extend: 'pdfHtml5', name: 'pdf', title: 'Pending_Nurses_{{ date("Y-m-d") }}', orientation: 'landscape', pageSize: 'A4' },
-                ],
+
                 initComplete: function () {
                     $('#nurses-skeleton').fadeOut(200, function () { $(this).remove(); });
                 },
@@ -124,9 +121,7 @@
                 searchTimer = setTimeout(function () { table.search(q).draw(); }, 400);
             });
 
-            $('#export-excel').on('click', function (e) { e.preventDefault(); table.button('excel:name').trigger(); });
-            $('#export-csv').on('click', function (e) { e.preventDefault(); table.button('csv:name').trigger(); });
-            $('#export-pdf').on('click', function (e) { e.preventDefault(); table.button('pdf:name').trigger(); });
+
 
             $(document).on('click', '.btn-delete', function () {
                 var id = $(this).data('id');

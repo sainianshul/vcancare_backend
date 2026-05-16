@@ -254,8 +254,8 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion">
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.services.care-types') ? 'active' : '' }}"
-                                href="{{ route('admin.services.care-types') }}">
+                            <a class="menu-link {{ request()->routeIs('admin.services.care-types.*') ? 'active' : '' }}"
+                                href="{{ route('admin.services.care-types.index') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Care Types</span>
                             </a>

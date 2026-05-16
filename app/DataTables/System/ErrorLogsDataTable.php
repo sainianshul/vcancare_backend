@@ -16,7 +16,7 @@ class ErrorLogsDataTable extends DataTable
             // ── Error ───────────────────────────────────────────────
             ->addColumn('error', function (ApplicationError $error) {
 
-                $viewUrl = route('admin.system.error-logs');
+                $viewUrl = route('admin.system.errors.show', $error->id);
 
                 return '
                     <div class="d-flex flex-column">
@@ -110,7 +110,7 @@ class ErrorLogsDataTable extends DataTable
             // ── Actions ─────────────────────────────────────────────
             ->addColumn('actions', function (ApplicationError $error) {
 
-                $viewUrl = route('admin.system.error-logs');
+                $viewUrl = route('admin.system.errors.show', $error->id);
 
                 return '
                     <div class="d-flex gap-1 justify-content-end">

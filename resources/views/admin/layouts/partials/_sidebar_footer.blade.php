@@ -11,10 +11,10 @@
                 </span>
             </div>
             <div class="d-flex flex-column align-items-start justify-content-center ms-3">
-                <span class="fs-8 text-uppercase fw-bold footer-profile-label" style="letter-spacing: 0.5px;">Profile</span>
-                <span class="fs-6 fw-bold footer-profile-name">{{ auth()->user()->name ?? 'Admin' }}</span>
+                <span class="fs-8 text-uppercase fw-bold text-muted" style="letter-spacing: 0.5px;">Profile</span>
+                <span class="fs-6 fw-bold text-gray-800">{{ auth()->user()->name ?? 'Admin' }}</span>
             </div>
-            <i class="ki-outline ki-right fs-4 ms-auto footer-profile-icon"></i>
+            <i class="ki-outline ki-right fs-4 ms-auto text-gray-500"></i>
         </div>
         <!--end::User info-->
 
@@ -31,10 +31,10 @@
                         </span>
                     </div>
                     <div class="d-flex flex-column">
-                        <div class="fw-bold d-flex align-items-center fs-6 footer-dropdown-name">
+                        <div class="fw-bold d-flex align-items-center fs-6 text-gray-800">
                             {{ auth()->user()->name ?? 'Admin' }}
                         </div>
-                        <span class="fw-normal fs-8 footer-dropdown-email">{{ auth()->user()->email ?? '' }}</span>
+                        <span class="fw-normal fs-8 text-muted">{{ auth()->user()->email ?? '' }}</span>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
 
             <!--begin::Theme mode (Premium Nested Dropdown)-->
             <div class="menu-item px-3 my-2 premium-dropdown-parent">
-                <a href="#" class="menu-link px-3 py-2 rounded d-flex justify-content-between align-items-center premium-menu-link" style="text-decoration: none;">
+                <a href="#" class="menu-link px-3 py-2 rounded d-flex justify-content-between align-items-center text-gray-800" style="text-decoration: none;">
                     <span class="menu-title fw-bold">Mode</span>
                     <span class="menu-icon"><i class="ki-outline ki-night-day fs-3"></i></span>
                 </a>
@@ -52,19 +52,19 @@
                 <!-- Sub Menu -->
                 <div class="premium-dropdown-sub rounded">
                     <div class="menu-item px-1 my-1">
-                        <a href="#" class="menu-link px-3 py-2 rounded d-flex align-items-center premium-menu-link" data-kt-element="mode" data-kt-value="light" style="text-decoration: none;">
+                        <a href="#" class="menu-link px-3 py-2 rounded d-flex align-items-center text-gray-800" data-kt-element="mode" data-kt-value="light" style="text-decoration: none;">
                             <span class="menu-icon me-2"><i class="ki-outline ki-night-day fs-3"></i></span>
                             <span class="menu-title fw-bold">Light</span>
                         </a>
                     </div>
                     <div class="menu-item px-1 my-1">
-                        <a href="#" class="menu-link px-3 py-2 rounded d-flex align-items-center premium-menu-link" data-kt-element="mode" data-kt-value="dark" style="text-decoration: none;">
+                        <a href="#" class="menu-link px-3 py-2 rounded d-flex align-items-center text-gray-800" data-kt-element="mode" data-kt-value="dark" style="text-decoration: none;">
                             <span class="menu-icon me-2"><i class="ki-outline ki-moon fs-3"></i></span>
                             <span class="menu-title fw-bold">Dark</span>
                         </a>
                     </div>
                     <div class="menu-item px-1 my-1">
-                        <a href="#" class="menu-link px-3 py-2 rounded d-flex align-items-center premium-menu-link" data-kt-element="mode" data-kt-value="system" style="text-decoration: none;">
+                        <a href="#" class="menu-link px-3 py-2 rounded d-flex align-items-center text-gray-800" data-kt-element="mode" data-kt-value="system" style="text-decoration: none;">
                             <span class="menu-icon me-2"><i class="ki-outline ki-screen fs-3"></i></span>
                             <span class="menu-title fw-bold">System</span>
                         </a>
@@ -79,7 +79,7 @@
             <div class="menu-item px-3 mb-1">
                 <form method="POST" action="{{ route('admin.logout') }}" id="logout-form">
                     @csrf
-                    <a href="#" class="menu-link px-3 py-2 premium-menu-link"
+                    <a href="#" class="menu-link px-3 py-2 text-gray-800"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="text-decoration: none;">
                         <span class="menu-icon"><i class="ki-outline ki-exit-right fs-3"></i></span>
                         <span class="menu-title fw-bold">Sign Out</span>

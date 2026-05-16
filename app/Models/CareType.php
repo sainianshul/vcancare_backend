@@ -10,8 +10,9 @@ class CareType extends Model
 {
     use SoftDeletes;
 
-    const STATUS_INACTIVE = 0;
+    const STATUS_DRAFT = 0;
     const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 2;
 
     protected $fillable = [
         'name',
@@ -33,6 +34,7 @@ class CareType extends Model
         return [
             self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_ACTIVE => 'Active',
+            self::STATUS_DRAFT => 'Draft',
         ];
     }
 
