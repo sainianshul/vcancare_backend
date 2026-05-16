@@ -27,8 +27,7 @@
                     <input
                         type="text"
                         id="dt-search"
-                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold
-                               border border-gray-300 shadow-sm text-gray-700"
+                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search users..."
                     />
 
@@ -49,8 +48,7 @@
 
                             <select
                                 id="filter-status"
-                                class="form-select form-select-solid form-select-sm fw-semibold ps-11
-                                       border-gray-300 text-gray-700 shadow-sm"
+                                class="form-select form-select-solid form-select-sm fw-semibold ps-11 shadow-sm"
                                 data-control="select2"
                                 data-placeholder="All Statuses"
                                 data-allow-clear="true"
@@ -73,98 +71,7 @@
 
                     </div>
 
-                    {{-- Export --}}
-                    <div class="dropdown">
 
-                        <button
-                            class="btn btn-sm btn-light fw-semibold d-flex align-items-center
-                                   border border-gray-300 shadow-sm px-4"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                        >
-
-                            <i class="ki-duotone ki-exit-up fs-5 text-gray-700 me-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-
-                            <span class="text-gray-800 fw-semibold fs-7">
-                                Export
-                            </span>
-
-                            <i class="ki-duotone ki-down fs-6 text-gray-500 ms-3">
-                                <span class="path1"></span>
-                            </i>
-
-                        </button>
-
-                        <ul
-                            class="dropdown-menu dropdown-menu-end menu menu-sub menu-sub-dropdown
-                                   menu-column menu-rounded-3 menu-gray-700
-                                   menu-state-bg-light-primary fw-semibold fs-7
-                                   w-175px py-3 border border-gray-200 shadow-sm"
-                        >
-
-                            <li class="menu-item px-3">
-
-                                <a class="menu-link px-3 py-2 rounded-3 d-flex align-items-center gap-3"
-                                   href="#"
-                                   id="export-excel">
-
-                                    <i class="ki-duotone ki-file-sheet fs-4 text-success">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-
-                                    <span class="fw-semibold">
-                                        Export Excel
-                                    </span>
-
-                                </a>
-
-                            </li>
-
-                            <li class="menu-item px-3">
-
-                                <a class="menu-link px-3 py-2 rounded-3 d-flex align-items-center gap-3"
-                                   href="#"
-                                   id="export-csv">
-
-                                    <i class="ki-duotone ki-file-down fs-4 text-primary">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-
-                                    <span class="fw-semibold">
-                                        Export CSV
-                                    </span>
-
-                                </a>
-
-                            </li>
-
-                            <li class="menu-item px-3">
-
-                                <a class="menu-link px-3 py-2 rounded-3 d-flex align-items-center gap-3"
-                                   href="#"
-                                   id="export-pdf">
-
-                                    <i class="ki-duotone ki-file-pdf fs-4 text-danger">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-
-                                    <span class="fw-semibold">
-                                        Export PDF
-                                    </span>
-
-                                </a>
-
-                            </li>
-
-                        </ul>
-
-                    </div>
 
                     {{-- Empty Logs --}}
                     <button
@@ -351,6 +258,7 @@
                     emptyTable: ' ',
 
                     zeroRecords: ' ',
+                    loadingRecords: ' ',
 
                     info: 'Showing _START_–_END_ of _TOTAL_ login records',
 
@@ -366,28 +274,7 @@
                     },
                 },
 
-                buttons: [
 
-                    {
-                        extend: 'excelHtml5',
-                        name: 'excel',
-                        title: 'Login_History_{{ date("Y-m-d") }}'
-                    },
-
-                    {
-                        extend: 'csvHtml5',
-                        name: 'csv',
-                        title: 'Login_History_{{ date("Y-m-d") }}'
-                    },
-
-                    {
-                        extend: 'pdfHtml5',
-                        name: 'pdf',
-                        title: 'Login_History_{{ date("Y-m-d") }}',
-                        orientation: 'landscape',
-                        pageSize: 'A4'
-                    },
-                ],
 
                 initComplete: function () {
 
@@ -438,27 +325,7 @@
                 table.ajax.reload();
             });
 
-            // ── Exports ────────────────────────────────────────────
-            $('#export-excel').on('click', function (e) {
 
-                e.preventDefault();
-
-                table.button('excel:name').trigger();
-            });
-
-            $('#export-csv').on('click', function (e) {
-
-                e.preventDefault();
-
-                table.button('csv:name').trigger();
-            });
-
-            $('#export-pdf').on('click', function (e) {
-
-                e.preventDefault();
-
-                table.button('pdf:name').trigger();
-            });
 
             // ── Empty Logs ─────────────────────────────────────────
             $('#btn-empty-logs').on('click', function () {

@@ -27,8 +27,7 @@
                     <input
                         type="text"
                         id="dt-search"
-                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold
-                               border border-gray-300 shadow-sm text-gray-700"
+                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search by error ID..."
                     />
 
@@ -49,8 +48,7 @@
 
                             <select
                                 id="filter-status"
-                                class="form-select form-select-solid form-select-sm fw-semibold ps-11
-                                       border-gray-300 text-gray-700 shadow-sm"
+                                class="form-select form-select-solid form-select-sm fw-semibold ps-11 shadow-sm"
                                 data-control="select2"
                                 data-placeholder="All Statuses"
                                 data-allow-clear="true"
@@ -75,8 +73,7 @@
 
                         <select
                             id="filter-severity"
-                            class="form-select form-select-solid form-select-sm fw-semibold
-                                   border-gray-300 text-gray-700 shadow-sm"
+                            class="form-select form-select-solid form-select-sm fw-semibold shadow-sm"
                             data-control="select2"
                             data-placeholder="Severity"
                             data-allow-clear="true"
@@ -279,6 +276,7 @@
                     emptyTable: ' ',
 
                     zeroRecords: ' ',
+                    loadingRecords: ' ',
 
                     info: 'Showing _START_–_END_ of _TOTAL_ errors',
 

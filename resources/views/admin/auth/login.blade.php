@@ -75,7 +75,7 @@
                             <label class="form-label fw-semibold text-gray-700 fs-7 mb-2 required">
                                 Email Address
                             </label>
-                            <div class="input-group input-group-solid border border-gray-300 rounded-2">
+                            <div class="input-group input-group-solid border rounded-2">
                                 <span class="input-group-text">
                                     <i class="ki-outline ki-sms fs-4 text-gray-400"></i>
                                 </span>
@@ -102,7 +102,7 @@
                             <label class="form-label fw-semibold text-gray-700 fs-7 mb-2 required">
                                 Password
                             </label>
-                            <div class="input-group input-group-solid border border-gray-300 rounded-2" id="kt_password_input">
+                            <div class="input-group input-group-solid border rounded-2" id="kt_password_input">
                                 <span class="input-group-text">
                                     <i class="ki-outline ki-lock-2 fs-4 text-gray-400"></i>
                                 </span>
