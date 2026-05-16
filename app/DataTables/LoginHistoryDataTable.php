@@ -39,30 +39,30 @@ class LoginHistoryDataTable extends DataTable
                 $role = (int) ($user?->role);
 
                 $roleBadge = '
-                    <span class="badge badge-light-secondary fw-bold px-2 py-1 fs-8">
-                        Guest
+                    <span class="badge badge-light-secondary border border-secondary fw-bold px-2 py-1 fs-8">
+                        <i class="ki-outline ki-user fs-7 text-secondary me-1"></i> Guest
                     </span>
                 ';
 
                 if ($role === User::ROLE_ADMIN) {
 
                     $roleBadge = '
-                        <span class="badge badge-light-danger fw-bold px-2 py-1 fs-8">
-                            Admin
+                        <span class="badge badge-light-danger border border-danger fw-bold px-2 py-1 fs-8">
+                            <i class="ki-outline ki-shield-tick fs-7 text-danger me-1"></i> Admin
                         </span>
                     ';
                 } elseif ($role === User::ROLE_USER) {
 
                     $roleBadge = '
-                        <span class="badge badge-light-primary fw-bold px-2 py-1 fs-8">
-                            Patient
+                        <span class="badge badge-light-primary border border-primary fw-bold px-2 py-1 fs-8">
+                            <i class="ki-outline ki-profile-user fs-7 text-primary me-1"></i> Patient
                         </span>
                     ';
                 } elseif ($role === User::ROLE_NURSE) {
 
                     $roleBadge = '
-                        <span class="badge badge-light-success fw-bold px-2 py-1 fs-8">
-                            Nurse
+                        <span class="badge badge-light-success border border-success fw-bold px-2 py-1 fs-8">
+                            <i class="ki-outline ki-heart fs-7 text-success me-1"></i> Nurse
                         </span>
                     ';
                 }
@@ -152,14 +152,14 @@ class LoginHistoryDataTable extends DataTable
                 return (int) $history->status === 1
 
                     ? '
-                        <span class="badge badge-light-success fw-bold px-3 py-2">
-                            Success
+                        <span class="badge badge-light-success border border-success fw-bold px-3 py-2">
+                            <i class="ki-outline ki-check-circle fs-6 text-success me-1"></i> Success
                         </span>
                     '
 
                     : '
-                        <span class="badge badge-light-danger fw-bold px-3 py-2">
-                            Failed
+                        <span class="badge badge-light-danger border border-danger fw-bold px-3 py-2">
+                            <i class="ki-outline ki-cross-circle fs-6 text-danger me-1"></i> Failed
                         </span>
                     ';
             })
@@ -202,18 +202,10 @@ class LoginHistoryDataTable extends DataTable
                 return '
                     <div class="d-flex gap-1 justify-content-end">
 
-                        <a href="' . route('admin.login-history.index') . '"
-                            class="btn btn-sm btn-icon btn-light-primary w-30px h-30px"
+                        <a href="' . route('admin.login-history.show', $history->id) . '"
+                            class="btn btn-sm btn-icon btn-light-primary border border-primary w-30px h-30px"
                             title="View">
-
-                            <i class="ki-duotone ki-eye fs-5">
-
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-
-                            </i>
-
+                            <i class="ki-outline ki-eye fs-5"></i>
                         </a>
 
                     </div>

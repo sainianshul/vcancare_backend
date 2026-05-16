@@ -46,16 +46,17 @@ class ErrorLogsDataTable extends DataTable
             ->addColumn('severity', function (ApplicationError $error) {
 
                 $map = [
-                    1 => ['Low', 'primary'],
-                    2 => ['Medium', 'warning'],
-                    3 => ['High', 'danger'],
-                    4 => ['Critical', 'dark'],
+                    1 => ['Low', 'info', 'ki-information-5'],
+                    2 => ['Medium', 'warning', 'ki-warning'],
+                    3 => ['High', 'danger', 'ki-shield-cross'],
+                    4 => ['Critical', 'dark', 'ki-cross-circle'],
                 ];
 
-                $item = $map[$error->severity] ?? ['Unknown', 'secondary'];
+                $item = $map[$error->severity] ?? ['Unknown', 'secondary', 'ki-question'];
 
                 return '
-                    <span class="badge badge-light-' . $item[1] . ' fw-bold px-3 py-2">
+                    <span class="badge badge-light-' . $item[1] . ' border border-' . $item[1] . ' fw-bold px-3 py-2">
+                        <i class="ki-outline ' . $item[2] . ' fs-6 text-' . $item[1] . ' me-1"></i>
                         ' . e($item[0]) . '
                     </span>
                 ';
@@ -65,15 +66,16 @@ class ErrorLogsDataTable extends DataTable
             ->addColumn('status', function (ApplicationError $error) {
 
                 $map = [
-                    0 => ['Open', 'danger'],
-                    1 => ['Resolved', 'success'],
-                    2 => ['Ignored', 'secondary'],
+                    0 => ['Open', 'danger', 'ki-time'],
+                    1 => ['Resolved', 'success', 'ki-check-circle'],
+                    2 => ['Ignored', 'secondary', 'ki-cross-circle'],
                 ];
 
-                $item = $map[$error->status] ?? ['Unknown', 'secondary'];
+                $item = $map[$error->status] ?? ['Unknown', 'secondary', 'ki-question'];
 
                 return '
-                    <span class="badge badge-light-' . $item[1] . ' fw-bold px-3 py-2">
+                    <span class="badge badge-light-' . $item[1] . ' border border-' . $item[1] . ' fw-bold px-3 py-2">
+                        <i class="ki-outline ' . $item[2] . ' fs-6 text-' . $item[1] . ' me-1"></i>
                         ' . e($item[0]) . '
                     </span>
                 ';
@@ -116,41 +118,25 @@ class ErrorLogsDataTable extends DataTable
                     <div class="d-flex gap-1 justify-content-end">
 
                         <a href="' . $viewUrl . '"
-                            class="btn btn-sm btn-icon btn-light-primary w-30px h-30px"
+                            class="btn btn-sm btn-icon btn-light-primary border border-primary w-30px h-30px"
                             title="View">
-
-                            <i class="ki-duotone ki-eye fs-5">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                            </i>
+                            <i class="ki-outline ki-eye fs-5"></i>
                         </a>
 
                         <button
                             type="button"
-                            class="btn btn-sm btn-icon btn-light-success w-30px h-30px btn-resolve"
+                            class="btn btn-sm btn-icon btn-light-success border border-success w-30px h-30px btn-resolve me-1"
                             data-id="' . $error->id . '"
                             title="Resolve">
-
-                            <i class="ki-duotone ki-check fs-5">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
+                            <i class="ki-outline ki-check fs-5"></i>
                         </button>
 
                         <button
                             type="button"
-                            class="btn btn-sm btn-icon btn-light-danger w-30px h-30px btn-delete"
+                            class="btn btn-sm btn-icon btn-light-danger border border-danger w-30px h-30px btn-delete"
                             data-id="' . $error->id . '"
                             title="Delete">
-
-                            <i class="ki-duotone ki-trash fs-5">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                                <span class="path4"></span>
-                                <span class="path5"></span>
-                            </i>
+                            <i class="ki-outline ki-trash fs-5"></i>
                         </button>
 
                     </div>

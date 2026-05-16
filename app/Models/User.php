@@ -80,6 +80,26 @@ class User extends Authenticatable
             ?? 'Unknown';
     }
 
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_ACTIVE => 'success',
+            self::STATUS_INACTIVE => 'secondary',
+            self::STATUS_BLOCKED => 'danger',
+            default => 'secondary',
+        };
+    }
+
+    public function getStatusIconAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_ACTIVE => 'ki-check-circle',
+            self::STATUS_INACTIVE => 'ki-information-5',
+            self::STATUS_BLOCKED => 'ki-cross-circle',
+            default => 'ki-information-5',
+        };
+    }
+
 
     // ─── Helpers ──────────────────────────────
 

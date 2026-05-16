@@ -79,24 +79,17 @@ abstract class BaseNursesDataTable extends DataTable
 
             return '
                 <div class="d-flex gap-1 justify-content-end">
-                    <a href="' . $viewUrl . '" class="btn btn-sm btn-icon btn-light-primary w-30px h-30px" title="View">
-                        <i class="ki-duotone ki-eye fs-5">
-                            <span class="path1"></span><span class="path2"></span><span class="path3"></span>
-                        </i>
+                    <a href="' . $viewUrl . '" class="btn btn-sm btn-icon btn-light-primary border border-primary w-30px h-30px me-1" title="View">
+                        <i class="ki-outline ki-eye fs-5"></i>
                     </a>
-                    <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-light-warning w-30px h-30px" title="Edit">
-                        <i class="ki-duotone ki-pencil fs-5">
-                            <span class="path1"></span><span class="path2"></span>
-                        </i>
+                    <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-light-warning border border-warning w-30px h-30px me-1" title="Edit">
+                        <i class="ki-outline ki-pencil fs-5"></i>
                     </a>
                     <button type="button"
-                        class="btn btn-sm btn-icon btn-light-danger w-30px h-30px btn-delete"
+                        class="btn btn-sm btn-icon btn-light-danger border border-danger w-30px h-30px btn-delete"
                         data-id="' . $user->id . '"
                         title="Delete">
-                        <i class="ki-duotone ki-trash fs-5">
-                            <span class="path1"></span><span class="path2"></span>
-                            <span class="path3"></span><span class="path4"></span><span class="path5"></span>
-                        </i>
+                        <i class="ki-outline ki-trash fs-5"></i>
                     </button>
                 </div>
             ';
@@ -109,18 +102,19 @@ abstract class BaseNursesDataTable extends DataTable
 
             $status = $user->nurseProfile?->status;
             $map = [
-                NurseProfile::STATUS_PENDING => ['Pending', 'warning'],
-                NurseProfile::STATUS_UNDER_REVIEW => ['Under Review', 'info'],
-                NurseProfile::STATUS_APPROVED => ['Approved', 'success'],
-                NurseProfile::STATUS_REJECTED => ['Rejected', 'danger'],
-                NurseProfile::STATUS_SUSPENDED => ['Suspended', 'dark'],
+                NurseProfile::STATUS_PENDING => ['Pending', 'warning', 'ki-time'],
+                NurseProfile::STATUS_UNDER_REVIEW => ['Under Review', 'info', 'ki-information-5'],
+                NurseProfile::STATUS_APPROVED => ['Approved', 'success', 'ki-check-circle'],
+                NurseProfile::STATUS_REJECTED => ['Rejected', 'danger', 'ki-cross-circle'],
+                NurseProfile::STATUS_SUSPENDED => ['Suspended', 'dark', 'ki-cross-circle'],
             ];
 
             if (!array_key_exists($status, $map)) {
                 $status = NurseProfile::STATUS_PENDING;
             }
 
-            return '<span class="badge badge-light-' . $map[$status][1] . ' fw-bold px-3 py-2">'
+            return '<span class="badge badge-light-' . $map[$status][1] . ' border border-' . $map[$status][1] . ' fw-bold px-3 py-2">'
+                . '<i class="ki-outline ' . $map[$status][2] . ' fs-6 text-' . $map[$status][1] . ' me-1"></i>'
                 . e($map[$status][0]) . '</span>';
         });
     }

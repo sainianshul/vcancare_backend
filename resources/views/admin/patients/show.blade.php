@@ -1,0 +1,305 @@
+@extends('admin.layouts.app')
+
+@section('title', 'Patient Profile')
+
+@section('content')
+
+    <!--begin::Toolbar-->
+    <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+        <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+            <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                <x-page-header title="Patient Profile" description="View and manage patient details" />
+                <x-breadcrumb :items="[
+                    ['label' => 'People'],
+                    ['label' => 'Patients', 'url' => route('admin.patients.index')],
+                    ['label' => $patient->name],
+                ]" />
+            </div>
+            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                <a href="{{ route('admin.patients.index') }}" class="btn btn-sm btn-light fw-semibold">
+                    <i class="ki-outline ki-arrow-left fs-4 me-1"></i>Back
+                </a>
+                <a href="{{ route('admin.patients.edit', $patient) }}" class="btn btn-sm btn-light-primary border border-primary fw-bold shadow-sm">
+                    <i class="ki-outline ki-pencil fs-4 me-1"></i>Edit Patient
+                </a>
+            </div>
+        </div>
+    </div>
+    <!--end::Toolbar-->
+
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <div id="kt_app_content_container" class="app-container container-fluid">
+
+            <x-alert-success />
+
+            <!--begin::Navbar-->
+            <div class="card card-bordered border-gray-300 mb-5 mb-xl-10">
+                <div class="card-body pt-9 pb-0">
+                    <!--begin::Details-->
+                    <div class="d-flex flex-wrap flex-sm-nowrap">
+                        <!--begin: Pic-->
+                        <div class="me-7 mb-4">
+                            <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                @if($patient->profile_photo)
+                                    <img src="{{ Storage::url($patient->profile_photo) }}" alt="image" class="border border-gray-300" />
+                                @else
+                                    <span class="symbol-label bg-light-primary border border-primary fs-2x fw-bold text-primary">
+                                        {{ mb_strtoupper(mb_substr($patient->name, 0, 2)) }}
+                                    </span>
+                                @endif
+                                @if($patient->status === \App\Models\User::STATUS_ACTIVE)
+                                    <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-body h-20px w-20px"></div>
+                                @elseif($patient->status === \App\Models\User::STATUS_BLOCKED)
+                                    <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-danger rounded-circle border border-4 border-body h-20px w-20px"></div>
+                                @else
+                                    <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-secondary rounded-circle border border-4 border-body h-20px w-20px"></div>
+                                @endif
+                            </div>
+                        </div>
+                        <!--end::Pic-->
+
+                        <!--begin::Info-->
+                        <div class="flex-grow-1">
+                            <!--begin::Title-->
+                            <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                                <!--begin::User-->
+                                <div class="d-flex flex-column">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h1 class="text-gray-900 fs-1 fw-bold me-2">{{ $patient->name }}</h1>
+                                        <span class="badge badge-light-{{ $patient->status_color }} border border-{{ $patient->status_color }} fw-semibold px-3 py-1">
+                                            <i class="ki-outline {{ $patient->status_icon }} fs-7 text-{{ $patient->status_color }} me-1"></i>
+                                            {{ $patient->status_name }}
+                                        </span>
+                                    </div>
+
+                                    <div class="d-flex flex-wrap fw-medium fs-7 mb-4 pe-2 gap-5">
+                                        <span class="d-flex align-items-center text-gray-600">
+                                            <i class="ki-outline ki-phone fs-4 me-2 text-gray-500"></i>
+                                            {{ $patient->phone }}
+                                        </span>
+                                        @if($patient->email)
+                                            <span class="d-flex align-items-center text-gray-600">
+                                                <i class="ki-outline ki-sms fs-4 me-2 text-gray-500"></i>
+                                                {{ $patient->email }}
+                                            </span>
+                                        @endif
+                                        <span class="d-flex align-items-center text-gray-600 border border-gray-400 border-dashed rounded px-3 py-1">
+                                            <i class="ki-outline ki-fingerprint-scan fs-5 me-2 text-primary"></i>
+                                            <span class="fw-normal">Last Login:&nbsp;</span> 
+                                            <span class="text-gray-800 fw-medium">{{ $patient->last_login_at ? $patient->last_login_at->diffForHumans() : 'Never' }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!--end::User-->
+
+                                <!--begin::Actions-->
+                                <div class="d-flex my-4">
+                                    <!-- Quick Status Change Form -->
+                                    <form action="{{ route('admin.patients.update', $patient) }}" method="POST" class="d-flex align-items-center gap-2">
+                                        @csrf
+                                        <input type="hidden" name="email" value="{{ $patient->email }}">
+                                        <select name="status" class="form-select form-select-sm bg-transparent border-gray-300 text-gray-900 w-125px">
+                                            @foreach (\App\Models\User::getStatusList() as $value => $label)
+                                                <option value="{{ $value }}" {{ $patient->status == $value ? 'selected' : '' }}>
+                                                    {{ $label }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-dark fw-semibold">Save</button>
+                                    </form>
+                                </div>
+                                <!--end::Actions-->
+                            </div>
+                            <!--end::Title-->
+
+                            <!--begin::Stats-->
+                            <div class="d-flex flex-wrap flex-stack mt-4">
+                                <!--begin::Wrapper-->
+                                <div class="d-flex flex-column flex-grow-1 pe-8">
+                                    <div class="d-flex flex-wrap">
+                                        <div class="border border-gray-300 rounded min-w-125px py-2 px-4 me-4 mb-3">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <i class="ki-outline ki-document fs-4 text-primary me-2"></i>
+                                                <div class="fs-4 fw-bold text-gray-900" data-kt-countup="true" data-kt-countup-value="14" data-kt-countup-prefix="">14</div>
+                                            </div>
+                                            <div class="fw-medium fs-8 text-gray-600 text-uppercase">Total Requests</div>
+                                        </div>
+
+                                        <div class="border border-gray-300 rounded min-w-125px py-2 px-4 me-4 mb-3">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <i class="ki-outline ki-check-square fs-4 text-success me-2"></i>
+                                                <div class="fs-4 fw-bold text-gray-900" data-kt-countup="true" data-kt-countup-value="8">8</div>
+                                            </div>
+                                            <div class="fw-medium fs-8 text-gray-600 text-uppercase">Completed</div>
+                                        </div>
+
+                                        <div class="border border-gray-300 rounded min-w-125px py-2 px-4 me-4 mb-3">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <i class="ki-outline ki-time fs-4 text-warning me-2"></i>
+                                                <div class="fs-5 fw-bold text-gray-900">
+                                                    {{ $patient->created_at ? $patient->created_at->format('d M, Y') : 'N/A' }}
+                                                </div>
+                                            </div>
+                                            <div class="fw-medium fs-8 text-gray-600 text-uppercase">
+                                                {{ $patient->created_at ? $patient->created_at->diffForHumans() : 'Joined Date' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end::Wrapper-->
+                            </div>
+                            <!--end::Stats-->
+                        </div>
+                        <!--end::Info-->
+                    </div>
+                    <!--end::Details-->
+
+                    <!--begin::Navs-->
+                    <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-6 fw-semibold mt-6" role="tablist">
+                        <li class="nav-item mt-2" role="presentation">
+                            <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4 active" data-bs-toggle="tab" href="#kt_tab_requests" role="tab">
+                                <i class="ki-outline ki-document fs-5 me-2"></i>Request List
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2" role="presentation">
+                            <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4" data-bs-toggle="tab" href="#kt_tab_activity" role="tab">
+                                <i class="ki-outline ki-chart-line fs-5 me-2"></i>Activity Logs
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2" role="presentation">
+                            <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4" data-bs-toggle="tab" href="#kt_tab_login_history" role="tab">
+                                <i class="ki-outline ki-fingerprint-scan fs-5 me-2"></i>Login History
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2" role="presentation">
+                            <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4" data-bs-toggle="tab" href="#kt_tab_send_sms" role="tab">
+                                <i class="ki-outline ki-sms fs-5 me-2"></i>Send SMS
+                            </a>
+                        </li>
+                    </ul>
+                    <!--begin::Navs-->
+                </div>
+            </div>
+            <!--end::Navbar-->
+
+            <!--begin::Tab Content-->
+            <div class="tab-content" id="myTabContent">
+                
+                <!-- Request List Tab -->
+                <div class="tab-pane fade show active" id="kt_tab_requests" role="tabpanel">
+                    <div class="card card-bordered border-gray-300">
+                        <div class="card-header border-bottom border-gray-300 pt-6">
+                            <div class="card-title">
+                                <h3 class="fw-bold text-gray-900 m-0">Recent Requests</h3>
+                            </div>
+                        </div>
+                        <div class="card-body py-4">
+                            <div class="d-flex flex-column align-items-center justify-content-center py-10">
+                                <img src="{{ asset('media/illustrations/empty.svg') }}" onerror="this.onerror=null; this.src='https://preview.keenthemes.com/metronic8/demo1/assets/media/illustrations/sketchy-1/2.png'" alt="No data" class="w-150px mb-5" />
+                                <h4 class="text-gray-900 fw-bold mb-1">No Requests Found</h4>
+                                <p class="text-gray-600 fs-6">This patient has not submitted any service requests yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Tab -->
+                <div class="tab-pane fade" id="kt_tab_activity" role="tabpanel">
+                    <div class="card card-bordered border-gray-300">
+                        <div class="card-header border-bottom border-gray-300 pt-6">
+                            <div class="card-title">
+                                <h3 class="fw-bold text-gray-900 m-0">Activity Logs</h3>
+                            </div>
+                        </div>
+                        <div class="card-body py-4">
+                            <div class="d-flex flex-column align-items-center justify-content-center py-10">
+                                <img src="{{ asset('media/illustrations/empty.svg') }}" onerror="this.onerror=null; this.src='https://preview.keenthemes.com/metronic8/demo1/assets/media/illustrations/sketchy-1/2.png'" alt="No data" class="w-150px mb-5" />
+                                <h4 class="text-gray-900 fw-bold mb-1">No Activity Recorded</h4>
+                                <p class="text-gray-600 fs-6">System activities related to this patient will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login History Tab -->
+                <div class="tab-pane fade" id="kt_tab_login_history" role="tabpanel">
+                    <div class="card card-bordered border-gray-300">
+                        <div class="card-header border-bottom border-gray-300 pt-6">
+                            <div class="card-title">
+                                <h3 class="fw-bold text-gray-900 m-0">Login History</h3>
+                            </div>
+                        </div>
+                        <div class="card-body py-4">
+                            <div class="table-responsive">
+                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_logins">
+                                    <thead>
+                                        <tr class="text-start text-gray-600 fw-medium fs-7 text-uppercase gs-0">
+                                            <th>IP Address</th>
+                                            <th>Device / Browser</th>
+                                            <th>Date & Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-gray-900 fw-semibold">
+                                        @forelse($patient->loginHistories()->latest()->take(10)->get() as $login)
+                                        <tr>
+                                            <td>{{ $login->ip_address }}</td>
+                                            <td>{{ Str::limit($login->user_agent, 40) }}</td>
+                                            <td>{{ $login->created_at->format('d M Y, h:i A') }}</td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center py-10">
+                                                <img src="{{ asset('media/illustrations/empty.svg') }}" onerror="this.onerror=null; this.src='https://preview.keenthemes.com/metronic8/demo1/assets/media/illustrations/sketchy-1/2.png'" alt="No data" class="w-150px mb-5" />
+                                                <h4 class="text-gray-900 fw-bold mb-1">No Logins Found</h4>
+                                                <p class="text-gray-600 fs-6">The patient hasn't logged in yet.</p>
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Send SMS Tab -->
+                <div class="tab-pane fade" id="kt_tab_send_sms" role="tabpanel">
+                    <div class="card card-bordered border-gray-300">
+                        <div class="card-header border-bottom border-gray-300 pt-6">
+                            <div class="card-title">
+                                <h3 class="fw-bold text-gray-900 m-0">Direct SMS</h3>
+                            </div>
+                        </div>
+                        <div class="card-body py-6">
+                            <form action="#" method="POST" class="form">
+                                @csrf
+                                <div class="mb-5">
+                                    <label class="form-label text-gray-900 fw-semibold">Recipient Phone Number</label>
+                                    <div class="position-relative">
+                                        <i class="ki-outline ki-phone fs-2 position-absolute top-50 translate-middle-y ms-4 text-gray-600"></i>
+                                        <input type="text" class="form-control bg-light border-gray-300 text-gray-900 ps-12" value="{{ $patient->phone }}" readonly disabled />
+                                    </div>
+                                </div>
+                                <div class="mb-5">
+                                    <label class="required form-label text-gray-900 fw-semibold">Message</label>
+                                    <textarea name="message" class="form-control bg-transparent border-gray-300 text-gray-900" rows="4" placeholder="Type your message here..."></textarea>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-dark fw-semibold" onclick="event.preventDefault(); toastr.success('SMS Sent Successfully! (Dummy)');">
+                                        <i class="ki-outline ki-send fs-4 me-1"></i>Send SMS
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--end::Tab Content-->
+
+        </div>
+    </div>
+    <!--end::Content-->
+
+@endsection

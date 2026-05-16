@@ -47,9 +47,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::prefix('patients')->name('patients.')->group(function () {
         Route::get('/', [PatientController::class, 'index'])->name('index');
         Route::get('data', [PatientController::class, 'data'])->name('data');
-        Route::get('blocked', function () {
-            echo "Blocked Patients";
-        })->name('blocked');
+        Route::get('blocked', [PatientController::class, 'blocked'])->name('blocked');
+        Route::get('blocked/data', [PatientController::class, 'blockedData'])->name('blocked.data');
+        Route::post('{patient}/unblock', [PatientController::class, 'unblock'])->name('unblock');
+        
+        Route::get('{patient}', [PatientController::class, 'show'])->name('show');
+        Route::get('{patient}/edit', [PatientController::class, 'edit'])->name('edit');
+        Route::post('{patient}', [PatientController::class, 'update'])->name('update');
+        Route::delete('{patient}', [PatientController::class, 'destroy'])->name('destroy');
     });
 
     // PEOPLE — Login History
@@ -57,6 +62,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/', [LoginHistoryController::class, 'index'])->name('index');
         Route::get('data', [LoginHistoryController::class, 'data'])->name('data');
         Route::post('empty', [LoginHistoryController::class, 'empty'])->name('empty');
+        Route::get('{id}', [LoginHistoryController::class, 'show'])->name('show');
     });
 
     // =====================

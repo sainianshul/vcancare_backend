@@ -64,16 +64,22 @@
 
                 @forelse($careTypes as $careType)
                     <div class="col-sm-6 col-lg-4 col-xl-3 care-type-card-col" data-name="{{ strtolower($careType->name) }}">
-                        <div class="card h-100 border border-gray-300 position-relative">
+                        <div class="card h-100 card-bordered border-dark position-relative">
 
                             <!--begin::Status ribbon-->
                             <span class="position-absolute top-0 end-0 mt-3 me-3">
                                 @if($careType->status === \App\Models\CareType::STATUS_ACTIVE)
-                                    <span class="badge badge-light-success border border-success fw-medium fs-8 px-3 py-1">Active</span>
+                                    <span class="badge badge-light-success border border-success fw-medium fs-8 px-3 py-1">
+                                        <i class="ki-outline ki-check-circle fs-7 text-success me-1"></i>Active
+                                    </span>
                                 @elseif($careType->status === \App\Models\CareType::STATUS_INACTIVE)
-                                    <span class="badge badge-light-danger border border-danger fw-medium fs-8 px-3 py-1">Inactive</span>
+                                    <span class="badge badge-light-danger border border-danger fw-medium fs-8 px-3 py-1">
+                                        <i class="ki-outline ki-cross-circle fs-7 text-danger me-1"></i>Inactive
+                                    </span>
                                 @else
-                                    <span class="badge badge-light-warning border border-warning fw-medium fs-8 px-3 py-1">Draft</span>
+                                    <span class="badge badge-light-warning border border-warning fw-medium fs-8 px-3 py-1">
+                                        <i class="ki-outline ki-time fs-7 text-warning me-1"></i>Draft
+                                    </span>
                                 @endif
                             </span>
                             <!--end::Status ribbon-->

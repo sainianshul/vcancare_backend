@@ -5,7 +5,7 @@ namespace App\DataTables;
 use App\Models\User;
 use Yajra\DataTables\Services\DataTable;
 
-class PatientDataTable extends DataTable
+class BlockedPatientDataTable extends DataTable
 {
     public function dataTable($query)
     {
@@ -16,7 +16,6 @@ class PatientDataTable extends DataTable
             ->addColumn('name', function (User $user) {
 
                 $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
-
                 $contact = e($user->email ?? $user->phone ?? '—');
 
                 $colors = [
@@ -61,34 +60,31 @@ class PatientDataTable extends DataTable
                 ';
             })
 
-            // ── Last Login ───────────────────────────────────────────
-            ->addColumn('last_login_at', function (User $user) {
+            // ── Blocked Reason ───────────────────────────────────────────
+            ->addColumn('blocked_reason', function (User $user) {
+                return $user->blocked_reason ? e($user->blocked_reason) : '<span class="text-muted">N/A</span>';
+            })
 
-                if (!$user->last_login_at) {
-                    return '<span class="text-muted">Never</span>';
+            // ── Blocked At ───────────────────────────────────────────
+            ->addColumn('blocked_at', function (User $user) {
+                // If blocked_at doesn't exist, we fall back to N/A
+                $blockedAt = $user->blocked_at ?? null;
+
+                if (!$blockedAt) {
+                    return '<span class="text-muted">N/A</span>';
+                }
+
+                // If it's not a carbon instance, maybe parse it
+                if (!($blockedAt instanceof \Carbon\Carbon)) {
+                    $blockedAt = \Carbon\Carbon::parse($blockedAt);
                 }
 
                 return '
                     <div class="fw-semibold text-gray-800">
-                        ' . $user->last_login_at->format('d M Y') . '
+                        ' . $blockedAt->format('d M Y') . '
                     </div>
-
                     <div class="text-muted fs-7">
-                        ' . $user->last_login_at->diffForHumans() . '
-                    </div>
-                ';
-            })
-
-            // ── Joined Date ──────────────────────────────────────────
-            ->editColumn('created_at', function (User $user) {
-
-                return '
-                    <div class="fw-semibold text-gray-800">
-                        ' . $user->created_at->format('d M Y') . '
-                    </div>
-
-                    <div class="text-muted fs-7">
-                        ' . $user->created_at->diffForHumans() . '
+                        ' . $blockedAt->diffForHumans() . '
                     </div>
                 ';
             })
@@ -98,21 +94,21 @@ class PatientDataTable extends DataTable
 
                 $viewUrl = route('admin.patients.show', $user->id);
 
-                $editUrl = route('admin.patients.edit', $user->id);
-
                 return '
                     <div class="d-flex gap-1 justify-content-end">
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-light-success border border-success fw-bold me-2 btn-unblock h-30px d-inline-flex align-items-center px-3 py-0"
+                            data-id="' . $user->id . '"
+                            title="Unblock">
+                            <i class="ki-outline ki-check-circle fs-5 me-1"></i>Unblock
+                        </button>
 
                         <a href="' . $viewUrl . '"
                             class="btn btn-sm btn-icon btn-light-primary border border-primary w-30px h-30px me-1"
                             title="View">
                             <i class="ki-outline ki-eye fs-5"></i>
-                        </a>
-
-                        <a href="' . $editUrl . '"
-                            class="btn btn-sm btn-icon btn-light-warning border border-warning w-30px h-30px me-1"
-                            title="Edit">
-                            <i class="ki-outline ki-pencil fs-5"></i>
                         </a>
 
                         <button
@@ -130,28 +126,25 @@ class PatientDataTable extends DataTable
             ->rawColumns([
                 'name',
                 'status',
-                'last_login_at',
-                'created_at',
+                'blocked_reason',
+                'blocked_at',
                 'actions',
             ]);
     }
 
     public function query(User $model)
     {
+        // Only return blocked users
         $query = $model->newQuery()
             ->where('role', User::ROLE_USER)
+            ->where('status', User::STATUS_BLOCKED)
             ->select('users.*');
-
-        // Filter by status
-        if (request()->filled('status')) {
-            $query->where('status', request('status'));
-        }
 
         return $query;
     }
 
     public function filename(): string
     {
-        return 'Users_' . date('Y_m_d_His');
+        return 'Blocked_Users_' . date('Y_m_d_His');
     }
 }
