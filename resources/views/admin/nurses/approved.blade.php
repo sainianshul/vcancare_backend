@@ -14,11 +14,11 @@
             <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
 
                 <div class="d-flex align-items-center position-relative">
-                    <i class="ki-duotone ki-magnifier fs-5 text-gray-500 position-absolute ms-4 z-index-3">
+                    <i class="ki-duotone ki-magnifier fs-5 text-gray-900 position-absolute ms-4 z-index-3">
                         <span class="path1"></span><span class="path2"></span>
                     </i>
                     <input type="text" id="dt-search"
-                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
+                        class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search nurses..." />
                 </div>
 
@@ -34,7 +34,7 @@
             <div id="nurses-table-wrapper">
                 <table id="nurses-table" class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100">
                     <thead>
-                        <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0 border-bottom border-gray-200">
+                        <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
                             <th class="w-50px">#</th>
                             <th class="min-w-320px">Nurse</th>
                             <th class="min-w-160px">Location</th>
@@ -147,3 +147,7 @@
         });
     </script>
 @endpush
+
+
+
+

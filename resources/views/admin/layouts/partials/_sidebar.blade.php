@@ -3,10 +3,8 @@
 
     <!--begin::Logo-->
     <div class="app-sidebar-logo flex-shrink-0 d-none d-md-flex align-items-center px-8" id="kt_app_sidebar_logo">
-        <a href="{{ route('admin.dashboard') }}">
-            <img alt="Logo" src="{{ asset('theme/media/logos/logo.svg') }}"
-                class="h-25px app-sidebar-logo-default theme-light-show" />
-            <img alt="Logo" src="{{ asset('theme/media/logos/logo-dark.svg') }}" class="h-25px theme-dark-show" />
+        <a href="{{ route('admin.dashboard') }}" class="text-decoration-none">
+            <h1 class="text-gray-900 fs-2 fw-bolder mb-0 ls-1">VCancares</h1>
         </a>
     </div>
     <!--end::Logo-->

@@ -13,7 +13,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:title" content="VCancares" />
     <meta property="og:site_name" content="VCancares" />
-    <link rel="shortcut icon" href="{{ asset('theme/dist/assets/media/logos/favicon.ico') }}" />
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
 
     <!--begin::Theme mode setup — runs BEFORE any render-->
     <script>

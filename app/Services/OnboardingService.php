@@ -302,10 +302,11 @@ class OnboardingService
             ],
 
             NurseProfile::STEP_CARE_TYPES => [
-                'care_type_ids' =>
+                'care_types' =>
                     $nurseProfile
                         ->careTypes()
-                        ->pluck('care_types.id')
+                        ->select('care_types.id', 'care_types.name')
+                        ->get()
                         ->toArray(),
             ],
 
@@ -381,6 +382,56 @@ class OnboardingService
                 'status' => NurseProfile::STATUS_PENDING,
                 'rejection_reason' => null,
             ]);
+        });
+    }
+
+    public function reviewStep(User $user, int $stepId, int $status, ?string $reason = null): void
+    {
+        $nurseProfile = $user->nurseProfile;
+
+        if (!$nurseProfile) {
+            throw new InvalidOnboardingStepException('Nurse profile not found.');
+        }
+
+        \App\Models\NurseProfileVerification::updateOrCreate(
+            [
+                'nurse_profile_id' => $nurseProfile->id,
+                'step_id' => $stepId,
+            ],
+            [
+                'status' => $status,
+                'review_message' => $reason,
+                'action_by' => auth()->id(),
+                'action_at' => now(),
+            ]
+        );
+    }
+
+    public function finalizeReview(User $user, int $status, ?string $reason = null, $canReapply = 1): void
+    {
+        $nurseProfile = $user->nurseProfile;
+        if (!$nurseProfile) {
+            throw new InvalidOnboardingStepException('Nurse profile not found.');
+        }
+
+        DB::transaction(function () use ($nurseProfile, $status, $reason, $canReapply) {
+            $updateData = [
+                'status' => $status,
+            ];
+            
+            if ($status == NurseProfile::STATUS_APPROVED) {
+                $updateData['approved_at'] = now();
+                $updateData['rejection_reason'] = null;
+                $updateData['can_reapply'] = true;
+                
+                // Clean up verification steps as they are no longer needed
+                $nurseProfile->verifications()->delete();
+            } elseif ($status == NurseProfile::STATUS_REJECTED) {
+                $updateData['rejection_reason'] = $reason;
+                $updateData['can_reapply'] = (bool)$canReapply;
+            }
+
+            $nurseProfile->update($updateData);
         });
     }
 

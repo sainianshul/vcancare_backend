@@ -91,6 +91,7 @@ class NurseProfile extends Model
         'onboarding_step',
         'is_onboarding_completed',
         'status',
+        'can_reapply',
     ];
 
     protected $casts = [
@@ -427,5 +428,10 @@ class NurseProfile extends Model
             'rejection_reason' => $this->rejection_reason,
             'approved_at' => $this->approved_at,
         ];
+    }
+
+    public function verifications()
+    {
+        return $this->hasMany(NurseProfileVerification::class);
     }
 }

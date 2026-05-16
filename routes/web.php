@@ -41,6 +41,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
         Route::get('/rejected', [NurseController::class, 'rejected'])->name('rejected');
         Route::get('/rejected/data', [NurseController::class, 'rejectedData'])->name('rejected.data');
+        Route::get('/{user}', [NurseController::class, 'show'])->name('show');
+        Route::get('/{user}/application', [NurseController::class, 'showApplication'])->name('show-application');
+        Route::get('/{user}/review-step-view/{step}', [NurseController::class, 'getReviewStepView'])->name('review-step-view');
+        Route::post('/{user}/review-step', [NurseController::class, 'reviewStep'])->name('review-step');
+        Route::post('/{user}/finalize-review', [NurseController::class, 'finalizeReview'])->name('finalize-review');
     });
 
     // PEOPLE — Patients

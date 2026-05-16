@@ -74,8 +74,8 @@ abstract class BaseNursesDataTable extends DataTable
     {
         return $dt->addColumn('actions', function (User $user) {
 
-            $viewUrl = route('admin.nurses.index');
-            $editUrl = route('admin.nurses.index');
+            $viewUrl = route('admin.nurses.show', $user->id);
+            $editUrl = '#';
 
             return '
                 <div class="d-flex gap-1 justify-content-end">

@@ -86,7 +86,7 @@
                                     value="{{ old('email') }}"
                                     placeholder="admin@vcancares.com"
                                     autocomplete="off"
-                                    class="form-control form-control-solid @error('email') is-invalid @enderror"
+                                    class="form-control form-control-transparent border border-gray-800 text-gray-900 @error('email') is-invalid @enderror"
                                 />
                             </div>
                             @error('email')
@@ -112,7 +112,7 @@
                                     id="password"
                                     placeholder="Enter your password"
                                     autocomplete="off"
-                                    class="form-control form-control-solid @error('password') is-invalid @enderror"
+                                    class="form-control form-control-transparent border border-gray-800 text-gray-900 @error('password') is-invalid @enderror"
                                 />
                                 <span class="btn btn-icon" id="kt_password_toggle">
                                     <i class="ki-outline ki-eye fs-4" id="eye_icon"></i>

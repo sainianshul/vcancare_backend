@@ -17,11 +17,11 @@
 
                 {{-- Search --}}
                 <div class="d-flex align-items-center position-relative">
-                    <i class="ki-outline ki-magnifier fs-5 text-gray-500 position-absolute ms-4 z-index-3"></i>
+                    <i class="ki-outline ki-magnifier fs-5 text-gray-900 position-absolute ms-4 z-index-3"></i>
                     <input
                         type="text"
                         id="dt-search"
-                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
+                        class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search blocked patients..."
                     />
                 </div>
@@ -49,7 +49,7 @@
                     class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100"
                 >
                     <thead>
-                        <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0 border-bottom border-gray-200">
+                        <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
                             <th class="w-50px">#</th>
                             <th class="min-w-250px">Patient</th>
                             <th class="min-w-120px">Status</th>
@@ -220,3 +220,7 @@
         });
     </script>
 @endpush
+
+
+
+
