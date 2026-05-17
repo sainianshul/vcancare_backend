@@ -86,7 +86,7 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            <div id="patients-table-wrapper">
+            <div id="patients-table-wrapper" class="table-responsive">
 
                 <table
                     id="patients-table"

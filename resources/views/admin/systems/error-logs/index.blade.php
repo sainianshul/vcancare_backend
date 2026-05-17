@@ -120,7 +120,7 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            <div id="errors-table-wrapper">
+            <div id="errors-table-wrapper" class="table-responsive">
 
                 <table
                     id="errors-table"

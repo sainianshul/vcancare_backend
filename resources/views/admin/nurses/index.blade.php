@@ -59,7 +59,7 @@
 
         <div class="card-body py-4">
 
-            <div id="nurses-table-wrapper">
+            <div id="nurses-table-wrapper" class="table-responsive">
                 <table id="nurses-table" class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100">
                     <thead>
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">

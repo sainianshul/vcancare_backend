@@ -100,7 +100,7 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            <div id="login-history-table-wrapper">
+            <div id="login-history-table-wrapper" class="table-responsive">
 
                 <table
                     id="login-history-table"
