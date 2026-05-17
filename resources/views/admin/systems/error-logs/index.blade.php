@@ -393,6 +393,22 @@
                 });
             });
 
+            // ── Change Status ───────────────────────────────────────────
+            $(document).on('click', '.btn-status', function () {
+                let id = $(this).data('id');
+                let status = $(this).data('status');
+                
+                $.post(`/admin/system/error-logs/${id}/status`, {
+                    _token: '{{ csrf_token() }}',
+                    status: status
+                }).done(function (res) {
+                    toastr.success(res.message);
+                    table.ajax.reload(null, false);
+                }).fail(function () {
+                    toastr.error('Something went wrong.');
+                });
+            });
+
         });
 
     </script>

@@ -24,10 +24,21 @@
                     <i class="ki-outline ki-arrow-left fs-4 me-1"></i> Back to Logs
                 </a>
                 
-                @if(!$error->isResolved())
-                <button type="button" class="btn btn-sm btn-dark fw-bold" id="btn-resolve-error" data-id="{{ $error->id }}">
-                    <i class="ki-outline ki-check fs-4 me-1"></i> Mark Resolved
-                </button>
+                @if($error->status === \App\Models\ApplicationError::STATUS_PENDING)
+                    <button type="button" class="btn btn-sm btn-warning fw-bold btn-status me-2" data-id="{{ $error->id }}" data-status="1">
+                        <i class="ki-outline ki-eye fs-4 me-1"></i> Mark Opened
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success fw-bold btn-status" data-id="{{ $error->id }}" data-status="2">
+                        <i class="ki-outline ki-check fs-4 me-1"></i> Mark Resolved
+                    </button>
+                @elseif($error->status === \App\Models\ApplicationError::STATUS_OPENED)
+                    <button type="button" class="btn btn-sm btn-success fw-bold btn-status" data-id="{{ $error->id }}" data-status="2">
+                        <i class="ki-outline ki-check fs-4 me-1"></i> Mark Resolved
+                    </button>
+                @else
+                    <button type="button" class="btn btn-sm btn-warning fw-bold btn-status" data-id="{{ $error->id }}" data-status="1">
+                        <i class="ki-outline ki-arrows-circle fs-4 me-1"></i> Re-open
+                    </button>
                 @endif
             </div>
         </div>
@@ -75,11 +86,13 @@
                         </div>
                         <div>
                             @if($error->status === 0)
-                                <span class="badge badge-light-danger fw-bold px-3 py-2 fs-7 border border-danger border-dashed"><i class="ki-outline ki-information-5 fs-5 me-1 text-danger"></i> Open</span>
+                                <span class="badge badge-light-danger fw-bold px-3 py-2 fs-7 border border-danger border-dashed"><i class="ki-outline ki-time fs-5 me-1 text-danger"></i> Pending</span>
                             @elseif($error->status === 1)
+                                <span class="badge badge-light-warning fw-bold px-3 py-2 fs-7 border border-warning border-dashed"><i class="ki-outline ki-eye fs-5 me-1 text-warning"></i> Opened</span>
+                            @elseif($error->status === 2)
                                 <span class="badge badge-light-success fw-bold px-3 py-2 fs-7 border border-success border-dashed"><i class="ki-outline ki-check-circle fs-5 me-1 text-success"></i> Resolved</span>
                             @else
-                                <span class="badge badge-light-secondary fw-bold px-3 py-2 fs-7 border border-secondary border-dashed"><i class="ki-outline ki-cross-circle fs-5 me-1 text-gray-600"></i> Ignored</span>
+                                <span class="badge badge-light-secondary fw-bold px-3 py-2 fs-7 border border-secondary border-dashed"><i class="ki-outline ki-question fs-5 me-1 text-gray-600"></i> Unknown</span>
                             @endif
                         </div>
                     </div>
@@ -205,3 +218,24 @@
     <x-comments type="{{ \App\Models\Comment::TYPE_LOGS }}" :model-id="$error->id" />
 
 @endsection
+
+@push('scripts')
+<script>
+    $(function () {
+        $('.btn-status').on('click', function () {
+            let id = $(this).data('id');
+            let status = $(this).data('status');
+
+            $.post(`/admin/system/error-logs/${id}/status`, {
+                _token: '{{ csrf_token() }}',
+                status: status
+            }).done(function (res) {
+                toastr.success(res.message);
+                setTimeout(() => location.reload(), 1000);
+            }).fail(function () {
+                toastr.error('Something went wrong.');
+            });
+        });
+    });
+</script>
+@endpush

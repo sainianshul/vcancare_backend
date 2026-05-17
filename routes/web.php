@@ -33,14 +33,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/', [NurseController::class, 'index'])->name('index');
         Route::get('/data', [NurseController::class, 'indexData'])->name('data');
 
-        Route::get('/pending', [NurseController::class, 'pending'])->name('pending');
-        Route::get('/pending/data', [NurseController::class, 'pendingData'])->name('pending.data');
+        Route::get('/pending_approval', [NurseController::class, 'pending'])->name('pending_approval');
+        Route::get('/pending_approval/data', [NurseController::class, 'pendingData'])->name('pending_approval.data');
 
         Route::get('/approved', [NurseController::class, 'approved'])->name('approved');
         Route::get('/approved/data', [NurseController::class, 'approvedData'])->name('approved.data');
 
         Route::get('/rejected', [NurseController::class, 'rejected'])->name('rejected');
         Route::get('/rejected/data', [NurseController::class, 'rejectedData'])->name('rejected.data');
+        Route::get('/pending-count', [NurseController::class, 'pendingCount'])->name('pending-count');
         Route::get('/{user}', [NurseController::class, 'show'])->name('show');
         Route::get('/{user}/application', [NurseController::class, 'showApplication'])->name('show-application');
         Route::get('/{user}/review-step-view/{step}', [NurseController::class, 'getReviewStepView'])->name('review-step-view');
@@ -153,6 +154,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('error-logs', [ErrroLogsController::class, 'index'])->name('error-logs');
         Route::get('error-logs/data', [ErrroLogsController::class, 'data'])->name('errors.data');
         Route::post('error-logs/empty', [ErrroLogsController::class, 'empty'])->name('errors.empty');
+        Route::get('error-logs/pending-count', [ErrroLogsController::class, 'pendingCount'])->name('errors.pending-count');
+        Route::post('error-logs/{id}/status', [ErrroLogsController::class, 'status'])->name('errors.status');
         Route::get('error-logs/{id}', [ErrroLogsController::class, 'show'])->name('errors.show');
 
 

@@ -66,9 +66,9 @@ class ErrorLogsDataTable extends DataTable
             ->addColumn('status', function (ApplicationError $error) {
 
                 $map = [
-                    0 => ['Open', 'danger', 'ki-time'],
-                    1 => ['Resolved', 'success', 'ki-check-circle'],
-                    2 => ['Ignored', 'secondary', 'ki-cross-circle'],
+                    0 => ['Pending', 'danger', 'ki-time'],
+                    1 => ['Opened', 'warning', 'ki-eye'],
+                    2 => ['Resolved', 'success', 'ki-check-circle'],
                 ];
 
                 $item = $map[$error->status] ?? ['Unknown', 'secondary', 'ki-question'];
@@ -113,32 +113,29 @@ class ErrorLogsDataTable extends DataTable
             ->addColumn('actions', function (ApplicationError $error) {
 
                 $viewUrl = route('admin.system.errors.show', $error->id);
+                $statusBtn = '';
+                if ($error->status == ApplicationError::STATUS_RESOLVED) {
+                    $statusBtn = '
+                        <button type="button" class="btn btn-sm btn-icon btn-light-warning border border-warning w-30px h-30px btn-status me-1"
+                            data-id="' . $error->id . '" data-status="1" title="Re-open">
+                            <i class="ki-outline ki-arrows-circle fs-5"></i>
+                        </button>';
+                } else {
+                    $statusBtn = '
+                        <button type="button" class="btn btn-sm btn-icon btn-light-success border border-success w-30px h-30px btn-status me-1"
+                            data-id="' . $error->id . '" data-status="2" title="Mark Resolved">
+                            <i class="ki-outline ki-check fs-5"></i>
+                        </button>';
+                }
 
                 return '
                     <div class="d-flex gap-1 justify-content-end">
-
                         <a href="' . $viewUrl . '"
                             class="btn btn-sm btn-icon btn-light-primary border border-primary w-30px h-30px"
                             title="View">
                             <i class="ki-outline ki-eye fs-5"></i>
                         </a>
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-icon btn-light-success border border-success w-30px h-30px btn-resolve me-1"
-                            data-id="' . $error->id . '"
-                            title="Resolve">
-                            <i class="ki-outline ki-check fs-5"></i>
-                        </button>
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-icon btn-light-danger border border-danger w-30px h-30px btn-delete"
-                            data-id="' . $error->id . '"
-                            title="Delete">
-                            <i class="ki-outline ki-trash fs-5"></i>
-                        </button>
-
+                        ' . $statusBtn . '
                     </div>
                 ';
             })

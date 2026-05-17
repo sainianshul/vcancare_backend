@@ -16,20 +16,19 @@ class OnboardingService
 {
     public function saveBasicProfile(User $user, array $data): void
     {
-        $nurseProfile = $user->nurseProfile;
+        DB::transaction(function () use ($user, $data) {
+            $nurseProfile = $user->nurseProfile;
 
-        // Pehli baar — profile banao
-        if (!$nurseProfile) {
-            $nurseProfile = NurseProfile::create([
-                'user_id' => $user->id,
-                'onboarding_step' => NurseProfile::STEP_BASIC_PROFILE,
-                'status' => NurseProfile::STATUS_PENDING,
-            ]);
-        }
+            // Pehli baar — profile banao
+            if (!$nurseProfile) {
+                $nurseProfile = NurseProfile::create([
+                    'user_id' => $user->id,
+                    'onboarding_step' => NurseProfile::STEP_BASIC_PROFILE,
+                    'status' => NurseProfile::STATUS_PENDING,
+                ]);
+            }
 
-        $nurseProfile->canSaveStep(NurseProfile::STEP_BASIC_PROFILE);
-
-        DB::transaction(function () use ($user, $nurseProfile, $data) {
+            $nurseProfile->canSaveStep(NurseProfile::STEP_BASIC_PROFILE);
 
             // User update
             $userData = ['email' => $data['email']];
@@ -72,6 +71,9 @@ class OnboardingService
     public function saveCareTypes(User $user, array $data)
     {
         $nurseProfile = $user->nurseProfile;
+        if (!$nurseProfile) {
+            throw new InvalidOnboardingStepException('Nurse profile not found. Please complete basic profile first.');
+        }
         $nurseProfile->canSaveStep(NurseProfile::STEP_CARE_TYPES);
         DB::transaction(function () use ($nurseProfile, $data) {
 
@@ -94,6 +96,9 @@ class OnboardingService
     public function saveEducation(User $user, array $data): void
     {
         $nurseProfile = $user->nurseProfile;
+        if (!$nurseProfile) {
+            throw new InvalidOnboardingStepException('Nurse profile not found. Please complete basic profile first.');
+        }
         $nurseProfile->canSaveStep(NurseProfile::STEP_EDUCATION);
         DB::transaction(function () use ($nurseProfile, $data) {
 
@@ -122,6 +127,9 @@ class OnboardingService
     public function saveWorkHistory(User $user, array $data): void
     {
         $nurseProfile = $user->nurseProfile;
+        if (!$nurseProfile) {
+            throw new InvalidOnboardingStepException('Nurse profile not found. Please complete basic profile first.');
+        }
         $nurseProfile->canSaveStep(NurseProfile::STEP_WORK_HISTORY);
 
         DB::transaction(function () use ($nurseProfile, $data) {
@@ -157,6 +165,9 @@ class OnboardingService
     ): void {
 
         $nurseProfile = $user->nurseProfile;
+        if (!$nurseProfile) {
+            throw new InvalidOnboardingStepException('Nurse profile not found. Please complete basic profile first.');
+        }
 
         $nurseProfile->canSaveStep(NurseProfile::STEP_DOCUMENTS);
 
@@ -212,6 +223,9 @@ class OnboardingService
     public function saveAvailability(User $user, array $data): void
     {
         $nurseProfile = $user->nurseProfile;
+        if (!$nurseProfile) {
+            throw new InvalidOnboardingStepException('Nurse profile not found. Please complete basic profile first.');
+        }
         $nurseProfile->canSaveStep(NurseProfile::STEP_AVAILABILITY);
 
         DB::transaction(function () use ($nurseProfile, $data) {

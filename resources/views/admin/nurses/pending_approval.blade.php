@@ -68,7 +68,7 @@
             var table = $('#nurses-table').DataTable({
                 serverSide: true,
                 processing: false,
-                ajax: { url: '{{ route('admin.nurses.pending.data') }}' },
+                ajax: { url: '{{ route('admin.nurses.pending_approval.data') }}' },
                 columns: [
                     { data: 'id', name: 'id', searchable: false },
                     { data: 'nurse', name: 'nurse', orderable: false },

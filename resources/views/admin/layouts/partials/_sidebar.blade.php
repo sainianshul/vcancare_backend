@@ -75,8 +75,8 @@
                         </div>
 
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.nurses.pending') ? 'active' : '' }}"
-                                href="{{ route('admin.nurses.pending') }}">
+                            <a class="menu-link {{ request()->routeIs('admin.nurses.pending_approval') ? 'active' : '' }}"
+                                href="{{ route('admin.nurses.pending_approval') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Pending Approval</span>
                                 @if($pendingCount > 0)

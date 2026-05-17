@@ -35,7 +35,7 @@ class NurseController extends Controller
     // ── Pending Approval ───────────────────────────────────
     public function pending(UnderReviewNurseDataTable $dt)
     {
-        return $dt->render('admin.nurses.pending');
+        return $dt->render('admin.nurses.pending_approval');
     }
 
     public function pendingData(UnderReviewNurseDataTable $dt)
@@ -65,6 +65,12 @@ class NurseController extends Controller
         return $dt->ajax();
     }
 
+    public function pendingCount()
+    {
+        $count = \App\Models\NurseProfile::where('status', \App\Models\NurseProfile::STATUS_UNDER_REVIEW)->count();
+        return response()->json(['count' => $count]);
+    }
+
     // ── Delete ────────────────────────────────────────────
     public function destroy($id)
     {
@@ -79,9 +85,7 @@ class NurseController extends Controller
     {
         $user = User::with(['nurseProfile.verifications', 'nurseProfile.careTypes'])->findOrFail($id);
 
-        if (!$user->nurseProfile) {
-            abort(404, 'Nurse profile not found.');
-        }
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
 
         $profile = $user->nurseProfile;
 
@@ -101,6 +105,7 @@ class NurseController extends Controller
     public function showApplication($id)
     {
         $user = User::with('nurseProfile')->findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
         $profile = $user->nurseProfile;
 
         return view('admin.nurses.show-review', compact('user', 'profile'));
@@ -110,6 +115,7 @@ class NurseController extends Controller
     public function reviewStep(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
 
         $request->validate([
             'step_id' => 'required|integer',
@@ -125,6 +131,7 @@ class NurseController extends Controller
     public function getReviewStepView(Request $request, $id, $step)
     {
         $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
         $profile = $user->nurseProfile;
 
         if ($step === 'final') {
@@ -156,6 +163,7 @@ class NurseController extends Controller
     public function finalizeReview(\Illuminate\Http\Request $request, $id)
     {
         $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
 
         $request->validate([
             'status' => 'required|integer',

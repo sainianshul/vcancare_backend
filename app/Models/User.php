@@ -182,6 +182,16 @@ class User extends Authenticatable
     {
         $nurse = $this->nurseProfile;
 
+        if (!$nurse) {
+            return [
+                'profile_status' => NurseProfile::STATUS_PENDING,
+                'profile_status_name' => 'Pending',
+                'onboarding' => [
+                    'is_completed' => false,
+                ],
+            ];
+        }
+
         $data = [
             'profile_status' => $nurse->status ?? NurseProfile::STATUS_PENDING,
             'profile_status_name' => $nurse->status_name ?? 'Pending',
