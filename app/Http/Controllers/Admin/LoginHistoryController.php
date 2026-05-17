@@ -23,4 +23,13 @@ class LoginHistoryController extends Controller
         LoginHistory::query()->truncate();
         return response()->json(['status' => 'success']);
     }
+
+    public function show($id)
+    {
+        $loginHistory = LoginHistory::with('user')->findOrFail($id);
+        
+        $ipLocation = new \App\Infrastructure\IpLocation($loginHistory->ip_address);
+
+        return view('admin.login-history.show', compact('loginHistory', 'ipLocation'));
+    }
 }

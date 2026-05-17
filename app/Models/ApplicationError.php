@@ -14,8 +14,8 @@ class ApplicationError extends Model
     */
 
     const STATUS_PENDING = 0;
-    const STATUS_RESOLVED = 1;
-    const STATUS_IGNORED = 2;
+    const STATUS_OPENED = 1;
+    const STATUS_RESOLVED = 2;
 
     /*
     |--------------------------------------------------------------------------

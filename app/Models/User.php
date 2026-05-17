@@ -80,12 +80,37 @@ class User extends Authenticatable
             ?? 'Unknown';
     }
 
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_ACTIVE => 'success',
+            self::STATUS_INACTIVE => 'secondary',
+            self::STATUS_BLOCKED => 'danger',
+            default => 'secondary',
+        };
+    }
+
+    public function getStatusIconAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_ACTIVE => 'ki-check-circle',
+            self::STATUS_INACTIVE => 'ki-information-5',
+            self::STATUS_BLOCKED => 'ki-cross-circle',
+            default => 'ki-information-5',
+        };
+    }
+
 
     // ─── Helpers ──────────────────────────────
 
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === self::ROLE_USER;
     }
 
     public function isNurse(): bool
@@ -156,6 +181,16 @@ class User extends Authenticatable
     private function nurseOnboardingData(): array
     {
         $nurse = $this->nurseProfile;
+
+        if (!$nurse) {
+            return [
+                'profile_status' => NurseProfile::STATUS_PENDING,
+                'profile_status_name' => 'Pending',
+                'onboarding' => [
+                    'is_completed' => false,
+                ],
+            ];
+        }
 
         $data = [
             'profile_status' => $nurse->status ?? NurseProfile::STATUS_PENDING,

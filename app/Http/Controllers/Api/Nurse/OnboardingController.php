@@ -333,8 +333,17 @@ class OnboardingController extends Controller
     )]
     public function submitForReview(Request $request)
     {
+        $user = $request->user();
+        $nurseProfile = $user->nurseProfile;
+
         $this->onboardingService->submitForReview(
-            $request->user()
+            $user
+        );
+
+        \App\Helpers\ActivityLogger::log(
+            \App\Models\Activity::ACTION_ONBOARDING_SUBMIT,
+            'Nurse submitted onboarding application for review.',
+            $nurseProfile
         );
 
         return ApiResponse::success(

@@ -19,7 +19,7 @@
                 {{-- Search --}}
                 <div class="d-flex align-items-center position-relative">
 
-                    <i class="ki-duotone ki-magnifier fs-5 text-gray-500 position-absolute ms-4 z-index-3">
+                    <i class="ki-duotone ki-magnifier fs-5 text-gray-900 position-absolute ms-4 z-index-3">
                         <span class="path1"></span>
                         <span class="path2"></span>
                     </i>
@@ -27,7 +27,7 @@
                     <input
                         type="text"
                         id="dt-search"
-                        class="form-control form-control-solid w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
+                        class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search by error ID..."
                     />
 
@@ -41,14 +41,14 @@
 
                         <div class="position-relative">
 
-                            <i class="ki-duotone ki-filter fs-5 text-gray-500 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
+                            <i class="ki-duotone ki-filter fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
                                 <span class="path1"></span>
                                 <span class="path2"></span>
                             </i>
 
                             <select
                                 id="filter-status"
-                                class="form-select form-select-solid form-select-sm fw-semibold ps-11 shadow-sm"
+                                class="form-select form-select-transparent border border-gray-800 text-gray-900 form-select-sm fw-semibold ps-11 shadow-sm"
                                 data-control="select2"
                                 data-placeholder="All Statuses"
                                 data-allow-clear="true"
@@ -73,7 +73,7 @@
 
                         <select
                             id="filter-severity"
-                            class="form-select form-select-solid form-select-sm fw-semibold shadow-sm"
+                            class="form-select form-select-transparent border border-gray-800 text-gray-900 form-select-sm fw-semibold shadow-sm"
                             data-control="select2"
                             data-placeholder="Severity"
                             data-allow-clear="true"
@@ -120,7 +120,7 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            <div id="errors-table-wrapper">
+            <div id="errors-table-wrapper" class="table-responsive">
 
                 <table
                     id="errors-table"
@@ -129,7 +129,7 @@
 
                     <thead>
 
-                        <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0 border-bottom border-gray-200">
+                        <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
 
                             <th class="w-50px">#</th>
 
@@ -393,8 +393,27 @@
                 });
             });
 
+            // ── Change Status ───────────────────────────────────────────
+            $(document).on('click', '.btn-status', function () {
+                let id = $(this).data('id');
+                let status = $(this).data('status');
+                
+                $.post(`/admin/system/error-logs/${id}/status`, {
+                    _token: '{{ csrf_token() }}',
+                    status: status
+                }).done(function (res) {
+                    toastr.success(res.message);
+                    table.ajax.reload(null, false);
+                }).fail(function () {
+                    toastr.error('Something went wrong.');
+                });
+            });
+
         });
 
     </script>
 
 @endpush
+
+
+

@@ -56,6 +56,13 @@ class AuthController extends Controller
 
         $user->update(['last_login_at' => now()]);
 
+        \App\Helpers\ActivityLogger::log(
+            \App\Models\Activity::ACTION_LOGIN,
+            'Admin logged in via Web.',
+            $user,
+            ['ip' => $request->ip(), 'user_agent' => $request->userAgent()]
+        );
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('admin.dashboard'));
@@ -63,6 +70,15 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        if ($user) {
+            \App\Helpers\ActivityLogger::log(
+                \App\Models\Activity::ACTION_LOGOUT,
+                'Admin logged out via Web.',
+                $user
+            );
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

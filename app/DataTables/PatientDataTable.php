@@ -53,24 +53,10 @@ class PatientDataTable extends DataTable
 
             // ── Status ───────────────────────────────────────────────
             ->addColumn('status', function (User $user) {
-
-                $colorMap = [
-                    User::STATUS_ACTIVE => 'success',
-                    User::STATUS_INACTIVE => 'secondary',
-                    User::STATUS_BLOCKED => 'danger',
-                ];
-
-                $statusList = User::getStatusList();
-
-                $status = $user->status;
-
-                $label = $statusList[$status] ?? 'Unknown';
-
-                $color = $colorMap[$status] ?? 'secondary';
-
                 return '
-                    <span class="badge badge-light-' . $color . ' fw-bold px-3 py-2">
-                        ' . e($label) . '
+                    <span class="badge badge-light-' . $user->status_color . ' border border-' . $user->status_color . ' fw-bold px-3 py-2">
+                        <i class="ki-outline ' . $user->status_icon . ' fs-6 text-' . $user->status_color . ' me-1"></i>
+                        ' . e($user->status_name) . '
                     </span>
                 ';
             })
@@ -110,47 +96,31 @@ class PatientDataTable extends DataTable
             // ── Actions ──────────────────────────────────────────────
             ->addColumn('actions', function (User $user) {
 
-                $viewUrl = route('admin.patients.index', $user->id);
+                $viewUrl = route('admin.patients.show', $user->id);
 
-                $editUrl = route('admin.patients.index', $user->id);
+                $editUrl = route('admin.patients.edit', $user->id);
 
                 return '
                     <div class="d-flex gap-1 justify-content-end">
 
                         <a href="' . $viewUrl . '"
-                            class="btn btn-sm btn-icon btn-light-primary w-30px h-30px"
+                            class="btn btn-sm btn-icon btn-light-primary border border-primary w-30px h-30px me-1"
                             title="View">
-
-                            <i class="ki-duotone ki-eye fs-5">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                            </i>
+                            <i class="ki-outline ki-eye fs-5"></i>
                         </a>
 
                         <a href="' . $editUrl . '"
-                            class="btn btn-sm btn-icon btn-light-warning w-30px h-30px"
+                            class="btn btn-sm btn-icon btn-light-warning border border-warning w-30px h-30px me-1"
                             title="Edit">
-
-                            <i class="ki-duotone ki-pencil fs-5">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
+                            <i class="ki-outline ki-pencil fs-5"></i>
                         </a>
 
                         <button
                             type="button"
-                            class="btn btn-sm btn-icon btn-light-danger w-30px h-30px btn-delete"
+                            class="btn btn-sm btn-icon btn-light-danger border border-danger w-30px h-30px btn-delete"
                             data-id="' . $user->id . '"
                             title="Delete">
-
-                            <i class="ki-duotone ki-trash fs-5">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                                <span class="path4"></span>
-                                <span class="path5"></span>
-                            </i>
+                            <i class="ki-outline ki-trash fs-5"></i>
                         </button>
 
                     </div>
