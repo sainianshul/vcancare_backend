@@ -140,6 +140,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     });
 
     // =====================
+    // COMMENTS
+    // =====================
+    Route::post('comments', [\App\Http\Controllers\Admin\CommentController::class, 'store'])->name('comments.store');
+    Route::delete('comments/{comment}', [\App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
+
+    // =====================
     // SYSTEM
     // =====================
     Route::prefix('system')->name('system.')->group(function () {

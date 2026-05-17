@@ -298,6 +298,8 @@
             </div>
             <!--end::Tab Content-->
 
+            <x-comments type="{{ \App\Models\Comment::TYPE_PATIENT }}" :model-id="$patient->id" />
+
         </div>
     </div>
     <!--end::Content-->

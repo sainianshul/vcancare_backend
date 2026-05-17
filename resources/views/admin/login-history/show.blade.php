@@ -194,4 +194,6 @@
 
     </div>
 
+    <x-comments type="{{ \App\Models\Comment::TYPE_LOGIN_HISTORY }}" :model-id="$loginHistory->id" />
+
 @endsection

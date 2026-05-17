@@ -185,6 +185,8 @@
             </div>
             <!--end::Onboarding Progress-->
 
+            <x-comments type="{{ \App\Models\Comment::TYPE_NURSE }}" :model-id="$user->id" />
+
         </div>
     </div>
     <!--end::Content-->

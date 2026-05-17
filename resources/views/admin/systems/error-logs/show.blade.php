@@ -202,4 +202,6 @@
     </div>
     <!--end::Technical Details-->
 
+    <x-comments type="{{ \App\Models\Comment::TYPE_LOGS }}" :model-id="$error->id" />
+
 @endsection

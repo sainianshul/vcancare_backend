@@ -279,6 +279,8 @@
         </div>
     </div>
 
+    <x-comments type="{{ \App\Models\Comment::TYPE_NURSE }}" :model-id="$user->id" />
+
 @endsection
 
 @push('styles')
