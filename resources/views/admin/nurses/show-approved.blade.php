@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- Profile Header -->
-    <div class="card shadow-none border border-gray-300 mb-5 mb-xl-8">
+    <div class="card shadow-sm border-0 mb-5 mb-xl-8">
         <div class="card-body pt-9 pb-0">
             <div class="d-flex flex-wrap flex-sm-nowrap">
                 
@@ -87,31 +87,47 @@
                     <div class="d-flex flex-wrap flex-stack border-top border-gray-200 border-dashed pt-5 pb-2 mt-2">
                         <div class="row w-100 g-4">
                             <div class="col-6 col-md-3">
-                                <div class="border border-warning border-dashed rounded px-4 py-4 bg-light-warning h-100 text-center transition-all hover-scale">
-                                    <i class="ki-outline ki-star fs-2x text-warning mb-2 d-block"></i>
-                                    <div class="fs-2 fw-bolder text-warning">{{ $profile->avg_rating ?? '0.0' }}</div>
-                                    <div class="fw-semibold fs-8 text-warning opacity-75 text-uppercase tracking-wider">Avg Rating</div>
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                    <div class="w-40px h-40px bg-light-warning rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                                        <i class="ki-outline ki-star fs-3 text-warning"></i>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Avg Rating</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->avg_rating ?? '0.0' }}</div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="border border-success border-dashed rounded px-4 py-4 bg-light-success h-100 text-center transition-all hover-scale">
-                                    <i class="ki-outline ki-message-text-2 fs-2x text-success mb-2 d-block"></i>
-                                    <div class="fs-2 fw-bolder text-success">{{ $profile->total_reviews ?? 0 }}</div>
-                                    <div class="fw-semibold fs-8 text-success opacity-75 text-uppercase tracking-wider">Total Reviews</div>
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                    <div class="w-40px h-40px bg-light-success rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                                        <i class="ki-outline ki-message-text-2 fs-3 text-success"></i>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Total Reviews</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->total_reviews ?? 0 }}</div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="border border-primary border-dashed rounded px-4 py-4 bg-light-primary h-100 text-center transition-all hover-scale">
-                                    <i class="ki-outline ki-shield-tick fs-2x text-primary mb-2 d-block"></i>
-                                    <div class="fs-2 fw-bolder text-primary">{{ $profile->trust_score ?? 100 }}%</div>
-                                    <div class="fw-semibold fs-8 text-primary opacity-75 text-uppercase tracking-wider">Trust Score</div>
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                    <div class="w-40px h-40px bg-light-primary rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                                        <i class="ki-outline ki-shield-tick fs-3 text-primary"></i>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Trust Score</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->trust_score ?? 100 }}%</div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="border border-info border-dashed rounded px-4 py-4 bg-light-info h-100 text-center transition-all hover-scale">
-                                    <i class="ki-outline ki-briefcase fs-2x text-info mb-2 d-block"></i>
-                                    <div class="fs-2 fw-bolder text-info">{{ $profile->total_bookings_completed ?? 0 }}</div>
-                                    <div class="fw-semibold fs-8 text-info opacity-75 text-uppercase tracking-wider">Jobs Completed</div>
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                    <div class="w-40px h-40px bg-light-info rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                                        <i class="ki-outline ki-briefcase fs-3 text-info"></i>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Jobs Done</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->total_bookings_completed ?? 0 }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -120,24 +136,24 @@
             </div>
 
             <!-- Tab Navigation (AJAX) -->
-            <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-6 fw-bold mt-4" id="nurse-profile-tabs">
+            <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-6 fw-semibold mt-4" id="nurse-profile-tabs">
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary px-4 py-4 active cursor-pointer" data-tab="overview">Overview</a>
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 active cursor-pointer" data-tab="overview">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary px-4 py-4 cursor-pointer" data-tab="requests">Requests</a>
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="requests">Requests</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary px-4 py-4 cursor-pointer" data-tab="bids">Bids</a>
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="bids">Bids</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary px-4 py-4 cursor-pointer" data-tab="reviews">Reviews</a>
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="reviews">Reviews</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary px-4 py-4 cursor-pointer" data-tab="login-history">Login History</a>
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="login-history">Login History</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary px-4 py-4 cursor-pointer" data-tab="activity">Activity Log</a>
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="activity">Activity Log</a>
                 </li>
             </ul>
         </div>
@@ -150,66 +166,60 @@
             <!-- Left Column: Details -->
             <div class="col-xl-4">
             <!-- Basic Details -->
-            <div class="card shadow-none border border-gray-300 mb-5 mb-xl-8">
+            <div class="card shadow-sm border-0 mb-5 mb-xl-8">
                 <div class="card-header border-0 pt-6">
-                    <h3 class="card-title fw-bold text-gray-900 fs-5 d-flex align-items-center">
-                        <i class="ki-outline ki-profile-user fs-3 text-primary me-2"></i> Personal Details
-                    </h3>
+                    <h3 class="card-title fw-bolder text-dark fs-5">About</h3>
                 </div>
                 <div class="card-body pt-4">
-                    <div class="d-flex flex-column gap-5">
-                        <div class="d-flex align-items-center border border-gray-200 rounded p-4 bg-light">
-                            <div class="w-40px h-40px bg-white rounded border border-gray-300 d-flex align-items-center justify-content-center me-4">
-                                <i class="ki-outline ki-badge fs-3 text-primary"></i>
-                            </div>
-                            <div class="d-flex flex-column">
-                                <span class="text-gray-500 fw-semibold fs-8">License Number</span>
-                                <span class="text-gray-900 fw-bold fs-6">{{ $profile->license_number ?? 'N/A' }}</span>
-                            </div>
+                    <div class="d-flex flex-column gap-3 fs-7 fw-semibold">
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">License</span>
+                            <span class="text-gray-900">{{ $profile->license_number ?? 'N/A' }}</span>
                         </div>
-
-                        <div class="row g-3">
-                            <div class="col-6">
-                                <div class="border border-gray-200 rounded p-3 text-center">
-                                    <span class="text-gray-500 fw-semibold fs-8 d-block mb-1">Experience</span>
-                                    <span class="text-gray-900 fw-bold fs-5">{{ $profile->years_of_experience ?? 0 }} <span class="fs-8 fw-medium text-gray-600">Yrs</span></span>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="border border-gray-200 rounded p-3 text-center">
-                                    <span class="text-gray-500 fw-semibold fs-8 d-block mb-1">Gender</span>
-                                    <span class="text-gray-900 fw-bold fs-6">
-                                        @if($profile->gender == \App\Models\NurseProfile::GENDER_MALE) Male
-                                        @elseif($profile->gender == \App\Models\NurseProfile::GENDER_FEMALE) Female
-                                        @else Other @endif
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">Experience</span>
+                            <span class="text-gray-900">{{ $profile->years_of_experience ?? 0 }} Years</span>
                         </div>
-
-                        <div class="d-flex align-items-start border border-gray-200 rounded p-4 bg-light">
-                            <div class="w-40px h-40px bg-white rounded border border-gray-300 d-flex align-items-center justify-content-center me-4 flex-shrink-0">
-                                <i class="ki-outline ki-geolocation fs-3 text-danger"></i>
-                            </div>
-                            <div class="d-flex flex-column">
-                                <span class="text-gray-500 fw-semibold fs-8 mb-1">Full Address</span>
-                                <span class="text-gray-800 fw-medium fs-7 lh-base">
-                                    {{ $profile->address ?? '' }}, <br/>
-                                    {{ $profile->city ?? '' }}, {{ $profile->state ?? '' }}, <br/>
-                                    {{ $profile->pincode ?? '' }}
-                                </span>
-                            </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">Gender</span>
+                            <span class="text-gray-900">
+                                @if($profile->gender == \App\Models\NurseProfile::GENDER_MALE) Male
+                                @elseif($profile->gender == \App\Models\NurseProfile::GENDER_FEMALE) Female
+                                @else Other @endif
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">City</span>
+                            <span class="text-gray-900">{{ $profile->city ?? 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">State</span>
+                            <span class="text-gray-900">{{ $profile->state ?? 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">Country</span>
+                            <span class="text-gray-900">{{ $profile->country ?? 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">Postcode</span>
+                            <span class="text-gray-900">{{ $profile->pincode ?? 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2 pt-2 border-top border-gray-200 border-dashed">
+                            <span class="w-100px text-gray-500">Phone</span>
+                            <span class="text-gray-900">{{ $user->phone ?? 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="w-100px text-gray-500">Email</span>
+                            <span class="text-gray-900 text-end text-break w-150px">{{ $user->email ?? 'N/A' }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
                 <!-- Schedule / Availability -->
-                <div class="card shadow-none border border-gray-300 mb-5 mb-xl-8">
+                <div class="card shadow-sm border-0 mb-5 mb-xl-8">
                     <div class="card-header border-0 pt-6">
-                        <h3 class="card-title fw-bold text-gray-900 fs-5 d-flex align-items-center">
-                            <i class="ki-outline ki-calendar fs-3 text-primary me-2"></i> Schedule
-                        </h3>
+                        <h3 class="card-title fw-bolder text-dark fs-5">Schedule</h3>
                     </div>
                     <div class="card-body pt-4">
                         <div class="mb-5 d-flex justify-content-between align-items-center bg-light rounded p-4 border border-gray-200">
@@ -252,9 +262,9 @@
             <!-- Right Column: Graph & Activity -->
             <div class="col-xl-8">
                 <!-- Earnings / Bookings Graph -->
-                <div class="card shadow-none border border-gray-300 mb-5 mb-xl-8">
+                <div class="card shadow-sm border-0 mb-5 mb-xl-8">
                     <div class="card-header border-0 pt-6">
-                        <h3 class="card-title fw-bold text-gray-900 fs-5">Monthly Bookings & Activity</h3>
+                        <h3 class="card-title fw-bolder text-dark fs-5">Monthly Bookings & Activity</h3>
                         <div class="card-toolbar">
                             <button class="btn btn-sm btn-light border border-gray-300 text-gray-700 fw-medium">
                                 <i class="ki-outline ki-filter fs-6"></i> Filter
