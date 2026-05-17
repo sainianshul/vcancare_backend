@@ -87,7 +87,7 @@
                     <div class="d-flex flex-wrap flex-stack border-top border-gray-200 border-dashed pt-5 pb-2 mt-2">
                         <div class="row w-100 g-4">
                             <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
                                     <div class="w-40px h-40px bg-light-warning rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
                                         <i class="ki-outline ki-star fs-3 text-warning"></i>
                                     </div>
@@ -98,7 +98,7 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
                                     <div class="w-40px h-40px bg-light-success rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
                                         <i class="ki-outline ki-message-text-2 fs-3 text-success"></i>
                                     </div>
@@ -109,7 +109,7 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
                                     <div class="w-40px h-40px bg-light-primary rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
                                         <i class="ki-outline ki-shield-tick fs-3 text-primary"></i>
                                     </div>
@@ -120,7 +120,7 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-white d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
+                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
                                     <div class="w-40px h-40px bg-light-info rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
                                         <i class="ki-outline ki-briefcase fs-3 text-info"></i>
                                     </div>
@@ -391,7 +391,7 @@
 
                 // Show shimmer loader
                 container.innerHTML = `
-                    <div class="card shadow-none border border-gray-300 bg-white">
+                    <div class="card shadow-none border border-gray-300 bg-body">
                         <div class="card-body pt-8 pb-8 placeholder-glow">
                             <span class="placeholder col-3 bg-secondary rounded mb-4" style="height:25px; display:block;"></span>
                             @include('admin.layouts.partials._table-skeleton', ['id' => 'tab-skeleton'])
@@ -403,7 +403,7 @@
                 // $.ajax({ url: '/admin/nurses/{{$user->id}}/tab/' + targetTab, type: 'GET' })
                 setTimeout(() => {
                     container.innerHTML = `
-                        <div class="card shadow-none border border-gray-300 bg-white">
+                        <div class="card shadow-none border border-gray-300 bg-body">
                             <div class="card-header border-0 pt-6">
                                 <h3 class="card-title fw-bold text-gray-900 fs-5 text-capitalize">${targetTab.replace('-', ' ')}</h3>
                             </div>

@@ -33,12 +33,11 @@
         <div id="kt_app_content_container" class="app-container container-fluid">
 
             @if($profile->status == \App\Models\NurseProfile::STATUS_REJECTED)
-                <div
-                    class="alert alert-dismissible bg-light-danger border border-danger border-dashed d-flex flex-column flex-sm-row w-100 p-5 mb-10 shadow-sm">
-                    <i class="ki-outline ki-cross-square fs-2hx text-danger me-4 mb-5 mb-sm-0"></i>
+                <div class="alert alert-dismissible bg-light-danger border border-danger border-dashed d-flex align-items-center w-100 p-4 mb-10 shadow-sm">
+                    <i class="ki-outline ki-cross-square fs-1 text-danger me-4"></i>
                     <div class="d-flex flex-column pe-0 pe-sm-10">
-                        <h5 class="mb-1 text-danger">Application Rejected</h5>
-                        <span class="text-gray-800 fw-medium">Reason:
+                        <h6 class="mb-1 text-danger fw-bold">Application Rejected</h6>
+                        <span class="text-gray-800 fw-medium fs-7">Reason:
                             {{ $profile->rejection_reason ?? 'No final reason provided.' }}</span>
                     </div>
                 </div>

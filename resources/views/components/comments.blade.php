@@ -1,5 +1,5 @@
 @if($isVisible)
-<div class="card shadow-none border border-gray-300 mb-5 mb-xl-8">
+<div class="card shadow-none border border-gray-300 mb-5 mb-xl-8 mt-5 mt-xl-8">
     <div class="card-header border-0 pt-6">
         <h3 class="card-title align-items-start flex-column">
             <span class="card-label fw-bold fs-4 mb-1 text-gray-900">Notes & Comments</span>

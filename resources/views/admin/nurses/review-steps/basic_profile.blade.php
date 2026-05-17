@@ -23,11 +23,11 @@
     <div class="card-body pt-0 pb-8">
 
         @if($status == \App\Models\NurseProfileVerification::STATUS_REJECTED && !empty($verification->review_message))
-        <div class="alert alert-dismissible bg-light-danger border border-danger border-dashed d-flex flex-column flex-sm-row w-100 p-5 mb-7">
-            <i class="ki-outline ki-message-text-2 fs-2hx text-danger me-4 mb-5 mb-sm-0"></i>
+        <div class="alert alert-dismissible bg-light-danger border border-danger border-dashed d-flex align-items-center w-100 p-4 mb-7">
+            <i class="ki-outline ki-message-text-2 fs-1 text-danger me-4"></i>
             <div class="d-flex flex-column pe-0 pe-sm-10">
-                <h5 class="mb-1 text-danger">Rejection Reason</h5>
-                <span class="text-gray-800 fw-medium">{{ $verification->review_message }}</span>
+                <h6 class="mb-1 text-danger fw-bold">Rejection Reason</h6>
+                <span class="text-gray-800 fw-medium fs-7">{{ $verification->review_message }}</span>
             </div>
         </div>
         @endif

@@ -23,21 +23,21 @@ class PatientController extends Controller
     public function show(User $patient)
     {
         // Ensure the user is a patient
-        abort_if($patient->role !== User::ROLE_USER, 404);
+        abort_unless($patient->isUser(), 404);
 
         return view('admin.patients.show', compact('patient'));
     }
 
     public function edit(User $patient)
     {
-        abort_if($patient->role !== User::ROLE_USER, 404);
+        abort_unless($patient->isUser(), 404);
 
         return view('admin.patients.edit', compact('patient'));
     }
 
     public function update(Request $request, User $patient)
     {
-        abort_if($patient->role !== User::ROLE_USER, 404);
+        abort_unless($patient->isUser(), 404);
 
         $request->validate([
             'email' => 'nullable|email|unique:users,email,' . $patient->id,
@@ -54,7 +54,7 @@ class PatientController extends Controller
 
     public function destroy(User $patient)
     {
-        abort_if($patient->role !== User::ROLE_USER, 404);
+        abort_unless($patient->isUser(), 404);
 
         $patient->delete();
 
@@ -73,7 +73,7 @@ class PatientController extends Controller
 
     public function unblock(User $patient)
     {
-        abort_if($patient->role !== User::ROLE_USER, 404);
+        abort_unless($patient->isUser(), 404);
 
         $patient->update([
             'status' => User::STATUS_ACTIVE,

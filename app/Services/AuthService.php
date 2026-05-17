@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Exceptions\InvalidOtpException;
 use App\Exceptions\TooManyOtpRequestsException;
 use App\Exceptions\UserBlockedException;
+use App\Helpers\ActivityLogger;
+use App\Models\Activity;
 use App\Models\LoginHistory;
 use App\Models\NurseProfile;
 use App\Models\OtpVerification;
@@ -108,7 +110,9 @@ class AuthService
             $data['phone']
         )->first();
 
+        $isNewUser = false;
         if (!$user) {
+            $isNewUser = true;
 
             $user = DB::transaction(
                 function () use ($data) {
@@ -159,6 +163,14 @@ class AuthService
             );
         }
 
+        if (isset($isNewUser) && $isNewUser) {
+            ActivityLogger::log(
+                Activity::ACTION_REGISTER,
+                'User registered successfully.',
+                $user
+            );
+        }
+
         if (
             $user->status ===
             User::STATUS_BLOCKED
@@ -193,16 +205,27 @@ class AuthService
             $user
         );
 
+        ActivityLogger::log(
+            Activity::ACTION_LOGIN,
+            'User logged in via API.',
+            $user,
+            ['ip' => $ip, 'user_agent' => $userAgent]
+        );
+
         return [
 
             'token' => $token,
-
             'user' => $user,
         ];
     }
 
     public function logout(User $user)
     {
+        ActivityLogger::log(
+            Activity::ACTION_LOGOUT,
+            'User logged out.',
+            $user
+        );
         $user->currentAccessToken()?->delete();
     }
 
