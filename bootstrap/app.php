@@ -25,34 +25,49 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
+
+        $middleware->api(prepend: [
+            \App\Http\Middleware\ForceJsonResponse::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
 
+        $exceptions->shouldRenderJsonWhen(function (\Illuminate\Http\Request $request, \Throwable $e) {
+            if ($request->is('api/*')) {
+                return true;
+            }
+            return $request->expectsJson();
+        });
+
         // Validation – For API 
         $exceptions->render(function (ValidationException $e, $request) {
-            if (!$request->expectsJson())
+            if (!$request->is('api/*') && !$request->expectsJson()) {
                 return null;
+            }
             return ApiResponse::error('Validation failed', 422, $e->errors());
         });
 
         // Auth – For API 
         $exceptions->render(function (AuthenticationException $e, $request) {
-            if (!$request->expectsJson())
+            if (!$request->is('api/*') && !$request->expectsJson()) {
                 return null;
+            }
             return ApiResponse::error('Unauthenticated', 401);
         });
 
         // Model Not Found – API JSON, 
         $exceptions->render(function (ModelNotFoundException $e, $request) {
-            if (!$request->expectsJson())
+            if (!$request->is('api/*') && !$request->expectsJson()) {
                 return null;
+            }
             return ApiResponse::error('Resource not found', 404);
         });
 
         // Global catch – API JSON with error ID,
         $exceptions->render(function (Throwable $e, $request) {
-            if (!$request->expectsJson())
+            if (!$request->is('api/*') && !$request->expectsJson()) {
                 return null;
+            }
 
             $errorId = 'ERR-' . strtoupper(str()->random(10));
 
