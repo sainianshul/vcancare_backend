@@ -200,7 +200,7 @@ class User extends Authenticatable
             ],
         ];
 
-        if (!$nurse->is_onboarding_completed) {
+        if ($nurse->status === NurseProfile::STATUS_PENDING) {
             $data['onboarding'] = array_merge($data['onboarding'], [
                 'current_step' => $nurse->onboarding_step,
                 'current_step_name' => $nurse->step_name
@@ -209,8 +209,9 @@ class User extends Authenticatable
 
         if ($nurse->status === NurseProfile::STATUS_REJECTED) {
             $data['profile_reason'] = $nurse->rejection_reason;
+            $data['is_reapply'] = (bool) $nurse->can_reapply;
             $data['rejected_steps'] = $nurse->verifications()
-                ->where('status', NurseProfileVerification::STATUS_REJECTED)
+                ->where('status', \App\Models\NurseProfileVerification::STATUS_REJECTED)
                 ->get()
                 ->map(fn($verification) => [
                     'step_id' => $verification->step_id,

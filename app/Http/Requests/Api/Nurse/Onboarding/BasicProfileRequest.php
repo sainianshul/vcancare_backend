@@ -22,7 +22,7 @@ class BasicProfileRequest extends FormRequest
         $nurseProfile = $user->nurseProfile;
 
         // Profile photo — pehli baar required, baad mein optional
-        $profilePhotoRules = $nurseProfile
+        $profilePhotoRules = $user->profile_photo
             ? ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120']
             : ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'];
 
