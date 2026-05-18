@@ -46,6 +46,11 @@ class NurseProfileVerification extends Model
         };
     }
 
+    public function getStepNameAttribute()
+    {
+        return NurseProfile::getOnboardingStepList()[$this->step_id] ?? 'Unknown';
+    }
+
     public function getStatusColorAttribute()
     {
         return match ($this->status) {
