@@ -134,6 +134,7 @@
                                     type="checkbox"
                                     name="remember"
                                     id="remember"
+                                    value="1"
                                     {{ old('remember') ? 'checked' : '' }}
                                 />
                                 <span class="form-check-label text-gray-600 fw-normal fs-7 ms-1">
@@ -158,13 +159,8 @@
 
                     <div class="separator separator-content my-2">
                         <span class="text-gray-400 fw-normal fs-8 text-uppercase ls-1">
-                            Secured Access
+                            Secured Login
                         </span>
-                    </div>
-
-                    <div class="d-flex align-items-center justify-content-center gap-2 mt-4">
-                        <i class="ki-outline ki-lock-3 fs-6 text-gray-400"></i>
-                        <span class="text-gray-400 fs-8">256-bit SSL encrypted · Admin only</span>
                     </div>
 
                 </div>

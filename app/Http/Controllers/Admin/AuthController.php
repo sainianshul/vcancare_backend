@@ -56,6 +56,14 @@ class AuthController extends Controller
 
         $user->update(['last_login_at' => now()]);
 
+        \App\Models\LoginHistory::create([
+            'user_id' => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'logged_in_at' => now(),
+            'status' => \App\Models\LoginHistory::STATUS_ACTIVE,
+        ]);
+
         \App\Helpers\ActivityLogger::log(
             \App\Models\Activity::ACTION_LOGIN,
             'Admin logged in via Web.',
