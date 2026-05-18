@@ -295,9 +295,9 @@ class OnboardingService
             throw new InvalidOnboardingStepException('Nurse profile not found.');
         }
 
-        // Allow only completed/review flows
-        if ($nurseProfile->onboarding_step < NurseProfile::STEP_SUBMIT_FOR_REVIEW) {
-            throw new InvalidOnboardingStepException('Complete onboarding first.');
+        // Allow fetching data for completed steps or the current step
+        if ($step > $nurseProfile->onboarding_step && $nurseProfile->onboarding_step < NurseProfile::STEP_SUBMIT_FOR_REVIEW) {
+            throw new InvalidOnboardingStepException('You have not reached this step yet.');
         }
 
         return match ($step) {
