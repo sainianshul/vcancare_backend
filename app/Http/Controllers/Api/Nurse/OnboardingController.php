@@ -289,8 +289,8 @@ class OnboardingController extends Controller
                     new OA\Property(
                         property: 'available_days',
                         type: 'array',
-                        items: new OA\Items(type: 'string'),
-                        example: ['monday', 'tuesday', 'friday']
+                        items: new OA\Items(type: 'integer'),
+                        example: [1, 2, 5]
                     ),
                     new OA\Property(property: 'is_available', type: 'boolean', example: true),
                 ]

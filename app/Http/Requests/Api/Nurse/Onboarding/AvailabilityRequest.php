@@ -30,14 +30,8 @@ class AvailabilityRequest extends FormRequest
             ],
 
             'available_days' => [
-                'description' => 'Available working days.',
-                'example' => [
-                    'monday',
-                    'tuesday',
-                    'wednesday',
-                    'thursday',
-                    'friday',
-                ],
+                'description' => 'Available working days (0=Sunday to 6=Saturday).',
+                'example' => [1, 2, 3, 4, 5],
             ],
 
             'is_available' => [
@@ -70,16 +64,8 @@ class AvailabilityRequest extends FormRequest
 
             'available_days.*' => [
                 'required',
-                'string',
-                Rule::in([
-                    'monday',
-                    'tuesday',
-                    'wednesday',
-                    'thursday',
-                    'friday',
-                    'saturday',
-                    'sunday',
-                ]),
+                'integer',
+                Rule::in([0, 1, 2, 3, 4, 5, 6]),
             ]
         ];
     }

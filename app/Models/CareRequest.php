@@ -24,9 +24,6 @@ class CareRequest extends Model
     const CARE_FOR_SELF = 1;
     const CARE_FOR_OTHER = 2;
 
-    const DURATION_HOURLY = 1;
-    const DURATION_DAILY = 2;
-    const DURATION_WEEKLY = 3;
 
     const CANCELLED_BY_USER = 1;
     const CANCELLED_BY_NURSE = 2;
@@ -50,8 +47,6 @@ class CareRequest extends Model
         'state',
         'country',
         'pincode',
-        'duration_type',
-        'duration_value',
         'start_date',
         'end_date',
         'start_time',
@@ -74,8 +69,6 @@ class CareRequest extends Model
         'care_type_id' => 'integer',
         'assigned_nurse_id' => 'integer',
         'care_for' => 'integer',
-        'duration_type' => 'integer',
-        'duration_value' => 'integer',
         'cancelled_by' => 'integer',
         'status' => 'integer',
         'is_disputed' => 'boolean',

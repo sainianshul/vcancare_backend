@@ -84,7 +84,7 @@
             <div class="d-flex flex-wrap gap-3 mt-4">
                 @php
                     // Map of standard days
-                    $allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                    $allDaysMap = \App\Models\NurseProfile::getDaysList();
                     
                     // Decode the chosen days if stored as JSON/array
                     $chosenDays = [];
@@ -97,20 +97,19 @@
                         }
                     }
                     
-                    // Normalize chosen days to ensure proper checking
-                    $chosenDays = array_map('trim', $chosenDays);
-                    $chosenDays = array_map('ucfirst', array_map('strtolower', $chosenDays));
+                    // Normalize chosen days to integers
+                    $chosenDays = array_map('intval', $chosenDays);
                 @endphp
                 
                 @if(count($chosenDays) > 0)
-                    @foreach($allDays as $day)
-                        @if(in_array($day, $chosenDays))
+                    @foreach($allDaysMap as $dayValue => $dayName)
+                        @if(in_array($dayValue, $chosenDays, true))
                             <span class="badge badge-light-primary border border-primary fw-medium px-4 py-2 fs-7 d-flex align-items-center gap-2">
-                                <i class="ki-outline ki-check-circle fs-6 text-primary"></i> {{ $day }}
+                                <i class="ki-outline ki-check-circle fs-6 text-primary"></i> {{ $dayName }}
                             </span>
                         @else
                             <span class="badge badge-light fw-medium border border-gray-300 text-gray-400 px-4 py-2 fs-7">
-                                {{ $day }}
+                                {{ $dayName }}
                             </span>
                         @endif
                     @endforeach

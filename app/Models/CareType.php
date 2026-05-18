@@ -19,7 +19,6 @@ class CareType extends Model
         'slug',
         'description',
         'image_path',
-        'duration_type',
         'created_by',
         'status',
     ];

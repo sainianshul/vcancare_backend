@@ -4,7 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use App\Enums\DurationType;
 
 return new class extends Migration {
     /**
@@ -23,7 +22,6 @@ return new class extends Migration {
 
             $table->string('image_path')->nullable();
 
-            $table->string('duration_type')->nullable();
 
             $table->foreignId('created_by')
                 ->constrained('users')

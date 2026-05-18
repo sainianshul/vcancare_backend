@@ -41,6 +41,19 @@ class NurseProfile extends Model
 
     /*
     |--------------------------------------------------------------------------
+    | Days of the Week
+    |--------------------------------------------------------------------------
+    */
+    const DAY_SUNDAY = 0;
+    const DAY_MONDAY = 1;
+    const DAY_TUESDAY = 2;
+    const DAY_WEDNESDAY = 3;
+    const DAY_THURSDAY = 4;
+    const DAY_FRIDAY = 5;
+    const DAY_SATURDAY = 6;
+
+    /*
+    |--------------------------------------------------------------------------
     | Onboarding Steps
     |--------------------------------------------------------------------------
     */
@@ -167,6 +180,19 @@ class NurseProfile extends Model
             self::GENDER_FEMALE => 'Female',
 
             self::GENDER_OTHER => 'Other',
+        ];
+    }
+
+    public static function getDaysList()
+    {
+        return [
+            self::DAY_SUNDAY => 'Sunday',
+            self::DAY_MONDAY => 'Monday',
+            self::DAY_TUESDAY => 'Tuesday',
+            self::DAY_WEDNESDAY => 'Wednesday',
+            self::DAY_THURSDAY => 'Thursday',
+            self::DAY_FRIDAY => 'Friday',
+            self::DAY_SATURDAY => 'Saturday',
         ];
     }
 

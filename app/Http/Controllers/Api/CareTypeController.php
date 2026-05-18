@@ -30,7 +30,6 @@ class CareTypeController extends Controller
                 'slug',
                 'description',
                 'image_path',
-                'duration_type',
             ])
             ->orderBy('name')
             ->get()
@@ -47,8 +46,6 @@ class CareTypeController extends Controller
                 'image_url' => $careType->image_path
                     ? asset('storage/' . $careType->image_path)
                     : null,
-
-                'duration_type' => $careType->duration_type,
             ]);
 
         return ApiResponse::success('Care types fetched successfully', ['care_types' => $careTypes]);
