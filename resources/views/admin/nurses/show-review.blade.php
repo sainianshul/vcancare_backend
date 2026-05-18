@@ -143,11 +143,11 @@
                                 $iconContent = '<span class="fw-medium fs-8">' . $stepId . '</span>';
 
                                 if ($status == \App\Models\NurseProfileVerification::STATUS_APPROVED) {
-                                    $circleClass = 'bg-success text-white border-success';
-                                    $iconContent = '<i class="ki-outline ki-check fs-7 text-white"></i>';
+                                    $circleClass = 'bg-light-success border-success border';
+                                    $iconContent = '<i class="ki-outline ki-check fs-7 text-success"></i>';
                                 } elseif ($status == \App\Models\NurseProfileVerification::STATUS_REJECTED) {
-                                    $circleClass = 'bg-danger text-white border-danger';
-                                    $iconContent = '<i class="ki-outline ki-cross fs-7 text-white"></i>';
+                                    $circleClass = 'bg-light-danger border-danger border';
+                                    $iconContent = '<i class="ki-outline ki-cross fs-7 text-danger"></i>';
                                 }
                             @endphp
 
@@ -155,7 +155,7 @@
                                 data-step="{{ $stepId }}" onclick="showStep({{ $stepId }}, this)">
 
                                 <div
-                                    class="w-25px h-25px rounded-circle d-flex align-items-center justify-content-center me-4 {{ $circleClass }}">
+                                    class="w-25px h-25px rounded d-flex align-items-center justify-content-center me-4 {{ $circleClass }}">
                                     {!! $iconContent !!}
                                 </div>
                                 <span
@@ -170,7 +170,7 @@
                             <div class="step-nav-item cursor-pointer d-flex align-items-center px-4 py-3 rounded transition-all hover-bg-light border border-transparent"
                                 data-step="final" onclick="showStep('final', this)">
                                 <div
-                                    class="w-25px h-25px rounded-circle bg-dark d-flex align-items-center justify-content-center me-4">
+                                    class="w-25px h-25px rounded bg-dark d-flex align-items-center justify-content-center me-4">
                                     <span class="text-white fw-bold fs-8">F</span>
                                 </div>
                                 <span class="fw-semibold fs-7 text-gray-900 nav-label">Final decision</span>
@@ -360,14 +360,14 @@
             if (!iconContainer) return;
 
             // Reset classes
-            iconContainer.className = 'w-25px h-25px rounded-circle d-flex align-items-center justify-content-center me-4';
+            iconContainer.className = 'w-25px h-25px rounded d-flex align-items-center justify-content-center me-4';
 
             if (status == {{ \App\Models\NurseProfileVerification::STATUS_APPROVED }}) {
-                iconContainer.classList.add('bg-success', 'text-white', 'border', 'border-success');
-                iconContainer.innerHTML = '<i class="ki-outline ki-check fs-7 text-white"></i>';
+                iconContainer.classList.add('bg-light-success', 'border', 'border-success');
+                iconContainer.innerHTML = '<i class="ki-outline ki-check fs-7 text-success"></i>';
             } else if (status == {{ \App\Models\NurseProfileVerification::STATUS_REJECTED }}) {
-                iconContainer.classList.add('bg-danger', 'text-white', 'border', 'border-danger');
-                iconContainer.innerHTML = '<i class="ki-outline ki-cross fs-7 text-white"></i>';
+                iconContainer.classList.add('bg-light-danger', 'border', 'border-danger');
+                iconContainer.innerHTML = '<i class="ki-outline ki-cross fs-7 text-danger"></i>';
             } else {
                 iconContainer.classList.add('bg-light', 'border-gray-300', 'text-gray-500', 'border');
                 iconContainer.innerHTML = `<span class="fw-medium fs-8">${stepId}</span>`;
