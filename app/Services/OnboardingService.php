@@ -393,7 +393,7 @@ class OnboardingService
 
         DB::transaction(function () use ($nurseProfile) {
             $nurseProfile->update([
-                'status' => NurseProfile::STATUS_PENDING,
+                'status' => NurseProfile::STATUS_UNDER_REVIEW,
                 'rejection_reason' => null,
             ]);
         });

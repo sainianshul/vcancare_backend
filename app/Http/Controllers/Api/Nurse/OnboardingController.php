@@ -382,8 +382,8 @@ class OnboardingController extends Controller
             message: 'Profile reapplication started successfully.',
             data: [
                 'onboarding' => $nurseProfile->getOnboardingResponse(),
-                'profile_status' => NurseProfile::STATUS_PENDING,
-                'profile_status_name' => NurseProfile::getStatusList()[NurseProfile::STATUS_PENDING],
+                'profile_status' => NurseProfile::STATUS_UNDER_REVIEW,
+                'profile_status_name' => NurseProfile::getStatusList()[NurseProfile::STATUS_UNDER_REVIEW],
             ]
         );
     }
