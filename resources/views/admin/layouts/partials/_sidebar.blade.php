@@ -397,6 +397,12 @@
                                 <span class="menu-title">Backups</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link" href="{{ url('/api/documentation') }}" target="_blank">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">API</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
