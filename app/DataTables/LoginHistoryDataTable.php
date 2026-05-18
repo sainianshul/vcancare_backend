@@ -54,15 +54,15 @@ class LoginHistoryDataTable extends DataTable
                 } elseif ($role === User::ROLE_USER) {
 
                     $roleBadge = '
-                        <span class="badge badge-light-primary border border-primary fw-bold px-2 py-1 fs-8">
-                            <i class="ki-outline ki-profile-user fs-7 text-primary me-1"></i> Patient
+                        <span class="badge badge-light-warning border border-warning fw-bold px-2 py-1 fs-8">
+                            <i class="ki-outline ki-profile-user fs-7 text-warning me-1"></i> Patient
                         </span>
                     ';
                 } elseif ($role === User::ROLE_NURSE) {
 
                     $roleBadge = '
-                        <span class="badge badge-light-success border border-success fw-bold px-2 py-1 fs-8">
-                            <i class="ki-outline ki-heart fs-7 text-success me-1"></i> Nurse
+                        <span class="badge badge-light-info border border-info fw-bold px-2 py-1 fs-8">
+                            <i class="ki-outline ki-heart fs-7 text-info me-1"></i> Nurse
                         </span>
                     ';
                 }
