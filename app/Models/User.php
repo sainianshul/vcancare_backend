@@ -177,7 +177,7 @@ class User extends Authenticatable
         return $response;
     }
 
-    // ── Private — clean rakha ──────────────────────
+    // ── nurseOnboardingData  ──────────────────────
     private function nurseOnboardingData(): array
     {
         $nurse = $this->nurseProfile;
@@ -209,6 +209,14 @@ class User extends Authenticatable
 
         if ($nurse->status === NurseProfile::STATUS_REJECTED) {
             $data['profile_reason'] = $nurse->rejection_reason;
+            $data['rejected_steps'] = $nurse->verifications()
+                ->where('status', NurseProfileVerification::STATUS_REJECTED)
+                ->get()
+                ->map(fn($verification) => [
+                    'step_id' => $verification->step_id,
+                    'step_name' => $verification->step_name,
+                    'review_message' => $verification->review_message,
+                ])->toArray();
         }
 
         if ($nurse->status === NurseProfile::STATUS_SUSPENDED) {
