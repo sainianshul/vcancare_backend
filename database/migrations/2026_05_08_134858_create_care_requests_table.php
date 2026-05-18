@@ -53,10 +53,6 @@ return new class extends Migration {
 
             $table->string('pincode');
 
-            $table->unsignedTinyInteger('duration_type');
-
-            $table->unsignedInteger('duration_value');
-
             $table->date('start_date');
 
             $table->date('end_date')->nullable();

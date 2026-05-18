@@ -38,6 +38,9 @@ Route::prefix('v1')->group(function () {
             [CareTypeController::class, 'index']
         );
         // User Routes
+        Route::prefix('user')->group(function () {
+            Route::post('care-requests', [\App\Http\Controllers\Api\User\CareRequestController::class, 'store']);
+        });
 
         // Nurse Routes
         Route::prefix('nurse')->group(function () {

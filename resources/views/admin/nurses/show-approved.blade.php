@@ -242,14 +242,18 @@
                             <span class="text-gray-600 fw-semibold fs-7 mb-2">Available Days</span>
                             <div class="d-flex flex-wrap gap-2">
                                 @php
+                                    $allDaysMap = \App\Models\NurseProfile::getDaysList();
                                     $days = [];
                                     if(!empty($profile->available_days)) {
                                         $days = is_string($profile->available_days) ? json_decode($profile->available_days, true) : $profile->available_days;
                                         if(!is_array($days)) $days = explode(',', $profile->available_days);
                                     }
+                                    $days = array_map('intval', $days);
                                 @endphp
-                                @forelse($days as $day)
-                                    <span class="badge badge-light border border-gray-300 text-gray-800 fw-medium fs-8">{{ trim($day) }}</span>
+                                @forelse($days as $dayValue)
+                                    @if(isset($allDaysMap[$dayValue]))
+                                        <span class="badge badge-light border border-gray-300 text-gray-800 fw-medium fs-8">{{ $allDaysMap[$dayValue] }}</span>
+                                    @endif
                                 @empty
                                     <span class="text-gray-500 fs-8">No specific days</span>
                                 @endforelse
