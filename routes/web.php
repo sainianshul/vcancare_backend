@@ -75,9 +75,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     // OPERATIONS — Care Requests
     // =====================
     Route::prefix('requests')->name('requests.')->group(function () {
-        Route::get('/', function () {
-            echo "All Requests";
-        })->name('index');
+        Route::get('/', [\App\Http\Controllers\Admin\RequestController::class, 'index'])->name('index');
+        Route::get('/data', [\App\Http\Controllers\Admin\RequestController::class, 'data'])->name('data');
+        Route::get('{request}/bids-data', [\App\Http\Controllers\Admin\RequestController::class, 'bidsData'])->name('bids-data');
+        Route::get('{request}/notified-nurses-data', [\App\Http\Controllers\Admin\RequestController::class, 'notifiedNursesData'])->name('notified-nurses-data');
+        Route::get('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'show'])->name('show');
+        Route::delete('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'destroy'])->name('destroy');
+        
         Route::get('new', function () {
             echo "New Requests";
         })->name('new');
@@ -103,6 +107,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('rejected', function () {
             echo "Rejected Bids";
         })->name('rejected');
+        
+        Route::get('{bid}', [\App\Http\Controllers\Admin\BidController::class, 'show'])->name('show');
     });
 
     // OPERATIONS — Services
