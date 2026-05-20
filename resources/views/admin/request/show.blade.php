@@ -63,7 +63,8 @@
                             <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-3 mb-3">
                                 <div class="d-flex align-items-center">
                                     <i class="ki-outline ki-heart fs-3 text-danger me-2"></i>
-                                    <div class="fs-6 fw-bold text-gray-900">{{ $careRequest->careType->name ?? 'Unknown' }}</div>
+                                    <div class="fs-6 fw-bold text-gray-900">{{ $careRequest->careType->name ?? 'Unknown' }}
+                                    </div>
                                 </div>
                                 <div class="fw-semibold fs-8 text-gray-600 mt-1">Care Type</div>
                             </div>
@@ -96,7 +97,8 @@
                             <div class="border border-gray-300 border-dashed rounded py-3 px-4 mb-3">
                                 <div class="d-flex align-items-center">
                                     <i class="ki-outline ki-time fs-3 text-success me-2"></i>
-                                    <div class="fs-6 fw-bold text-gray-900">{{ $hours }} Hour{{ $hours > 1 ? 's' : '' }}/Day</div>
+                                    <div class="fs-6 fw-bold text-gray-900">{{ $hours }} Hour{{ $hours > 1 ? 's' : '' }}/Day
+                                    </div>
                                 </div>
                                 <div class="fw-semibold fs-8 text-gray-600 mt-1">Daily Shift</div>
                             </div>
@@ -106,15 +108,19 @@
                             <div class="col-sm-6">
                                 <div class="bg-light-primary rounded p-3 border border-primary border-dashed">
                                     <span class="text-primary fw-semibold d-block fs-8 mb-1">Start Date & Time</span>
-                                    <span class="fw-bold fs-6 text-gray-900">{{ $careRequest->start_date ? $careRequest->start_date->format('d M Y') : 'N/A' }}</span>
-                                    <span class="text-gray-700 fw-semibold fs-7 ms-2">{{ $careRequest->start_time ? \Carbon\Carbon::parse($careRequest->start_time)->format('h:i A') : 'N/A' }}</span>
+                                    <span
+                                        class="fw-bold fs-6 text-gray-900">{{ $careRequest->start_date ? $careRequest->start_date->format('d M Y') : 'N/A' }}</span>
+                                    <span
+                                        class="text-gray-700 fw-semibold fs-7 ms-2">{{ $careRequest->start_time ? \Carbon\Carbon::parse($careRequest->start_time)->format('h:i A') : 'N/A' }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="bg-light-danger rounded p-3 border border-danger border-dashed">
                                     <span class="text-danger fw-semibold d-block fs-8 mb-1">End Date & Time</span>
-                                    <span class="fw-bold fs-6 text-gray-900">{{ $careRequest->end_date ? $careRequest->end_date->format('d M Y') : 'N/A' }}</span>
-                                    <span class="text-gray-700 fw-semibold fs-7 ms-2">{{ $careRequest->end_time ? \Carbon\Carbon::parse($careRequest->end_time)->format('h:i A') : 'N/A' }}</span>
+                                    <span
+                                        class="fw-bold fs-6 text-gray-900">{{ $careRequest->end_date ? $careRequest->end_date->format('d M Y') : 'N/A' }}</span>
+                                    <span
+                                        class="text-gray-700 fw-semibold fs-7 ms-2">{{ $careRequest->end_time ? \Carbon\Carbon::parse($careRequest->end_time)->format('h:i A') : 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -129,24 +135,28 @@
                         </h3>
                     </div>
                     <div class="card-body pt-2 pb-5">
-                        <div class="d-flex align-items-center bg-light-warning border border-warning border-dashed rounded p-3 mb-4">
+                        <div
+                            class="d-flex align-items-center bg-light-warning border border-warning border-dashed rounded p-3 mb-4">
                             <i class="ki-outline ki-time fs-2 text-warning me-3"></i>
                             <div class="flex-grow-1">
                                 <span class="text-warning fw-semibold d-block fs-8">Bidding Ends At</span>
-                                <span class="fw-bold fs-6 text-gray-900">{{ $careRequest->bidding_ends_at ? $careRequest->bidding_ends_at->format('d M Y, h:i A') : 'N/A' }}</span>
+                                <span
+                                    class="fw-bold fs-6 text-gray-900">{{ $careRequest->bidding_ends_at ? $careRequest->bidding_ends_at->format('d M Y, h:i A') : 'N/A' }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="row g-3">
                             <div class="col-6">
                                 <div class="border border-gray-300 border-dashed rounded p-3 text-center bg-light">
-                                    <span class="fs-4 fw-bold text-gray-900 d-block">{{ $careRequest->matching_attempt_level }}</span>
+                                    <span
+                                        class="fs-4 fw-bold text-gray-900 d-block">{{ $careRequest->matching_attempt_level }}</span>
                                     <span class="fs-8 fw-semibold text-gray-600">Radius Level</span>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="border border-gray-300 border-dashed rounded p-3 text-center bg-light">
-                                    <span class="fs-4 fw-bold text-gray-900 d-block">{{ $careRequest->total_bids_received }}</span>
+                                    <span
+                                        class="fs-4 fw-bold text-gray-900 d-block">{{ $careRequest->total_bids_received }}</span>
                                     <span class="fs-8 fw-semibold text-gray-600">Total Bids</span>
                                 </div>
                             </div>
@@ -205,7 +215,8 @@
                     </div>
                     <div class="card-body pt-2 pb-5">
                         <div class="table-responsive">
-                            <table id="notified-nurses-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3">
+                            <table id="notified-nurses-table"
+                                class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3">
                                 <thead>
                                     <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
                                         <th class="ps-3 min-w-150px rounded-start">Nurse</th>
@@ -249,7 +260,8 @@
                                     {{ $careRequest->user->name ?? 'Unknown' }}
                                 </a>
                                 <div class="fs-8 fw-semibold text-gray-600 mb-2">ID: {{ $careRequest->user->id ?? 'N/A' }}</div>
-                                <div class="badge badge-light-success border border-success fw-bold px-3 py-1 mt-1 fs-8">Active Member</div>
+                                <div class="badge badge-light-success border border-success fw-bold px-3 py-1 mt-1 fs-8">Active
+                                    Member</div>
                             </div>
 
                             <div class="separator separator-dashed border-gray-300 my-4"></div>
@@ -287,12 +299,15 @@
                                     </div>
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <span class="text-gray-900 fw-bold fs-6">{{ $careRequest->patient_name ?? 'N/A' }}</span>
+                                    <span
+                                        class="text-gray-900 fw-bold fs-6">{{ $careRequest->patient_name ?? 'N/A' }}</span>
                                     <span class="mt-1">
                                         @if($careRequest->care_for === \App\Models\CareRequest::CARE_FOR_SELF)
-                                            <span class="badge badge-light-primary border border-primary fs-9 px-2 py-1">Self Care</span>
+                                            <span class="badge badge-light-primary border border-primary fs-9 px-2 py-1">Self
+                                                Care</span>
                                         @else
-                                            <span class="badge badge-light-info border border-info fs-9 px-2 py-1">Family Member</span>
+                                            <span class="badge badge-light-info border border-info fs-9 px-2 py-1">Family
+                                                Member</span>
                                         @endif
                                     </span>
                                 </div>
@@ -302,7 +317,8 @@
                         <div class="d-flex flex-column gap-3 mt-4">
                             <div class="d-flex flex-stack">
                                 <span class="text-gray-600 fw-semibold fs-7">Patient Age</span>
-                                <span class="text-gray-900 fw-bold fs-7">{{ $careRequest->patient_age ?? 'N/A' }} years</span>
+                                <span class="text-gray-900 fw-bold fs-7">{{ $careRequest->patient_age ?? 'N/A' }}
+                                    years</span>
                             </div>
                             <div class="separator separator-dashed border-gray-300"></div>
                             <div class="d-flex flex-stack">
@@ -317,7 +333,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 {{-- Location Card --}}
                 <div class="card shadow-sm mb-7 border border-gray-300">
                     <div class="card-header border-0 pt-4 min-h-50px">
@@ -337,7 +353,8 @@
                             <span class="bullet bullet-vertical h-30px bg-primary me-3 mt-1"></span>
                             <div class="flex-grow-1">
                                 <span class="text-gray-600 fw-semibold d-block fs-8">City & State</span>
-                                <span class="fw-bold fs-7 text-gray-900">{{ $careRequest->city ?? 'N/A' }}, {{ $careRequest->state ?? 'N/A' }}</span>
+                                <span class="fw-bold fs-7 text-gray-900">{{ $careRequest->city ?? 'N/A' }},
+                                    {{ $careRequest->state ?? 'N/A' }}</span>
                             </div>
                         </div>
                         <div class="d-flex align-items-start">
@@ -370,7 +387,7 @@
                                 </span>
                             </div>
                             <span class="text-success fs-8 d-block">
-                                Applied Rule: 
+                                Applied Rule:
                                 <strong>
                                     @if($careRequest->commission_type === 1)
                                         Percentage
