@@ -16,8 +16,8 @@ class CareTypeRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:2000'],
-            'commission_type' => ['nullable', 'string', 'in:percentage,fixed'],
-            'commission_value' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'commision_type' => ['nullable', 'integer', 'in:0,1,2'],
+            'commision_value' => ['nullable', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'action' => ['required', 'in:draft,publish,save'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],

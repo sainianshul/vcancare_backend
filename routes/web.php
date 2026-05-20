@@ -146,6 +146,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('comments', [\App\Http\Controllers\Admin\CommentController::class, 'store'])->name('comments.store');
     Route::delete('comments/{comment}', [\App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
 
+    // API Token management (for patient/nurse profile pages)
+    Route::delete('api-tokens/{tokenId}/revoke', function ($tokenId) {
+        $token = \Laravel\Sanctum\PersonalAccessToken::findOrFail($tokenId);
+        $token->delete();
+        return response()->json(['success' => true]);
+    })->name('api-tokens.revoke');
+
+    Route::post('api-tokens/{userId}/issue', function ($userId) {
+        $user = \App\Models\User::findOrFail($userId);
+        // Issue an additional token for admin testing without revoking user's active sessions
+        $plainTextToken = $user->createToken('admin-swagger-testing')->plainTextToken;
+        return response()->json(['success' => true, 'token' => $plainTextToken]);
+    })->name('api-tokens.issue');
+
     // =====================
     // SYSTEM
     // =====================

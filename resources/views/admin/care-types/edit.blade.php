@@ -140,7 +140,7 @@
                             </div>
 
                             {{-- ── Section 3: Commission ── --}}
-                            @php $currentType = old('commission_type', $careType->commission_type ?? 'percentage'); @endphp
+                            @php $currentType = old('commision_type', $careType->commision_type ?? '1'); @endphp
                             <div class="card shadow-sm mb-5">
                                 <div class="card-header min-h-50px pt-4 pb-2">
                                     <h3 class="card-title d-flex flex-column">
@@ -154,33 +154,45 @@
                                     <div class="mb-6">
                                         <label class="form-label">Commission Type</label>
                                         <div class="row g-4" data-kt-buttons="true">
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-4">
                                                 <label
-                                                    class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6 {{ $currentType !== 'fixed' ? 'active' : '' }}"
+                                                    class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-4 h-100 {{ $currentType != '0' && $currentType != '2' ? 'active' : '' }}"
                                                     id="tile-pct">
-                                                    <span
-                                                        class="form-check form-check-custom form-check-sm align-items-start mt-1">
-                                                        <input class="form-check-input" type="radio" name="commission_type"
-                                                            value="percentage" {{ $currentType !== 'fixed' ? 'checked' : '' }} />
+                                                    <span class="form-check form-check-custom form-check-sm align-items-start mt-1">
+                                                        <input class="form-check-input" type="radio" name="commision_type"
+                                                            value="1" {{ $currentType != '0' && $currentType != '2' ? 'checked' : '' }} />
                                                     </span>
-                                                    <span class="ms-4">
-                                                        <span class="fs-6 fw-bold text-gray-800 d-block">Percentage %</span>
-                                                        <span class="fs-7 text-dark">A % of each booking amount.</span>
+                                                    <span class="ms-3">
+                                                        <span class="fs-7 fw-bold text-gray-800 d-block">Percent %</span>
+                                                        <span class="fs-8 text-dark">Of total</span>
                                                     </span>
                                                 </label>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-4">
                                                 <label
-                                                    class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6 {{ $currentType === 'fixed' ? 'active' : '' }}"
+                                                    class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-4 h-100 {{ $currentType == '0' ? 'active' : '' }}"
                                                     id="tile-fixed">
-                                                    <span
-                                                        class="form-check form-check-custom form-check-sm align-items-start mt-1">
-                                                        <input class="form-check-input" type="radio" name="commission_type"
-                                                            value="fixed" {{ $currentType === 'fixed' ? 'checked' : '' }} />
+                                                    <span class="form-check form-check-custom form-check-sm align-items-start mt-1">
+                                                        <input class="form-check-input" type="radio" name="commision_type"
+                                                            value="0" {{ $currentType == '0' ? 'checked' : '' }} />
                                                     </span>
-                                                    <span class="ms-4">
-                                                        <span class="fs-6 fw-bold text-gray-800 d-block">Fixed Amount</span>
-                                                        <span class="fs-7 text-dark">A flat fee per booking.</span>
+                                                    <span class="ms-3">
+                                                        <span class="fs-7 fw-bold text-gray-800 d-block">Fixed / Day</span>
+                                                        <span class="fs-8 text-dark">Per day fee</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label
+                                                    class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-4 h-100 {{ $currentType == '2' ? 'active' : '' }}"
+                                                    id="tile-fixed-total">
+                                                    <span class="form-check form-check-custom form-check-sm align-items-start mt-1">
+                                                        <input class="form-check-input" type="radio" name="commision_type"
+                                                            value="2" {{ $currentType == '2' ? 'checked' : '' }} />
+                                                    </span>
+                                                    <span class="ms-3">
+                                                        <span class="fs-7 fw-bold text-gray-800 d-block">Flat Fee</span>
+                                                        <span class="fs-8 text-dark">Per booking</span>
                                                     </span>
                                                 </label>
                                             </div>
@@ -190,15 +202,15 @@
                                     <div style="max-width:250px;">
                                         <label class="form-label">Value</label>
                                         <div class="input-group">
-                                            <input type="number" name="commission_value" id="commission_value"
-                                                class="form-control @error('commission_value') is-invalid @enderror" min="0"
+                                            <input type="number" name="commision_value" id="commision_value"
+                                                class="form-control @error('commision_value') is-invalid @enderror" min="0"
                                                 step="0.01"
-                                                value="{{ old('commission_value', $careType->commission_value) }}" />
+                                                value="{{ old('commision_value', $careType->commision_value) }}" />
                                             <span class="input-group-text" id="commission-unit">
-                                                {{ $currentType === 'fixed' ? '$' : '%' }}
+                                                {{ $currentType == '0' ? '₹ / day' : ($currentType == '2' ? '₹ flat' : '%') }}
                                             </span>
                                         </div>
-                                        @error('commission_value')
+                                        @error('commision_value')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -330,12 +342,15 @@
 
             // ── Commission tile toggle ──
             function syncTiles() {
-                const val = $('input[name="commission_type"]:checked').val();
+                const val = $('input[name="commision_type"]:checked').val();
                 $('.btn-outline').removeClass('active');
 
-                if (val === 'fixed') {
+                if (val == '0') {
                     $('#tile-fixed').addClass('active');
-                    $('#commission-unit').text('$');
+                    $('#commission-unit').text('₹ / day');
+                } else if (val == '2') {
+                    $('#tile-fixed-total').addClass('active');
+                    $('#commission-unit').text('₹ flat');
                 } else {
                     $('#tile-pct').addClass('active');
                     $('#commission-unit').text('%');
@@ -347,7 +362,7 @@
                 syncTiles();
             });
 
-            $('input[name="commission_type"]').on('change', syncTiles);
+            $('input[name="commision_type"]').on('change', syncTiles);
 
             syncTiles();
 

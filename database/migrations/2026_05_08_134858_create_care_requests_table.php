@@ -24,11 +24,6 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->foreignId('assigned_nurse_id')
-                ->nullable()
-                ->constrained('nurse_profiles')
-                ->nullOnDelete();
-
             $table->unsignedTinyInteger('care_for');
 
             $table->string('patient_name')->nullable();
@@ -40,8 +35,8 @@ return new class extends Migration {
             $table->string('secondary_phone', 15)->nullable();
 
             $table->decimal('latitude', 10, 7);
-
             $table->decimal('longitude', 10, 7);
+            $table->geometry('location', subtype: 'point');
 
             $table->text('address');
 
@@ -63,25 +58,11 @@ return new class extends Migration {
 
             $table->text('notes')->nullable();
 
-            $table->string('otp')->nullable();
-
-            $table->timestamp('otp_expires_at')->nullable();
-
-            $table->timestamp('service_started_at')->nullable();
-
-            $table->timestamp('service_ended_at')->nullable();
-
-            $table->decimal('final_amount', 10, 2)->nullable();
-
-            $table->decimal('commission_amount', 10, 2)->nullable();
-
-            $table->decimal('nurse_payout', 10, 2)->nullable();
-
             $table->unsignedTinyInteger('cancelled_by')->nullable();
 
-            $table->boolean('is_disputed')->default(false);
-
             $table->unsignedTinyInteger('status')->default(0);
+
+            $table->timestamp('expires_at')->nullable();
 
             $table->timestamps();
 
@@ -91,17 +72,14 @@ return new class extends Migration {
 
             $table->index('user_id');
 
-            $table->index('assigned_nurse_id');
-
             $table->index(['user_id', 'status']);
-
-            $table->index(['assigned_nurse_id', 'status']);
 
             $table->index(['care_type_id', 'status']);
 
             $table->index(['start_date', 'end_date']);
 
             $table->index(['latitude', 'longitude']);
+            $table->spatialIndex('location');
 
             $table->index(['city', 'status']);
 

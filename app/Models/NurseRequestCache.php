@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class NurseRequestCache extends Model
 {
@@ -49,6 +50,7 @@ class NurseRequestCache extends Model
         return self::getStatusList()[$this->status] ?? 'Unknown';
     }
 
+    // Query Scopes
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereIn('status', [
@@ -57,6 +59,7 @@ class NurseRequestCache extends Model
         ]);
     }
 
+    // Relationships
     public function nurse()
     {
         return $this->belongsTo(NurseProfile::class, 'nurse_id');
@@ -65,5 +68,38 @@ class NurseRequestCache extends Model
     public function careRequest()
     {
         return $this->belongsTo(CareRequest::class);
+    }
+
+    /**
+     * Format cache entry for API response.
+     * Single source of truth — used by both index and show endpoints.
+     */
+    public function toApiArray(): array
+    {
+        $snapshot = $this->request_snapshot ?? [];
+        $expiresAt = Carbon::parse($this->expires_at);
+
+        return [
+            'id' => $this->id,
+            'care_request_id' => $this->care_request_id,
+            'care_request_ref' => $snapshot['care_request_ref'] ?? null,
+            'status' => $this->status,
+            'status_name' => $this->status_text,
+            'city' => $snapshot['city'] ?? 'Unknown',
+            'pincode' => $snapshot['pincode'] ?? 'Unknown',
+            'start_date' => $snapshot['start_date'] ?? null,
+            'end_date' => $snapshot['end_date'] ?? null,
+            'start_time' => $snapshot['start_time'] ?? null,
+            'end_time' => $snapshot['end_time'] ?? null,
+            'care_type' => $snapshot['care_type'] ?? 'Unknown',
+            'approx_distance_km' => $snapshot['distance_to_patient'] ?? null,
+            'expires_at' => $expiresAt->toDateTimeString(),
+            'expires_in_human' => $expiresAt->diffForHumans([
+                'parts' => 2,
+                'short' => true,
+                'syntax' => Carbon::DIFF_ABSOLUTE,
+            ]) . ' left',
+            'created_at' => $this->created_at->toDateTimeString(),
+        ];
     }
 }

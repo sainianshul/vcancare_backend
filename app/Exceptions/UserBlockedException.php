@@ -2,16 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Helpers\ApiResponse;
-use Exception;
-
-class UserBlockedException extends Exception
+class UserBlockedException extends ApiException
 {
-    public function render()
-    {
-        return ApiResponse::error(
-            $this->getMessage(),
-            403
-        );
-    }
+    protected int $defaultStatus = 403;
 }

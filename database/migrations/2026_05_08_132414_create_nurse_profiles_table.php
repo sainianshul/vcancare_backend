@@ -43,9 +43,9 @@ return new class extends Migration {
 
             $table->decimal('latitude', 10, 7)
                 ->nullable();
-
             $table->decimal('longitude', 10, 7)
                 ->nullable();
+            $table->geometry('location', subtype: 'point');
 
             $table->text('address')
                 ->nullable();
@@ -175,6 +175,7 @@ return new class extends Migration {
                 'latitude',
                 'longitude',
             ]);
+            $table->spatialIndex('location');
 
             $table->index([
                 'city',

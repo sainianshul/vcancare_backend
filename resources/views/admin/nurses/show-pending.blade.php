@@ -52,9 +52,10 @@
                                     <div class="d-flex justify-content-between align-items-center w-100">
                                         <div class="d-flex align-items-center mb-2">
                                             <h1 class="text-gray-900 fs-1 fw-bold me-2">{{ $user->name }}</h1>
-                                            <span class="badge badge-light-warning border border-warning fw-semibold px-3 py-1">
+                                            <span class="badge badge-light-warning border border-warning fw-semibold px-3 py-1 me-2">
                                                 <i class="ki-outline ki-time fs-7 text-warning me-1"></i> Pending Onboarding
                                             </span>
+                                            <x-api-token-badge :token="$apiToken" :user-id="$user->id" />
                                         </div>
 
                                         <div class="d-flex gap-2">

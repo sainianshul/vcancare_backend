@@ -2,16 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Helpers\ApiResponse;
-use Exception;
-
-class InvalidOtpException extends Exception
+class InvalidOtpException extends ApiException
 {
-    public function render()
-    {
-        return ApiResponse::error(
-            $this->getMessage(),
-            422
-        );
-    }
+    protected int $defaultStatus = 422;
 }

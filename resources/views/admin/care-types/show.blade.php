@@ -117,9 +117,9 @@
                                 <!-- Commission -->
                                 <div class="d-flex align-items-center justify-content-between">
                                     <span class="fw-medium fs-7" style="color: var(--bs-gray-600);">Commission</span>
-                                    @if($careType->commission_value)
+                                    @if($careType->commision_value)
                                         <span class="badge badge-light-primary border border-primary fw-medium px-3 py-1">
-                                            {{ $careType->commission_value }}{{ $careType->commission_type === 'percentage' ? '%' : ' flat' }}
+                                            {{ $careType->commission_text }}
                                         </span>
                                     @else
                                         <span class="badge badge-light fw-medium px-3 py-1 border border-gray-300"

@@ -11,6 +11,15 @@ class NurseProfile extends Model
 {
     use SoftDeletes;
 
+    protected static function booted()
+    {
+        static::saving(function ($model) {
+            $lng = (float) ($model->longitude ?? 0);
+            $lat = (float) ($model->latitude ?? 0);
+            $model->location = \Illuminate\Support\Facades\DB::raw("ST_GeomFromText('POINT({$lng} {$lat})', 4326)");
+        });
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Status
@@ -105,6 +114,10 @@ class NurseProfile extends Model
         'is_onboarding_completed',
         'status',
         'can_reapply',
+    ];
+
+    protected $hidden = [
+        'location',
     ];
 
     protected $casts = [
@@ -261,6 +274,7 @@ class NurseProfile extends Model
             true
         );
     }
+
 
 
     // Status Checks

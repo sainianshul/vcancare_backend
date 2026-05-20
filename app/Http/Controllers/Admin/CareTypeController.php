@@ -35,8 +35,8 @@ class CareTypeController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
-            'commission_type' => $request->commission_type,
-            'commission_value' => $request->commission_value,
+            'commision_type' => $request->commision_type,
+            'commision_value' => $request->commision_value,
             'image_path' => $imagePath,
             'status' => $status,
             'created_by' => auth()->id(),
@@ -69,8 +69,8 @@ class CareTypeController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
-            'commission_type' => $request->commission_type,
-            'commission_value' => $request->commission_value,
+            'commision_type' => $request->commision_type,
+            'commision_value' => $request->commision_value,
             'status' => $status,
         ];
 
