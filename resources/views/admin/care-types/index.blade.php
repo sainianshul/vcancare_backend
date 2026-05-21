@@ -64,7 +64,7 @@
 
                 @forelse($careTypes as $careType)
                     <div class="col-sm-6 col-lg-4 col-xl-3 care-type-card-col" data-name="{{ strtolower($careType->name) }}">
-                        <div class="card h-100 card-bordered border-dark position-relative">
+                        <div class="card h-100 border border-gray-300 shadow-sm position-relative">
 
                             <!--begin::Status ribbon-->
                             <span class="position-absolute top-0 end-0 mt-3 me-3">
@@ -146,7 +146,7 @@
                 @empty
                     <!--begin::Empty state-->
                     <div class="col-12" id="empty-state">
-                        <div class="card border-0 shadow-sm">
+                        <div class="card border border-gray-300 shadow-sm">
                             <div class="card-body py-20 d-flex flex-column align-items-center text-center">
                                 <div class="mb-6">
                                     <svg width="80" height="80" viewBox="0 0 80 80" fill="none"

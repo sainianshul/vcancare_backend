@@ -216,6 +216,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('backups');
     });
 
+    // SUPPORT TICKETS
+    Route::prefix('support')->name('support.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\SupportController::class, 'index'])->name('index');
+        Route::get('/data', [\App\Http\Controllers\Admin\SupportController::class, 'data'])->name('data');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\SupportController::class, 'show'])->name('show');
+        Route::post('/{id}/reply', [\App\Http\Controllers\Admin\SupportController::class, 'reply'])->name('reply');
+        Route::post('/{id}/status', [\App\Http\Controllers\Admin\SupportController::class, 'updateStatus'])->name('update-status');
+    });
+
     // SYSTEM — Settings
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('general', function () {

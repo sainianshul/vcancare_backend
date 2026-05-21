@@ -156,6 +156,16 @@
                     </div>
                 </div>
 
+                <!-- Support Tickets -->
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('admin.support.*') ? 'active' : '' }}" href="{{ route('admin.support.index') }}">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-message-text-2 fs-2"></i>
+                        </span>
+                        <span class="menu-title">Support Tickets</span>
+                    </a>
+                </div>
+
                 {{-- Care Requests --}}
                 <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ request()->routeIs('admin.requests.*') ? 'here show' : '' }}">

@@ -105,5 +105,16 @@ Route::prefix('v1')->group(function () {
             Route::get('onboarding/step-data/{step}', [OnboardingController::class, 'getStepData']);
             Route::post('onboarding/reapply', [OnboardingController::class, 'reapply']);
         });
+
+        // ─────────────────────────────────────────────────────────
+        // SUPPORT TICKETS (For Both Patients and Nurses)
+        // ─────────────────────────────────────────────────────────
+        Route::prefix('support')->group(function () {
+            Route::get('tickets', [\App\Http\Controllers\Api\SupportController::class, 'index']);
+            Route::post('tickets', [\App\Http\Controllers\Api\SupportController::class, 'store']);
+            Route::get('tickets/{id}', [\App\Http\Controllers\Api\SupportController::class, 'show']);
+            Route::post('tickets/{id}/reply', [\App\Http\Controllers\Api\SupportController::class, 'reply']);
+        });
+
     });
 });
