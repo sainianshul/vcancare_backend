@@ -1,0 +1,62 @@
+<div class="card shadow-sm border border-gray-300">
+    <div class="card-body pt-6 pb-5">
+        @include('admin.layouts.partials._table-skeleton', ['id' => 'nurse-reviews-skeleton'])
+        
+        <div id="nurse-reviews-table-wrapper" class="table-responsive d-none">
+            <table id="nurse-reviews-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-4 w-100" data-server-side="true">
+                <thead>
+                    <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
+                        <th class="ps-3 rounded-start min-w-150px">User</th>
+                        <th class="min-w-100px">Booking ID</th>
+                        <th class="min-w-100px">Rating</th>
+                        <th class="min-w-250px">Review</th>
+                        <th class="rounded-end min-w-120px">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    if (typeof jQuery !== 'undefined') {
+        $('#nurse-reviews-table').DataTable({
+            processing: false,
+            serverSide: true,
+            ajax: '{{ route('admin.nurses.reviews.data', $user->id) }}',
+            paging: true,
+            pageLength: 10,
+            searching: false,
+            info: true,
+            ordering: false,
+            dom: "<'row'<'col-sm-12'tr>>" +
+                 "<'row mt-3'" +
+                 "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
+                 "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>>",
+            language: {
+                emptyTable: "No reviews found for this nurse.",
+                info: "Showing _START_ to _END_ of _TOTAL_ reviews",
+                infoEmpty: "Showing 0 to 0 of 0 reviews",
+                paginate: {
+                    previous: '<i class="ki-duotone ki-arrow-left"></i>',
+                    next: '<i class="ki-duotone ki-arrow-right"></i>',
+                }
+            },
+            columns: [
+                { data: 'user', className: 'ps-3' },
+                { data: 'booking_id' },
+                { data: 'rating' },
+                { data: 'review' },
+                { data: 'created_at' }
+            ],
+            initComplete: function () {
+                $('#nurse-reviews-skeleton').fadeOut(200, function () {
+                    $(this).remove();
+                    $('#nurse-reviews-table-wrapper').removeClass('d-none').hide().fadeIn(200);
+                });
+            }
+        });
+    }
+</script>

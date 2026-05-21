@@ -62,6 +62,7 @@ Route::prefix('v1')->group(function () {
             Route::post('bookings/{booking_id}/confirm-payment', [UserBookingController::class, 'confirmPayment']);
             Route::post('bookings/{booking_id}/cancel', [UserBookingController::class, 'cancel']);
             Route::get('bookings/{booking_id}/otp', [UserBookingController::class, 'getSessionOtp']);
+            Route::post('bookings/{booking_id}/review', [\App\Http\Controllers\Api\User\NurseReviewController::class, 'store']);
 
             // Wallet
             Route::get('wallet', [UserBookingController::class, 'wallet']);

@@ -197,31 +197,26 @@
                         </h3>
                     </div>
                     <div class="card-body pt-2 pb-5">
-                        <div class="table-responsive">
-                            <table id="sessions-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3">
-                                <thead>
-                                    <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
-                                        <th class="ps-3 rounded-start">#</th>
-                                        <th class="min-w-100px">Date</th>
-                                        <th>Start</th>
-                                        <th>End</th>
-                                        <th>Started At</th>
-                                        <th>Ended At</th>
-                                        <th>Status</th>
-                                        <th>OTP</th>
-                                        <th class="rounded-end">Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="9" class="text-center py-5 text-gray-500">
-                                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                            Loading sessions...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                            @include('admin.layouts.partials._table-skeleton', ['id' => 'sessions-skeleton'])
+                            <div id="sessions-table-wrapper" class="d-none">
+                                <table id="sessions-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3 w-100">
+                                    <thead>
+                                        <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
+                                            <th class="ps-3 rounded-start">#</th>
+                                            <th class="min-w-100px">Date</th>
+                                            <th>Start</th>
+                                            <th>End</th>
+                                            <th>Started At</th>
+                                            <th>Ended At</th>
+                                            <th>Status</th>
+                                            <th>OTP</th>
+                                            <th class="rounded-end">Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                     </div>
                 </div>
 
@@ -280,8 +275,9 @@
                             </h3>
                         </div>
                         <div class="card-body pt-2 pb-5">
-                            <div class="table-responsive">
-                                <table class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3">
+                            @include('admin.layouts.partials._table-skeleton', ['id' => 'bids-skeleton'])
+                            <div id="bids-table-wrapper" class="table-responsive d-none">
+                                <table id="bids-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3 w-100" data-server-side="true">
                                     <thead>
                                         <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
                                             <th class="ps-3 rounded-start min-w-150px">Nurse</th>
@@ -293,46 +289,38 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($booking->careRequest->bids as $listBid)
-                                            @php
-                                                $bStatusColors = [0 => 'warning', 1 => 'success', 2 => 'danger', 3 => 'secondary', 4 => 'dark'];
-                                                $bColor = $bStatusColors[$listBid->status] ?? 'dark';
-                                                $isSelected = ($booking->bid_id == $listBid->id);
-                                            @endphp
-                                            <tr class="{{ $isSelected ? 'bg-light-success' : '' }}">
-                                                <td class="ps-3">
-                                                    @if($listBid->nurse && $listBid->nurse->user)
-                                                        <div class="d-flex align-items-center gap-3">
-                                                            <div class="symbol symbol-30px symbol-circle">
-                                                                <span class="symbol-label bg-light-info text-info fw-bold">{{ mb_strtoupper(mb_substr($listBid->nurse->user->name, 0, 2)) }}</span>
-                                                            </div>
-                                                            <div class="d-flex flex-column">
-                                                                <a href="{{ route('admin.nurses.show', $listBid->nurse->user->id) }}" class="text-gray-900 text-hover-primary fw-bold fs-7">{{ $listBid->nurse->user->name }}</a>
-                                                                <span class="text-gray-600 fs-8">ID: {{ $listBid->nurse_id }}</span>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <span class="text-gray-500 fs-7">Unknown</span>
-                                                    @endif
-                                                </td>
-                                                <td><span class="text-gray-900 fw-bold fs-7">₹{{ number_format($listBid->nurse_amount, 2) }}</span></td>
-                                                <td><span class="text-success fw-bold fs-7">₹{{ number_format($listBid->commission_amount, 2) }}</span></td>
-                                                <td><span class="text-primary fw-bold fs-7">₹{{ number_format($listBid->total_amount, 2) }}</span></td>
-                                                <td>
-                                                    <span class="badge badge-light-{{ $bColor }} fs-8 px-2 py-1">{{ $listBid->status_text }}</span>
-                                                    @if($isSelected)
-                                                        <span class="badge badge-success fs-9 px-2 py-1 ms-1"><i class="ki-outline ki-check text-white fs-8"></i> Selected</span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-gray-600 fs-8">{{ $listBid->notes ?? '—' }}</td>
-                                            </tr>
-                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 @endif
+
+                {{-- Ratings & Reviews Table (AJAX) --}}
+                <div class="card shadow-sm mb-7 border border-gray-300">
+                    <div class="card-header border-0 pt-4 min-h-50px">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold fs-5 mb-0 text-gray-900">Ratings & Reviews</span>
+                        </h3>
+                    </div>
+                    <div class="card-body pt-2 pb-5">
+                        @include('admin.layouts.partials._table-skeleton', ['id' => 'ratings-skeleton'])
+                        <div id="ratings-table-wrapper" class="table-responsive d-none">
+                            <table id="ratings-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3 w-100" data-server-side="true">
+                                <thead>
+                                    <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
+                                        <th class="ps-3 rounded-start min-w-200px">User</th>
+                                        <th class="min-w-100px">Rating</th>
+                                        <th class="min-w-200px">Review</th>
+                                        <th class="rounded-end min-w-100px">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
                 {{-- Payment Logs Table (AJAX) --}}
                 <div class="card shadow-sm mb-7 border border-gray-300">
@@ -346,22 +334,16 @@
                             <table id="payment-logs-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3">
                                 <thead>
                                     <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
-                                        <th class="ps-3 min-w-150px rounded-start">Event</th>
-                                        <th class="min-w-100px">Amount</th>
+                                        <th class="ps-3 rounded-start">Event</th>
+                                        <th>Amount</th>
                                         <th>Gateway</th>
                                         <th>Order ID</th>
                                         <th>Payment ID</th>
                                         <th>Status</th>
-                                        <th class="rounded-end">Date</th>
+                                        <th class="rounded-end">Time</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td colspan="7" class="text-center py-5 text-gray-500">
-                                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                            Loading payment logs...
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -607,6 +589,41 @@
                     </div>
                 </div>
 
+                {{-- Location Card --}}
+                @if($booking->careRequest && $booking->careRequest->address)
+                    <div class="card shadow-sm mb-7 border border-gray-300">
+                        <div class="card-header border-0 pt-4 min-h-50px">
+                            <h3 class="card-title align-items-start flex-column">
+                                <span class="card-label fw-bold fs-5 mb-0 text-gray-900">Location</span>
+                            </h3>
+                        </div>
+                        <div class="card-body pt-2 pb-5">
+                            <div class="d-flex align-items-start mb-3">
+                                <span class="bullet bullet-vertical h-30px bg-success me-3 mt-1"></span>
+                                <div class="flex-grow-1">
+                                    <span class="text-gray-600 fw-semibold d-block fs-8">Full Address</span>
+                                    <span class="fw-bold fs-7 text-gray-900">{{ $booking->careRequest->address }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <span class="bullet bullet-vertical h-30px bg-primary me-3 mt-1"></span>
+                                <div class="flex-grow-1">
+                                    <span class="text-gray-600 fw-semibold d-block fs-8">City & State</span>
+                                    <span class="fw-bold fs-7 text-gray-900">{{ $booking->careRequest->city ?? 'N/A' }},
+                                        {{ $booking->careRequest->state ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <span class="bullet bullet-vertical h-30px bg-warning me-3 mt-1"></span>
+                                <div class="flex-grow-1">
+                                    <span class="text-gray-600 fw-semibold d-block fs-8">Pincode</span>
+                                    <span class="fw-bold fs-7 text-gray-900">{{ $booking->careRequest->pincode ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Nurse Card --}}
                 <div class="card shadow-sm mb-7 border border-gray-300">
                     <div class="card-header border-0 pt-4 min-h-50px">
@@ -833,57 +850,97 @@
     <script>
         $(document).ready(function () {
 
+            // Common DataTable options to handle serverSide and skeleton seamlessly
+            const getDtOpts = (skeletonId, wrapperId) => {
+                return {
+                    processing: false, // We use skeleton instead of native processing overlay
+                    serverSide: true,
+                    paging: true,
+                    pageLength: 5,
+                    lengthMenu: [5, 10, 25],
+                    searching: false,
+                    info: true,
+                    ordering: false,
+                    dom:
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row mt-3'" +
+                        "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
+                        "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>>",
+                    language: {
+                        emptyTable: "No data available.",
+                        info: "Showing _START_ to _END_ of _TOTAL_",
+                        infoEmpty: "Showing 0 to 0 of 0",
+                        paginate: {
+                            previous: '<i class="ki-duotone ki-arrow-left"></i>',
+                            next: '<i class="ki-duotone ki-arrow-right"></i>',
+                        }
+                    },
+                    initComplete: function () {
+                        $('#' + skeletonId).fadeOut(200, function () {
+                            $(this).remove();
+                            $('#' + wrapperId).removeClass('d-none').hide().fadeIn(200);
+                        });
+                    }
+                };
+            };
+
             // ── Sessions Table (AJAX) ───────────────────────────────────────
-            $.getJSON('{{ route('admin.bookings.sessions-data', $booking->id) }}', function (response) {
-                let tbody = $('#sessions-table tbody');
-                tbody.empty();
+            $('#sessions-table').DataTable(Object.assign({}, getDtOpts('sessions-skeleton', 'sessions-table-wrapper'), {
+                ajax: '{{ route('admin.bookings.sessions-data', $booking->id) }}',
+                columns: [
+                    { data: 'session_number', className: 'ps-3 fw-bold text-gray-800' },
+                    { data: 'session_date', className: 'fw-semibold text-gray-800' },
+                    { data: 'start_time', className: 'text-gray-700' },
+                    { data: 'end_time', className: 'text-gray-700' },
+                    { data: 'started_at', className: 'text-gray-700 fs-8' },
+                    { data: 'ended_at', className: 'text-gray-700 fs-8' },
+                    { data: 'status' },
+                    { data: 'otp_verified' },
+                    { data: 'nurse_notes', className: 'text-gray-600 fs-8', render: function(data) {
+                        return '<div style="max-width:150px; white-space:normal;">' + data + '</div>';
+                    }}
+                ]
+            }));
 
-                if (!response.data || response.data.length === 0) {
-                    tbody.append('<tr><td colspan="9" class="text-center py-5 text-gray-500 fs-7">No sessions found.</td></tr>');
-                    return;
-                }
+            // ── Bids Table (AJAX) ──────────────────────────────────────────
+            @if($booking->care_request_id)
+                $('#bids-table').DataTable(Object.assign({}, getDtOpts('bids-skeleton', 'bids-table-wrapper'), {
+                    ajax: '{{ route('admin.bookings.bids-data', $booking->id) }}',
+                    columns: [
+                        { data: 'nurse', className: 'ps-3' },
+                        { data: 'nurse_amount' },
+                        { data: 'commission' },
+                        { data: 'total' },
+                        { data: 'status' },
+                        { data: 'notes' }
+                    ]
+                }));
+            @endif
 
-                $.each(response.data, function (i, s) {
-                    tbody.append(
-                        '<tr>' +
-                        '<td class="ps-3 fw-bold text-gray-800">' + s.session_number + '</td>' +
-                        '<td class="fw-semibold text-gray-800">' + s.session_date + '</td>' +
-                        '<td class="text-gray-700">' + s.start_time + '</td>' +
-                        '<td class="text-gray-700">' + s.end_time + '</td>' +
-                        '<td class="text-gray-700 fs-8">' + s.started_at + '</td>' +
-                        '<td class="text-gray-700 fs-8">' + s.ended_at + '</td>' +
-                        '<td>' + s.status + '</td>' +
-                        '<td>' + s.otp_verified + '</td>' +
-                        '<td class="text-gray-600 fs-8" style="max-width:150px">' + s.nurse_notes + '</td>' +
-                        '</tr>'
-                    );
-                });
-            });
+            // ── Ratings & Reviews Table (AJAX) ───────────────────────────────
+            $('#ratings-table').DataTable(Object.assign({}, getDtOpts('ratings-skeleton', 'ratings-table-wrapper'), {
+                ajax: '{{ route('admin.bookings.reviews-data', $booking->id) }}',
+                columns: [
+                    { data: 'user', className: 'ps-3' },
+                    { data: 'rating' },
+                    { data: 'review', className: 'text-gray-700 fs-7 text-wrap' },
+                    { data: 'created_at' }
+                ]
+            }));
 
             // ── Payment Logs Table (AJAX) ────────────────────────────────────
-            $.getJSON('{{ route('admin.bookings.payment-logs-data', $booking->id) }}', function (response) {
-                let tbody = $('#payment-logs-table tbody');
-                tbody.empty();
-
-                if (!response.data || response.data.length === 0) {
-                    tbody.append('<tr><td colspan="7" class="text-center py-5 text-gray-500 fs-7">No payment logs found.</td></tr>');
-                    return;
-                }
-
-                $.each(response.data, function (i, log) {
-                    tbody.append(
-                        '<tr>' +
-                        '<td class="ps-3">' + log.event + '</td>' +
-                        '<td>' + log.amount + '</td>' +
-                        '<td>' + log.gateway + '</td>' +
-                        '<td>' + log.gateway_order_id + '</td>' +
-                        '<td>' + log.gateway_payment_id + '</td>' +
-                        '<td>' + log.status + '</td>' +
-                        '<td class="text-gray-700 fs-8">' + log.created_at + '</td>' +
-                        '</tr>'
-                    );
-                });
-            });
+            $('#payment-logs-table').DataTable(Object.assign({}, getDtOpts('payment-logs-skeleton', 'payment-logs-table-wrapper'), {
+                ajax: '{{ route('admin.bookings.payment-logs-data', $booking->id) }}',
+                columns: [
+                    { data: 'event', className: 'ps-3' },
+                    { data: 'amount' },
+                    { data: 'gateway' },
+                    { data: 'gateway_order_id' },
+                    { data: 'gateway_payment_id' },
+                    { data: 'status' },
+                    { data: 'created_at', className: 'text-gray-700 fs-8' }
+                ]
+            }));
 
         });
     </script>

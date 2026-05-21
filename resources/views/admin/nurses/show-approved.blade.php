@@ -142,7 +142,7 @@
                     <a class="nav-link text-active-primary text-gray-600 px-4 py-4 active cursor-pointer" data-tab="overview">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="requests">Requests</a>
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="bookings">Bookings</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="bids">Bids</a>
@@ -334,6 +334,10 @@
 
 @endsection
 
+@push('datatables_css')
+    @include('admin.layouts.partials._datatable-cdn-css')
+@endpush
+
 @push('styles')
 <style>
     .hover-scale {
@@ -350,6 +354,10 @@
         border-radius: 50% !important;
     }
 </style>
+@endpush
+
+@push('datatables_js')
+    @include('admin.layouts.partials._datatable-cdn-js')
 @endpush
 
 @push('scripts')
@@ -450,28 +458,93 @@
                     </div>
                 `;
 
-                // Fake AJAX request (Replace with actual route later)
-                // $.ajax({ url: '/admin/nurses/{{$user->id}}/tab/' + targetTab, type: 'GET' })
-                setTimeout(() => {
-                    container.innerHTML = `
-                        <div class="card shadow-none border border-gray-300 bg-body">
-                            <div class="card-header border-0 pt-6">
-                                <h3 class="card-title fw-bold text-gray-900 fs-5 text-capitalize">${targetTab.replace('-', ' ')}</h3>
-                            </div>
-                            <div class="card-body pt-4">
-                                <div class="alert bg-light border border-gray-300 border-dashed rounded p-5 d-flex align-items-center">
-                                    <i class="ki-outline ki-information-5 fs-2x text-gray-600 me-4"></i>
-                                    <div class="d-flex flex-column">
-                                        <h4 class="mb-1 text-gray-900">Module Pending Integration</h4>
-                                        <span class="text-gray-700 fw-medium">The ${targetTab.replace('-', ' ')} data will be loaded here via AJAX.</span>
+                if (targetTab === 'reviews') {
+                    $.ajax({
+                        url: '{{ route('admin.nurses.reviews', $user->id) }}',
+                        type: 'GET',
+                        success: function (response) {
+                            container.innerHTML = response.html || response;
+                            // Re-execute scripts if any
+                            const scripts = container.getElementsByTagName('script');
+                            for (let i = 0; i < scripts.length; i++) {
+                                eval(scripts[i].innerText);
+                            }
+                        },
+                        error: function () {
+                            container.innerHTML = '<div class="alert alert-danger m-5">Failed to load reviews. Please try again.</div>';
+                        }
+                    });
+                } else if (targetTab === 'bookings') {
+                    $.ajax({
+                        url: '{{ route('admin.nurses.bookings', $user->id) }}',
+                        type: 'GET',
+                        success: function (response) {
+                            container.innerHTML = response;
+                            // Re-execute scripts since DataTables needs to initialize
+                            const scripts = container.getElementsByTagName('script');
+                            for (let i = 0; i < scripts.length; i++) {
+                                eval(scripts[i].innerText);
+                            }
+                        },
+                        error: function () {
+                            container.innerHTML = '<div class="alert alert-danger m-5">Failed to load bookings. Please try again.</div>';
+                        }
+                    });
+                } else if (targetTab === 'login-history') {
+                    $.ajax({
+                        url: '{{ route('admin.nurses.login-history', $user->id) }}',
+                        type: 'GET',
+                        success: function (response) {
+                            container.innerHTML = response;
+                            const scripts = container.getElementsByTagName('script');
+                            for (let i = 0; i < scripts.length; i++) {
+                                eval(scripts[i].innerText);
+                            }
+                        },
+                        error: function () {
+                            container.innerHTML = '<div class="alert alert-danger m-5">Failed to load login history. Please try again.</div>';
+                        }
+                    });
+                } else if (targetTab === 'bids') {
+                    $.ajax({
+                        url: '{{ route('admin.nurses.bids', $user->id) }}',
+                        type: 'GET',
+                        success: function (response) {
+                            container.innerHTML = response;
+                            const scripts = container.getElementsByTagName('script');
+                            for (let i = 0; i < scripts.length; i++) {
+                                eval(scripts[i].innerText);
+                            }
+                        },
+                        error: function () {
+                            container.innerHTML = '<div class="alert alert-danger m-5">Failed to load bids. Please try again.</div>';
+                        }
+                    });
+                } else {
+                    // Fake AJAX request for other pending tabs
+                    setTimeout(() => {
+                        container.innerHTML = `
+                            <div class="card shadow-none border border-gray-300 bg-body">
+                                <div class="card-header border-0 pt-6">
+                                    <h3 class="card-title fw-bold text-gray-900 fs-5 text-capitalize">${targetTab.replace('-', ' ')}</h3>
+                                </div>
+                                <div class="card-body pt-4">
+                                    <div class="alert bg-light border border-gray-300 border-dashed rounded p-5 d-flex align-items-center">
+                                        <i class="ki-outline ki-information-5 fs-2x text-gray-600 me-4"></i>
+                                        <div class="d-flex flex-column">
+                                            <h4 class="mb-1 text-gray-900">Module Pending Integration</h4>
+                                            <span class="text-gray-700 fw-medium">The ${targetTab.replace('-', ' ')} data will be loaded here via AJAX.</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
-                }, 800);
+                        `;
+                    }, 800);
+                }
             });
         });
+
+
     });
 </script>
 @endpush

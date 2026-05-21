@@ -164,12 +164,19 @@
                             </a>
                         </li>
                         <li class="nav-item mt-2" role="presentation">
+                            <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4" data-bs-toggle="tab" href="#kt_tab_bookings" role="tab"
+                               onclick="loadTabContent('{{ route('admin.patients.bookings', $patient->id) }}', 'kt_tab_bookings')">
+                                <i class="ki-outline ki-calendar-tick fs-5 me-2"></i>Bookings
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2" role="presentation">
                             <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4" data-bs-toggle="tab" href="#kt_tab_activity" role="tab">
                                 <i class="ki-outline ki-chart-line fs-5 me-2"></i>Activity Logs
                             </a>
                         </li>
                         <li class="nav-item mt-2" role="presentation">
-                            <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4" data-bs-toggle="tab" href="#kt_tab_login_history" role="tab">
+                            <a class="nav-link text-gray-600 text-active-dark ms-0 me-10 py-4" data-bs-toggle="tab" href="#kt_tab_login_history" role="tab"
+                               onclick="loadTabContent('{{ route('admin.patients.login-history', $patient->id) }}', 'kt_tab_login_history')">
                                 <i class="ki-outline ki-fingerprint-scan fs-5 me-2"></i>Login History
                             </a>
                         </li>
@@ -205,6 +212,15 @@
                     </div>
                 </div>
 
+                <!-- Bookings Tab -->
+                <div class="tab-pane fade" id="kt_tab_bookings" role="tabpanel">
+                    <div class="d-flex justify-content-center align-items-center py-10" id="loader_kt_tab_bookings">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Activity Tab -->
                 <div class="tab-pane fade" id="kt_tab_activity" role="tabpanel">
                     <div class="card card-bordered border-gray-300">
@@ -225,41 +241,9 @@
 
                 <!-- Login History Tab -->
                 <div class="tab-pane fade" id="kt_tab_login_history" role="tabpanel">
-                    <div class="card card-bordered border-gray-300">
-                        <div class="card-header border-bottom border-gray-300 pt-6">
-                            <div class="card-title">
-                                <h3 class="fw-bold text-gray-900 m-0">Login History</h3>
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div class="table-responsive">
-                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_logins">
-                                    <thead>
-                                        <tr class="text-start text-gray-600 fw-medium fs-7 text-uppercase gs-0">
-                                            <th>IP Address</th>
-                                            <th>Device / Browser</th>
-                                            <th>Date & Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-gray-900 fw-semibold">
-                                        @forelse($patient->loginHistories()->latest()->take(10)->get() as $login)
-                                        <tr>
-                                            <td>{{ $login->ip_address }}</td>
-                                            <td>{{ Str::limit($login->user_agent, 40) }}</td>
-                                            <td>{{ $login->created_at->format('d M Y, h:i A') }}</td>
-                                        </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="3" class="text-center py-10">
-                                                <img src="{{ asset('media/illustrations/empty.svg') }}" onerror="this.onerror=null; this.src='https://preview.keenthemes.com/metronic8/demo1/assets/media/illustrations/sketchy-1/2.png'" alt="No data" class="w-150px mb-5" />
-                                                <h4 class="text-gray-900 fw-bold mb-1">No Logins Found</h4>
-                                                <p class="text-gray-600 fs-6">The patient hasn't logged in yet.</p>
-                                            </td>
-                                        </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="d-flex justify-content-center align-items-center py-10" id="loader_kt_tab_login_history">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
                 </div>
@@ -306,3 +290,45 @@
     <!--end::Content-->
 
 @endsection
+
+@push('datatables_css')
+    @include('admin.layouts.partials._datatable-cdn-css')
+@endpush
+
+@push('datatables_js')
+    @include('admin.layouts.partials._datatable-cdn-js')
+@endpush
+
+@push('scripts')
+<script>
+    function loadTabContent(url, tabId) {
+        const tabPane = document.getElementById(tabId);
+        
+        // If content already loaded (loader is gone), don't reload
+        if (!tabPane.querySelector('#loader_' + tabId)) {
+            return;
+        }
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
+            .then(html => {
+                tabPane.innerHTML = html;
+                
+                // Execute any scripts that came with the HTML
+                const scripts = tabPane.getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    const newScript = document.createElement('script');
+                    newScript.text = scripts[i].text;
+                    document.body.appendChild(newScript).parentNode.removeChild(newScript);
+                }
+            })
+            .catch(error => {
+                tabPane.innerHTML = '<div class="alert alert-danger m-5">Failed to load content. Please try again.</div>';
+                console.error('Error loading tab content:', error);
+            });
+    }
+</script>
+@endpush

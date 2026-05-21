@@ -1861,6 +1861,67 @@
                 ]
             }
         },
+        "/api/v1/user/bookings/{booking_id}/review": {
+            "post": {
+                "tags": [
+                    "User - Bookings"
+                ],
+                "summary": "Submit a review and rating for a nurse after a booking",
+                "operationId": "storeNurseReview",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "description": "The ID of the booking to review",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "rating": {
+                                        "description": "Rating from 1 to 5",
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "review": {
+                                        "description": "Optional text review",
+                                        "type": "string",
+                                        "example": "Great service, highly recommended!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Review submitted successfully"
+                    },
+                    "400": {
+                        "description": "Application Error"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/health": {
             "get": {
                 "tags": [
@@ -1928,6 +1989,10 @@
         {
             "name": "User Care Requests",
             "description": "User Care Requests"
+        },
+        {
+            "name": "User - Bookings",
+            "description": "User - Bookings"
         },
         {
             "name": "General",

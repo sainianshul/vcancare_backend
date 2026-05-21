@@ -44,6 +44,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/pending-count', [NurseController::class, 'pendingCount'])->name('pending-count');
         Route::get('/{user}', [NurseController::class, 'show'])->name('show');
         Route::get('/{user}/application', [NurseController::class, 'showApplication'])->name('show-application');
+        Route::get('/{user}/reviews', [NurseController::class, 'reviews'])->name('reviews');
+        Route::get('/{user}/reviews/data', [NurseController::class, 'reviewsData'])->name('reviews.data');
+        Route::get('/{user}/bids', [NurseController::class, 'bids'])->name('bids');
+        Route::get('/{user}/bids/data', [NurseController::class, 'bidsData'])->name('bids.data');
+        Route::get('/{user}/bookings', [NurseController::class, 'bookings'])->name('bookings');
+        Route::get('/{user}/bookings/data', [NurseController::class, 'bookingsData'])->name('bookings.data');
+        Route::get('/{user}/login-history', [NurseController::class, 'loginHistory'])->name('login-history');
+        Route::get('/{user}/login-history/data', [NurseController::class, 'loginHistoryData'])->name('login-history.data');
         Route::get('/{user}/review-step-view/{step}', [NurseController::class, 'getReviewStepView'])->name('review-step-view');
         Route::post('/{user}/review-step', [NurseController::class, 'reviewStep'])->name('review-step');
         Route::post('/{user}/finalize-review', [NurseController::class, 'finalizeReview'])->name('finalize-review');
@@ -58,6 +66,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::post('{patient}/unblock', [PatientController::class, 'unblock'])->name('unblock');
         
         Route::get('{patient}', [PatientController::class, 'show'])->name('show');
+        Route::get('{patient}/bookings', [PatientController::class, 'bookings'])->name('bookings');
+        Route::get('{patient}/bookings/data', [PatientController::class, 'bookingsData'])->name('bookings.data');
+        Route::get('{patient}/login-history', [PatientController::class, 'loginHistory'])->name('login-history');
+        Route::get('{patient}/login-history/data', [PatientController::class, 'loginHistoryData'])->name('login-history.data');
         Route::get('{patient}/edit', [PatientController::class, 'edit'])->name('edit');
         Route::post('{patient}', [PatientController::class, 'update'])->name('update');
         Route::delete('{patient}', [PatientController::class, 'destroy'])->name('destroy');
@@ -105,6 +117,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/data', [\App\Http\Controllers\Admin\BookingController::class, 'data'])->name('data');
         Route::get('{booking}/sessions-data', [\App\Http\Controllers\Admin\BookingController::class, 'sessionsData'])->name('sessions-data');
         Route::get('{booking}/payment-logs-data', [\App\Http\Controllers\Admin\BookingController::class, 'paymentLogsData'])->name('payment-logs-data');
+        Route::get('{booking}/reviews-data', [\App\Http\Controllers\Admin\BookingController::class, 'reviewsData'])->name('reviews-data');
+        Route::get('{booking}/bids-data', [\App\Http\Controllers\Admin\BookingController::class, 'bidsData'])->name('bids-data');
         Route::get('{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'show'])->name('show');
     });
 
