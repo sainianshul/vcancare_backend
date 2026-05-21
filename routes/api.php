@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\CareTypeController;
+use App\Http\Controllers\Api\Nurse\CareRequestController as NurseCareRequestController;
+use App\Http\Controllers\Api\Nurse\BookingController as NurseBookingController;
 use App\Http\Controllers\Api\Nurse\OnboardingController;
+use App\Http\Controllers\Api\User\CareRequestController as UserCareRequestController;
+use App\Http\Controllers\Api\User\BookingController as UserBookingController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\Auth\AuthController;
@@ -37,13 +41,57 @@ Route::prefix('v1')->group(function () {
             'care-types',
             [CareTypeController::class, 'index']
         );
+
+        // =====================
         // User Routes
+        // =====================
         Route::prefix('user')->group(function () {
-            Route::post('care-requests', [\App\Http\Controllers\Api\User\CareRequestController::class, 'store']);
+
+            // Care Requests
+            Route::get('care-requests', [UserCareRequestController::class, 'index']);
+            Route::post('care-requests', [UserCareRequestController::class, 'store']);
+            Route::post('care-requests/{care_request_id}/cancel', [UserBookingController::class, 'cancelRequest']);
+            Route::get('care-requests/{care_request_id}/bids', [UserCareRequestController::class, 'bids']);
+            Route::get('care-requests/{care_request_id}/bids/{bid_id}', [UserCareRequestController::class, 'showBid']);
+
+            // Bookings
+            Route::get('bookings', [UserBookingController::class, 'index']);
+            Route::get('bookings/{booking_id}', [UserBookingController::class, 'show']);
+            Route::post('bookings/select-bid', [UserBookingController::class, 'selectBid']);
+            Route::post('bookings/{booking_id}/pay', [UserBookingController::class, 'initiatePayment']);
+            Route::post('bookings/{booking_id}/confirm-payment', [UserBookingController::class, 'confirmPayment']);
+            Route::post('bookings/{booking_id}/cancel', [UserBookingController::class, 'cancel']);
+            Route::get('bookings/{booking_id}/otp', [UserBookingController::class, 'getSessionOtp']);
+
+            // Wallet
+            Route::get('wallet', [UserBookingController::class, 'wallet']);
         });
 
+        // =====================
         // Nurse Routes
+        // =====================
         Route::prefix('nurse')->group(function () {
+
+            // Protected routes that require an approved nurse profile
+            Route::middleware(['nurse_approved'])->group(function () {
+
+                // Care Requests (bidding)
+                Route::get('care-requests', [NurseCareRequestController::class, 'index']);
+                Route::get('care-requests/{id}', [NurseCareRequestController::class, 'show']);
+                Route::post('care-requests/bid', [NurseCareRequestController::class, 'placeBid']);
+
+                // Bookings
+                Route::get('bookings', [NurseBookingController::class, 'index']);
+                Route::get('schedule', [NurseBookingController::class, 'schedule']);
+                Route::post('sessions/{session_id}/start', [NurseBookingController::class, 'startSession']);
+                Route::post('sessions/{session_id}/end', [NurseBookingController::class, 'endSession']);
+                Route::post('bookings/{booking_id}/cancel', [NurseBookingController::class, 'cancel']);
+
+                // Wallet & Withdrawals
+                Route::get('wallet', [NurseBookingController::class, 'wallet']);
+                Route::post('wallet/withdraw', [NurseBookingController::class, 'requestWithdrawal']);
+                Route::get('wallet/withdrawals', [NurseBookingController::class, 'withdrawals']);
+            });
 
             //  Nurse Onboarding Routes
             Route::post('onboarding/basic-profile', [OnboardingController::class, 'saveBasicProfile']);

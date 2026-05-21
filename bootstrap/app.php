@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'nurse_approved' => \App\Http\Middleware\EnsureNurseIsApproved::class,
         ]);
 
         $middleware->api(prepend: [
@@ -33,6 +34,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
 
         $exceptions->shouldRenderJsonWhen(function (\Illuminate\Http\Request $request, \Throwable $e) {
+            if ($request->is('api/documentation*') || $request->is('docs/asset/*')) {
+                return false;
+            }
             if ($request->is('api/*')) {
                 return true;
             }
@@ -41,6 +45,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Validation – For API 
         $exceptions->render(function (ValidationException $e, $request) {
+            if ($request->is('api/documentation*') || $request->is('docs/asset/*'))
+                return null;
             if (!$request->is('api/*') && !$request->expectsJson()) {
                 return null;
             }
@@ -49,6 +55,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Auth – For API 
         $exceptions->render(function (AuthenticationException $e, $request) {
+            if ($request->is('api/documentation*') || $request->is('docs/asset/*'))
+                return null;
             if (!$request->is('api/*') && !$request->expectsJson()) {
                 return null;
             }
@@ -57,43 +65,46 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Model Not Found – API JSON, 
         $exceptions->render(function (ModelNotFoundException $e, $request) {
+            if ($request->is('api/documentation*') || $request->is('docs/asset/*'))
+                return null;
             if (!$request->is('api/*') && !$request->expectsJson()) {
                 return null;
             }
             return ApiResponse::error('Resource not found', 404);
         });
 
-        // Global catch – API JSON with error ID,
-        $exceptions->render(function (Throwable $e, $request) {
-            if (!$request->is('api/*') && !$request->expectsJson()) {
-                return null;
-            }
+        /*  // Global catch – API JSON with error ID,
+          $exceptions->render(function (Throwable $e, $request) {
+              if ($request->is('api/documentation*') || $request->is('docs/asset/*')) return null;
+              if (!$request->is('api/*') && !$request->expectsJson()) {
+                  return null;
+              }
 
-            $errorId = 'ERR-' . strtoupper(str()->random(10));
+              $errorId = 'ERR-' . strtoupper(str()->random(10));
 
-            try {
-                ApplicationError::create([
-                    'error_id' => $errorId,
-                    'user_id' => auth()->id() ?? null,
-                    'message' => $e->getMessage(),
-                    'exception' => get_class($e),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'url' => $request->fullUrl(),
-                    'method' => $request->method(),
-                    'ip_address' => $request->ip(),
-                    'request_data' => $request->all(),
-                    'trace' => $e->getTraceAsString(),
-                    'status' => ApplicationError::STATUS_PENDING,
-                ]);
-            } catch (Throwable $logException) {
-                report($logException);
-            }
+              try {
+                  ApplicationError::create([
+                      'error_id' => $errorId,
+                      'user_id' => auth()->id() ?? null,
+                      'message' => $e->getMessage(),
+                      'exception' => get_class($e),
+                      'file' => $e->getFile(),
+                      'line' => $e->getLine(),
+                      'url' => $request->fullUrl(),
+                      'method' => $request->method(),
+                      'ip_address' => $request->ip(),
+                      'request_data' => $request->all(),
+                      'trace' => $e->getTraceAsString(),
+                      'status' => ApplicationError::STATUS_PENDING,
+                  ]);
+              } catch (Throwable $logException) {
+                  report($logException);
+              }
 
-            report($e);
+              report($e);
 
-            return ApiResponse::error('Something went wrong', 500, [
-                'error_id' => $errorId,
-            ]);
-        });
+              return ApiResponse::error('Something went wrong', 500, [
+                  'error_id' => $errorId,
+              ]);
+          }); */
     })->create();

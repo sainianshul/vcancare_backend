@@ -21,6 +21,8 @@ class CareType extends Model
         'image_path',
         'created_by',
         'status',
+        'commision_type',
+        'commision_value',
     ];
 
     protected $casts = [
@@ -35,6 +37,29 @@ class CareType extends Model
             self::STATUS_ACTIVE => 'Active',
             self::STATUS_DRAFT => 'Draft',
         ];
+    }
+
+    const COMMISION_TYPE_FIXED_PER_DAY = 0;
+    const COMMISION_TYPE_PERCENT = 1;
+    const COMMISION_TYPE_FLAT_FIXED = 2;
+
+    public static function getCommisionTypeList(): array
+    {
+        return [
+            self::COMMISION_TYPE_FIXED_PER_DAY => 'Fixed Per Day',
+            self::COMMISION_TYPE_PERCENT => 'Percent',
+            self::COMMISION_TYPE_FLAT_FIXED => 'Fixed Total',
+        ];
+    }
+
+    public function getCommissionTextAttribute(): string
+    {
+        if ($this->commision_type === self::COMMISION_TYPE_PERCENT) {
+            return $this->commision_value . '%';
+        } elseif ($this->commision_type === self::COMMISION_TYPE_FLAT_FIXED) {
+            return '₹' . $this->commision_value . ' flat';
+        }
+        return '₹' . $this->commision_value . ' / day';
     }
 
     public function getStatusTextAttribute(): string

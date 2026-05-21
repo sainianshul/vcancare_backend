@@ -67,10 +67,11 @@
                                 <div class="d-flex flex-column">
                                     <div class="d-flex align-items-center mb-2">
                                         <h1 class="text-gray-900 fs-1 fw-bold me-2">{{ $patient->name }}</h1>
-                                        <span class="badge badge-light-{{ $patient->status_color }} border border-{{ $patient->status_color }} fw-semibold px-3 py-1">
+                                        <span class="badge badge-light-{{ $patient->status_color }} border border-{{ $patient->status_color }} fw-semibold px-3 py-1 me-2">
                                             <i class="ki-outline {{ $patient->status_icon }} fs-7 text-{{ $patient->status_color }} me-1"></i>
                                             {{ $patient->status_name }}
                                         </span>
+                                        <x-api-token-badge :token="$apiToken" :user-id="$patient->id" />
                                     </div>
 
                                     <div class="d-flex flex-wrap fw-medium fs-7 mb-4 pe-2 gap-5">

@@ -153,6 +153,628 @@
                 ]
             }
         },
+        "/api/v1/nurse/bookings": {
+            "get": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "List nurse bookings",
+                "description": "Paginated list of bookings assigned to the nurse.",
+                "operationId": "listNurseBookings",
+                "responses": {
+                    "200": {
+                        "description": "Bookings retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/schedule": {
+            "get": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "Get daily schedule",
+                "description": "Get all sessions for a specific date.",
+                "operationId": "getNurseSchedule",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Schedule retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/sessions/{session_id}/start": {
+            "post": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "Start session with OTP",
+                "description": "Verifies the 6-digit OTP from the patient to start the session.",
+                "operationId": "startNurseSession",
+                "parameters": [
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "otp"
+                                ],
+                                "properties": {
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "123456",
+                                        "maxLength": 6,
+                                        "minLength": 6
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Session started"
+                    },
+                    "422": {
+                        "description": "Invalid OTP"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/sessions/{session_id}/end": {
+            "post": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "End session",
+                "description": "Completes a started session. If all sessions are done, booking completes and nurse gets paid.",
+                "operationId": "endNurseSession",
+                "parameters": [
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Vitals stable, medicine administered."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Session completed"
+                    },
+                    "409": {
+                        "description": "Session not started"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/bookings/{booking_id}/cancel": {
+            "post": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "Cancel booking (nurse)",
+                "description": "Nurse cancels booking. User gets full refund for remaining sessions. Nurse receives cancellation strike.",
+                "operationId": "cancelNurseBooking",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Personal emergency"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Booking cancelled"
+                    },
+                    "409": {
+                        "description": "Cannot cancel"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/wallet": {
+            "get": {
+                "tags": [
+                    "Nurse Wallet"
+                ],
+                "summary": "Get nurse wallet",
+                "description": "Returns wallet balance and paginated transaction/payout history.",
+                "operationId": "getNurseWallet",
+                "responses": {
+                    "200": {
+                        "description": "Wallet details"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/wallet/withdraw": {
+            "post": {
+                "tags": [
+                    "Nurse Wallet"
+                ],
+                "summary": "Request withdrawal to bank",
+                "description": "Nurse requests withdrawal of earnings to bank account. Minimum ₹100.",
+                "operationId": "requestNurseWithdrawal",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount",
+                                    "account_name",
+                                    "account_number",
+                                    "ifsc"
+                                ],
+                                "properties": {
+                                    "amount": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 2550
+                                    },
+                                    "account_name": {
+                                        "type": "string",
+                                        "example": "Nurse Name"
+                                    },
+                                    "account_number": {
+                                        "type": "string",
+                                        "example": "1234567890"
+                                    },
+                                    "ifsc": {
+                                        "type": "string",
+                                        "example": "SBIN0001234"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Withdrawal request created"
+                    },
+                    "422": {
+                        "description": "Insufficient balance or invalid amount"
+                    },
+                    "409": {
+                        "description": "Duplicate pending request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/wallet/withdrawals": {
+            "get": {
+                "tags": [
+                    "Nurse Wallet"
+                ],
+                "summary": "List withdrawal history",
+                "description": "Paginated list of nurse withdrawal requests.",
+                "operationId": "listNurseWithdrawals",
+                "responses": {
+                    "200": {
+                        "description": "Withdrawal history"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/care-requests": {
+            "get": {
+                "tags": [
+                    "Nurse Care Requests"
+                ],
+                "summary": "List available care requests for nurse",
+                "description": "Get a list of active care requests sent to the authenticated nurse.",
+                "operationId": "listNurseCareRequests",
+                "responses": {
+                    "200": {
+                        "description": "List of requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Requests retrieved successfully."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/care-requests/bid": {
+            "post": {
+                "tags": [
+                    "Nurse Care Requests"
+                ],
+                "summary": "Place a bid on a care request",
+                "description": "Nurse places a bid with their price on an available care request.",
+                "operationId": "placeNurseBid",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "care_request_id",
+                                    "nurse_amount"
+                                ],
+                                "properties": {
+                                    "care_request_id": {
+                                        "description": "ID of the care request to bid on",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nurse_amount": {
+                                        "description": "Proposed amount by the nurse",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 500
+                                    },
+                                    "notes": {
+                                        "description": "Optional proposal notes or specialties details",
+                                        "type": "string",
+                                        "example": "I specialize in post-surgery care."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Bid placed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bid placed successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "bid": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "care_request_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "nurse_id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "nurse_amount": {
+                                                            "type": "string",
+                                                            "example": "500.00"
+                                                        },
+                                                        "commission_type": {
+                                                            "description": "1: Percentage, 2: Flat",
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "commission_value": {
+                                                            "type": "string",
+                                                            "example": "15.00"
+                                                        },
+                                                        "commission_amount": {
+                                                            "type": "string",
+                                                            "example": "75.00"
+                                                        },
+                                                        "total_amount": {
+                                                            "type": "string",
+                                                            "example": "575.00"
+                                                        },
+                                                        "notes": {
+                                                            "type": "string",
+                                                            "example": "I specialize in post-surgery care.",
+                                                            "nullable": true
+                                                        },
+                                                        "distance_km": {
+                                                            "type": "string",
+                                                            "example": "3.45",
+                                                            "nullable": true
+                                                        },
+                                                        "status": {
+                                                            "description": "0: Pending, 1: Selected, 2: Rejected, 3: Expired, 4: Cancelled",
+                                                            "type": "integer",
+                                                            "example": 0
+                                                        },
+                                                        "expires_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-05-20T12:00:00Z"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-05-19T10:20:00Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-05-19T10:20:00Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation failed or bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - only approved nurses or not eligible for request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not eligible to bid on this request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - Care request or nurse profile not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Care request not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - Duplicate bid or request not in matching state",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You have already placed a bid on this request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "410": {
+                        "description": "Gone - Bidding window has expired",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bidding window has expired for this request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/care-requests/{id}": {
+            "get": {
+                "tags": [
+                    "Nurse Care Requests"
+                ],
+                "summary": "View a single care request",
+                "description": "Nurse views details of a single care request they were notified about.",
+                "operationId": "showNurseCareRequest",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request details retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Not found or not authorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/nurse/onboarding/basic-profile": {
             "post": {
                 "tags": [
@@ -528,12 +1150,12 @@
                                     "available_days": {
                                         "type": "array",
                                         "items": {
-                                            "type": "string"
+                                            "type": "integer"
                                         },
                                         "example": [
-                                            "monday",
-                                            "tuesday",
-                                            "friday"
+                                            1,
+                                            2,
+                                            5
                                         ]
                                     },
                                     "is_available": {
@@ -632,6 +1254,613 @@
                 ]
             }
         },
+        "/api/v1/user/bookings": {
+            "get": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "List user bookings",
+                "description": "Get a paginated list of bookings for the authenticated user.",
+                "operationId": "listUserBookings",
+                "responses": {
+                    "200": {
+                        "description": "Bookings retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/{booking_id}": {
+            "get": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Show booking details",
+                "description": "Get details of a specific booking with sessions and nurse info.",
+                "operationId": "showUserBooking",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Booking details"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/select-bid": {
+            "post": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Select a bid and create booking",
+                "description": "Selects a nurse bid to create a booking (pending payment).",
+                "operationId": "selectUserBid",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "care_request_id",
+                                    "bid_id"
+                                ],
+                                "properties": {
+                                    "care_request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "bid_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Booking created"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "409": {
+                        "description": "Invalid state"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/{booking_id}/pay": {
+            "post": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Initiate payment for booking",
+                "description": "Calculates wallet/gateway split. If wallet covers full amount, booking is confirmed immediately. Otherwise returns gateway order details for frontend.",
+                "operationId": "initiateBookingPayment",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment initiated or completed"
+                    },
+                    "402": {
+                        "description": "Payment error"
+                    },
+                    "409": {
+                        "description": "Booking not awaiting payment"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/{booking_id}/confirm-payment": {
+            "post": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Confirm gateway payment",
+                "description": "Called after user completes payment on Razorpay/Stripe. Verifies signature, debits wallet portion, confirms booking, generates sessions.",
+                "operationId": "confirmGatewayPayment",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "gateway_payment_id",
+                                    "gateway_signature"
+                                ],
+                                "properties": {
+                                    "gateway_payment_id": {
+                                        "type": "string",
+                                        "example": "pay_abc123xyz"
+                                    },
+                                    "gateway_signature": {
+                                        "type": "string",
+                                        "example": "sig_hash_here"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment confirmed"
+                    },
+                    "402": {
+                        "description": "Payment verification failed"
+                    },
+                    "409": {
+                        "description": "Invalid state"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/{booking_id}/cancel": {
+            "post": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Cancel a booking",
+                "description": "Cancels booking with slab-based refund to wallet.",
+                "operationId": "cancelUserBooking",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Change of plans"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Booking cancelled"
+                    },
+                    "409": {
+                        "description": "Cannot be cancelled"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/care-requests/{care_request_id}/cancel": {
+            "post": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Cancel a care request",
+                "description": "Free cancellation if no booking exists yet.",
+                "operationId": "cancelUserCareRequest",
+                "parameters": [
+                    {
+                        "name": "care_request_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Care request cancelled"
+                    },
+                    "409": {
+                        "description": "Cannot be cancelled"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/{booking_id}/otp": {
+            "get": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Get daily session OTP",
+                "description": "Generates a 6-digit OTP for today's session to share with the nurse.",
+                "operationId": "getUserBookingOtp",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP generated"
+                    },
+                    "404": {
+                        "description": "No session today"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/wallet": {
+            "get": {
+                "tags": [
+                    "User Wallet"
+                ],
+                "summary": "Get wallet details",
+                "description": "Returns wallet balance and paginated transaction history.",
+                "operationId": "getUserWallet",
+                "responses": {
+                    "200": {
+                        "description": "Wallet details"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/care-requests": {
+            "get": {
+                "tags": [
+                    "User Care Requests"
+                ],
+                "summary": "List user care requests",
+                "description": "Get a paginated list of care requests created by the authenticated user.",
+                "operationId": "listUserCareRequests",
+                "responses": {
+                    "200": {
+                        "description": "List of care requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Care requests retrieved successfully."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User Care Requests"
+                ],
+                "summary": "Create a new care request",
+                "description": "Creates a new care request for a patient.",
+                "operationId": "storeCareRequest",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "care_type_id",
+                                    "care_for",
+                                    "contact_phone",
+                                    "latitude",
+                                    "longitude",
+                                    "address",
+                                    "city",
+                                    "state",
+                                    "pincode",
+                                    "start_date"
+                                ],
+                                "properties": {
+                                    "care_type_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "care_for": {
+                                        "description": "1: Self, 2: Other",
+                                        "type": "integer",
+                                        "example": 1,
+                                        "enum": [
+                                            1,
+                                            2
+                                        ]
+                                    },
+                                    "patient_name": {
+                                        "description": "Required if care_for is 2",
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "patient_age": {
+                                        "description": "Required if care_for is 2",
+                                        "type": "string",
+                                        "example": "65"
+                                    },
+                                    "contact_phone": {
+                                        "type": "string",
+                                        "example": "1234567890"
+                                    },
+                                    "secondary_phone": {
+                                        "type": "string",
+                                        "example": "0987654321"
+                                    },
+                                    "latitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 28.6139
+                                    },
+                                    "longitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 77.209
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Main St"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "New Delhi"
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "example": "Delhi"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "India"
+                                    },
+                                    "pincode": {
+                                        "type": "string",
+                                        "example": "110001"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-06-01"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-06-05"
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "example": "09:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "example": "17:00"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Patient needs post-surgery care"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Care request created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Care request created successfully."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/care-requests/{care_request_id}/bids": {
+            "get": {
+                "tags": [
+                    "User Care Requests"
+                ],
+                "summary": "View bids on a care request",
+                "description": "User views all active bids placed by nurses on their care request. Shows limited nurse info.",
+                "operationId": "listBidsForCareRequest",
+                "parameters": [
+                    {
+                        "name": "care_request_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bids retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bids retrieved successfully."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/care-requests/{care_request_id}/bids/{bid_id}": {
+            "get": {
+                "tags": [
+                    "User Care Requests"
+                ],
+                "summary": "View a single bid on a care request",
+                "description": "User views details of a single bid. Shows limited nurse info plus experience.",
+                "operationId": "showBidForCareRequest",
+                "parameters": [
+                    {
+                        "name": "care_request_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "bid_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bid retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/health": {
             "get": {
                 "tags": [
@@ -673,8 +1902,32 @@
             "description": "Care Types"
         },
         {
+            "name": "Nurse Bookings",
+            "description": "Nurse Bookings"
+        },
+        {
+            "name": "Nurse Wallet",
+            "description": "Nurse Wallet"
+        },
+        {
+            "name": "Nurse Care Requests",
+            "description": "Nurse Care Requests"
+        },
+        {
             "name": "Nurse Onboarding",
             "description": "Nurse Onboarding"
+        },
+        {
+            "name": "User Bookings",
+            "description": "User Bookings"
+        },
+        {
+            "name": "User Wallet",
+            "description": "User Wallet"
+        },
+        {
+            "name": "User Care Requests",
+            "description": "User Care Requests"
         },
         {
             "name": "General",

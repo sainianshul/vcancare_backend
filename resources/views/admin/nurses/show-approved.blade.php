@@ -28,7 +28,8 @@
                         <div class="d-flex flex-column">
                             <div class="d-flex align-items-center mb-2">
                                 <span class="text-gray-900 fs-2 fw-bold me-2">{{ $user->name }}</span>
-                                <i class="ki-outline ki-verify fs-1 text-primary" title="Verified Professional"></i>
+                                <i class="ki-outline ki-verify fs-1 text-primary me-2" title="Verified Professional"></i>
+                                <x-api-token-badge :token="$apiToken" :user-id="$user->id" />
                             </div>
                             <div class="d-flex flex-wrap fw-medium fs-7 mb-4 pe-2">
                                 <span class="d-flex align-items-center text-gray-800 me-5 mb-2">
@@ -162,84 +163,146 @@
     <!-- AJAX Content Container -->
     <div id="tab-content-container">
         <!-- Default Content: Overview -->
-        <div class="row g-5 g-xl-8">
-            <!-- Left Column: Details -->
-            <div class="col-xl-4">
-            <!-- Basic Details -->
-            <div class="card shadow-sm border-0 mb-5 mb-xl-8">
-                <div class="card-header border-0 pt-6">
-                    <h3 class="card-title fw-bolder text-dark fs-5">About</h3>
+        <div class="row g-7">
+            <!-- Left Column: Main Details & Graph -->
+            <div class="col-lg-8">
+                
+                <!-- About Details -->
+                <div class="card shadow-sm border-0 border-gray-300 mb-7">
+                    <div class="card-header border-0 pt-4 min-h-50px">
+                        <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">Professional Details</h3>
+                    </div>
+                    <div class="card-body pt-2 pb-5">
+                        <div class="d-flex flex-wrap gap-4 mb-5">
+                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-3 mb-3 flex-grow-1">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="ki-outline ki-medal-star fs-3 text-warning me-2"></i>
+                                    <div class="fs-6 fw-bold text-gray-900">{{ $profile->years_of_experience ?? 0 }} Years</div>
+                                </div>
+                                <div class="fw-semibold fs-8 text-gray-600">Experience</div>
+                            </div>
+                            
+                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-3 mb-3 flex-grow-1">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="ki-outline ki-document fs-3 text-primary me-2"></i>
+                                    <div class="fs-6 fw-bold text-gray-900">{{ $profile->license_number ?? 'N/A' }}</div>
+                                </div>
+                                <div class="fw-semibold fs-8 text-gray-600">License Number</div>
+                            </div>
+
+                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 mb-3 flex-grow-1">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="ki-outline ki-profile-user fs-3 text-success me-2"></i>
+                                    <div class="fs-6 fw-bold text-gray-900">
+                                        @if($profile->gender == \App\Models\NurseProfile::GENDER_MALE) Male
+                                        @elseif($profile->gender == \App\Models\NurseProfile::GENDER_FEMALE) Female
+                                        @else Other @endif
+                                    </div>
+                                </div>
+                                <div class="fw-semibold fs-8 text-gray-600">Gender</div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-sm-6">
+                                <div class="bg-light-info rounded p-3 border border-info border-dashed">
+                                    <span class="text-info fw-semibold d-block fs-8 mb-1">Phone Number</span>
+                                    <span class="fw-bold fs-7 text-gray-900">{{ $user->phone ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="bg-light-primary rounded p-3 border border-primary border-dashed">
+                                    <span class="text-primary fw-semibold d-block fs-8 mb-1">Email Address</span>
+                                    <span class="fw-bold fs-7 text-gray-900 text-truncate d-block">{{ $user->email ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body pt-4">
-                    <div class="d-flex flex-column gap-3 fs-7 fw-semibold">
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">License</span>
-                            <span class="text-gray-900">{{ $profile->license_number ?? 'N/A' }}</span>
+
+                <!-- Earnings / Bookings Graph -->
+                <div class="card shadow-sm border border-gray-300 mb-7">
+                    <div class="card-header border-0 pt-4 min-h-50px">
+                        <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">Monthly Bookings & Activity</h3>
+                        <div class="card-toolbar">
+                            <button class="btn btn-sm btn-light border border-gray-300 text-gray-700 fw-medium px-3 py-1 fs-8">
+                                <i class="ki-outline ki-filter fs-7"></i> Filter
+                            </button>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">Experience</span>
-                            <span class="text-gray-900">{{ $profile->years_of_experience ?? 0 }} Years</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">Gender</span>
-                            <span class="text-gray-900">
-                                @if($profile->gender == \App\Models\NurseProfile::GENDER_MALE) Male
-                                @elseif($profile->gender == \App\Models\NurseProfile::GENDER_FEMALE) Female
-                                @else Other @endif
-                            </span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">City</span>
-                            <span class="text-gray-900">{{ $profile->city ?? 'N/A' }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">State</span>
-                            <span class="text-gray-900">{{ $profile->state ?? 'N/A' }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">Country</span>
-                            <span class="text-gray-900">{{ $profile->country ?? 'N/A' }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">Postcode</span>
-                            <span class="text-gray-900">{{ $profile->pincode ?? 'N/A' }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between mt-2 pt-2 border-top border-gray-200 border-dashed">
-                            <span class="w-100px text-gray-500">Phone</span>
-                            <span class="text-gray-900">{{ $user->phone ?? 'N/A' }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="w-100px text-gray-500">Email</span>
-                            <span class="text-gray-900 text-end text-break w-150px">{{ $user->email ?? 'N/A' }}</span>
-                        </div>
+                    </div>
+                    <div class="card-body pt-2 pb-6">
+                        <div id="kt_charts_widget_activity" style="height: 300px"></div>
                     </div>
                 </div>
             </div>
 
-                <!-- Schedule / Availability -->
-                <div class="card shadow-sm border-0 mb-5 mb-xl-8">
-                    <div class="card-header border-0 pt-6">
-                        <h3 class="card-title fw-bolder text-dark fs-5">Schedule</h3>
+            <!-- Right Column: Location & Schedule -->
+            <div class="col-lg-4">
+                
+                <!-- Location Card (Matching Request UI) -->
+                <div class="card shadow-sm border border-gray-300 mb-7">
+                    <div class="card-header border-0 pt-4 min-h-50px">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold fs-5 mb-0 text-gray-900">Location</span>
+                        </h3>
                     </div>
-                    <div class="card-body pt-4">
-                        <div class="mb-5 d-flex justify-content-between align-items-center bg-light rounded p-4 border border-gray-200">
-                            <span class="text-gray-800 fw-medium fs-7">Current Status</span>
+                    <div class="card-body pt-2 pb-5">
+                        <div class="d-flex align-items-start mb-4">
+                            <span class="bullet bullet-vertical h-30px bg-success me-3 mt-1"></span>
+                            <div class="flex-grow-1">
+                                <span class="text-gray-600 fw-semibold d-block fs-8">Full Address</span>
+                                <span class="fw-bold fs-7 text-gray-900">{{ $profile->address ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-4">
+                            <span class="bullet bullet-vertical h-30px bg-primary me-3 mt-1"></span>
+                            <div class="flex-grow-1">
+                                <span class="text-gray-600 fw-semibold d-block fs-8">City & State</span>
+                                <span class="fw-bold fs-7 text-gray-900">{{ $profile->city ?? 'N/A' }}, {{ $profile->state ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <span class="bullet bullet-vertical h-30px bg-warning me-3 mt-1"></span>
+                            <div class="flex-grow-1">
+                                <span class="text-gray-600 fw-semibold d-block fs-8">Country & Pincode</span>
+                                <span class="fw-bold fs-7 text-gray-900">{{ $profile->country ?? 'N/A' }} - {{ $profile->pincode ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule / Availability -->
+                <div class="card shadow-sm border border-gray-300 mb-7">
+                    <div class="card-header border-0 pt-4 min-h-50px">
+                        <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">Availability</h3>
+                    </div>
+                    <div class="card-body pt-2 pb-5">
+                        <div class="mb-5 d-flex justify-content-between align-items-center bg-light rounded p-3 border border-gray-200">
+                            <span class="text-gray-700 fw-medium fs-7">Current Status</span>
                             @if($profile->is_available)
-                                <span class="badge badge-light-success border border-success fw-bold px-3 py-1 fs-8"><i class="ki-outline ki-check-circle fs-8 me-1 text-success"></i> Available</span>
+                                <span class="badge badge-light-success border border-success fw-bold px-3 py-1 fs-8">
+                                    <i class="ki-outline ki-check-circle fs-8 me-1 text-success"></i> Available
+                                </span>
                             @else
-                                <span class="badge badge-light-danger border border-danger fw-bold px-3 py-1 fs-8"><i class="ki-outline ki-minus-circle fs-8 me-1 text-danger"></i> Offline</span>
+                                <span class="badge badge-light-danger border border-danger fw-bold px-3 py-1 fs-8">
+                                    <i class="ki-outline ki-minus-circle fs-8 me-1 text-danger"></i> Offline
+                                </span>
                             @endif
                         </div>
-                        <div class="d-flex justify-content-between align-items-center border-bottom border-gray-200 border-dashed pb-3 mb-3">
+                        
+                        <div class="d-flex justify-content-between align-items-center border-bottom border-gray-200 border-dashed pb-3 mb-4">
                             <span class="text-gray-600 fw-semibold fs-7">Available Hours</span>
-                            <span class="text-gray-900 fw-medium fs-7">
+                            <span class="text-gray-900 fw-bold fs-7 d-flex align-items-center gap-2">
+                                <i class="ki-outline ki-sun fs-5 text-warning"></i> 
                                 {{ $profile->available_from ? \Carbon\Carbon::parse($profile->available_from)->format('h:i A') : 'N/A' }} 
-                                - 
+                                <span class="text-muted fw-normal">-</span> 
+                                <i class="ki-outline ki-moon fs-5 text-primary"></i> 
                                 {{ $profile->available_to ? \Carbon\Carbon::parse($profile->available_to)->format('h:i A') : 'N/A' }}
                             </span>
                         </div>
-                        <div class="d-flex flex-column mt-4">
-                            <span class="text-gray-600 fw-semibold fs-7 mb-2">Available Days</span>
+                        
+                        <div class="d-flex flex-column">
+                            <span class="text-gray-600 fw-semibold fs-7 mb-3">Available Days</span>
                             <div class="d-flex flex-wrap gap-2">
                                 @php
                                     $allDaysMap = \App\Models\NurseProfile::getDaysList();
@@ -250,35 +313,19 @@
                                     }
                                     $days = array_map('intval', $days);
                                 @endphp
-                                @forelse($days as $dayValue)
-                                    @if(isset($allDaysMap[$dayValue]))
-                                        <span class="badge badge-light border border-gray-300 text-gray-800 fw-medium fs-8">{{ $allDaysMap[$dayValue] }}</span>
+                                
+                                @foreach($allDaysMap as $dayValue => $dayName)
+                                    @if(in_array($dayValue, $days))
+                                        <span class="badge badge-light-success border border-success text-success fw-bold px-3 py-2 fs-8">{{ $dayName }}</span>
+                                    @else
+                                        <span class="badge badge-light-danger border border-danger text-danger fw-bold px-3 py-2 fs-8 text-decoration-line-through opacity-75">{{ $dayName }}</span>
                                     @endif
-                                @empty
-                                    <span class="text-gray-500 fs-8">No specific days</span>
-                                @endforelse
+                                @endforeach
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: Graph & Activity -->
-            <div class="col-xl-8">
-                <!-- Earnings / Bookings Graph -->
-                <div class="card shadow-sm border-0 mb-5 mb-xl-8">
-                    <div class="card-header border-0 pt-6">
-                        <h3 class="card-title fw-bolder text-dark fs-5">Monthly Bookings & Activity</h3>
-                        <div class="card-toolbar">
-                            <button class="btn btn-sm btn-light border border-gray-300 text-gray-700 fw-medium">
-                                <i class="ki-outline ki-filter fs-6"></i> Filter
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body pt-2 pb-6">
-                        <div id="kt_charts_widget_activity" style="height: 300px"></div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

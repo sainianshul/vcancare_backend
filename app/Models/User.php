@@ -151,6 +151,17 @@ class User extends Authenticatable
     {
         return $this->hasOne(NurseProfile::class);
     }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
     // app/Models/User.php
 
     public function toUserResponse(): array

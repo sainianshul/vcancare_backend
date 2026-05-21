@@ -22,10 +22,11 @@ class PatientController extends Controller
 
     public function show(User $patient)
     {
-        // Ensure the user is a patient
         abort_unless($patient->isUser(), 404);
 
-        return view('admin.patients.show', compact('patient'));
+        $apiToken = $patient->tokens()->latest()->first();
+
+        return view('admin.patients.show', compact('patient', 'apiToken'));
     }
 
     public function edit(User $patient)

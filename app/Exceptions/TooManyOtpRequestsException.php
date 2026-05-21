@@ -2,16 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Helpers\ApiResponse;
-use Exception;
-
-class TooManyOtpRequestsException extends Exception
+class TooManyOtpRequestsException extends ApiException
 {
-    public function render()
-    {
-        return ApiResponse::error(
-            $this->getMessage(),
-            429
-        );
-    }
+    protected int $defaultStatus = 429;
 }

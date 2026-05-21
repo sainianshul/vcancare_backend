@@ -88,17 +88,18 @@ class NurseController extends Controller
         abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
 
         $profile = $user->nurseProfile;
+        $apiToken = $user->tokens()->latest()->first();
 
         // Route based on status
         if ($profile->status === NurseProfile::STATUS_APPROVED) {
-            return view('admin.nurses.show-approved', compact('user', 'profile'));
+            return view('admin.nurses.show-approved', compact('user', 'profile', 'apiToken'));
         } elseif ($profile->status === NurseProfile::STATUS_UNDER_REVIEW) {
-            return view('admin.nurses.show-review', compact('user', 'profile'));
+            return view('admin.nurses.show-review', compact('user', 'profile', 'apiToken'));
         } elseif ($profile->status === NurseProfile::STATUS_REJECTED) {
-            return view('admin.nurses.show-review', compact('user', 'profile'));
+            return view('admin.nurses.show-review', compact('user', 'profile', 'apiToken'));
         } else {
             // PENDING or SUSPENDED
-            return view('admin.nurses.show-pending', compact('user', 'profile'));
+            return view('admin.nurses.show-pending', compact('user', 'profile', 'apiToken'));
         }
     }
 
