@@ -212,6 +212,27 @@
                     </div>
                 </div>
 
+                {{-- Bookings --}}
+                <div data-kt-menu-trigger="click"
+                    class="menu-item menu-accordion {{ request()->routeIs('admin.bookings.*') ? 'here show' : '' }}">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-calendar-tick fs-2"></i>
+                        </span>
+                        <span class="menu-title">Bookings</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bookings.index') ? 'active' : '' }}"
+                                href="{{ route('admin.bookings.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">All Bookings</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Bids --}}
                 <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ request()->routeIs('admin.bids.*') ? 'here show' : '' }}">

@@ -97,6 +97,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('cancelled');
     });
 
+    // =====================
+    // OPERATIONS — Bookings
+    // =====================
+    Route::prefix('bookings')->name('bookings.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('index');
+        Route::get('/data', [\App\Http\Controllers\Admin\BookingController::class, 'data'])->name('data');
+        Route::get('{booking}/sessions-data', [\App\Http\Controllers\Admin\BookingController::class, 'sessionsData'])->name('sessions-data');
+        Route::get('{booking}/payment-logs-data', [\App\Http\Controllers\Admin\BookingController::class, 'paymentLogsData'])->name('payment-logs-data');
+        Route::get('{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'show'])->name('show');
+    });
+
     // OPERATIONS — Bids
     Route::prefix('bids')->name('bids.')->group(function () {
         Route::get('active', function () {
