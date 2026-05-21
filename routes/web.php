@@ -77,6 +77,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::prefix('requests')->name('requests.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RequestController::class, 'index'])->name('index');
         Route::get('/data', [\App\Http\Controllers\Admin\RequestController::class, 'data'])->name('data');
+        Route::get('today', [\App\Http\Controllers\Admin\RequestController::class, 'todayIndex'])->name('today');
         Route::get('{request}/bids-data', [\App\Http\Controllers\Admin\RequestController::class, 'bidsData'])->name('bids-data');
         Route::get('{request}/notified-nurses-data', [\App\Http\Controllers\Admin\RequestController::class, 'notifiedNursesData'])->name('notified-nurses-data');
         Route::get('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'show'])->name('show');

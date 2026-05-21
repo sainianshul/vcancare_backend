@@ -58,6 +58,8 @@ class Booking extends Model
         'user_id',
         'nurse_id',
         'nurse_amount',
+        'commission_type',
+        'commission_value',
         'commission_amount',
         'total_amount',
         'start_date',

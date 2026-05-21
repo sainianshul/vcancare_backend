@@ -165,6 +165,16 @@ class RequestDataTable extends DataTable
             $query->where('status', request('status'));
         }
 
+        // Filter by Today Requests
+        if (request('is_today') === '1') {
+            $query->whereDate('care_requests.created_at', \Carbon\Carbon::today());
+        }
+
+        // Filter by selected date
+        if (request()->filled('date')) {
+            $query->whereDate('care_requests.created_at', request('date'));
+        }
+
         return $query;
     }
 

@@ -32,6 +32,24 @@
                 {{-- Right Controls --}}
                 <div class="d-flex align-items-center gap-2">
 
+                    @if(empty($isToday))
+                    {{-- Date Filter --}}
+                    <div style="width: 175px;">
+                        <div class="position-relative">
+                            <i class="ki-duotone ki-calendar fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                            <input
+                                type="date"
+                                class="form-control form-control-transparent border border-gray-800 text-gray-900 form-control-sm fw-semibold ps-11 shadow-sm"
+                                placeholder="Filter by Date"
+                                id="filter-date"
+                            />
+                        </div>
+                    </div>
+                    @endif
+
                     {{-- Status Filter --}}
                     <div style="width: 145px;">
                         <div class="position-relative">
@@ -115,6 +133,8 @@
                     url: '{{ route('admin.requests.data') }}',
                     data: function (d) {
                         d.status = $('#filter-status').val();
+                        d.date = $('#filter-date').val();
+                        d.is_today = '{{ $isToday ?? false }}';
                     }
                 },
                 columns: [
@@ -180,6 +200,13 @@
             $('#filter-status').on('change', function () {
                 table.ajax.reload();
             });
+
+            @if(empty($isToday))
+            // ── Date Filter ──────────────────────────────────────────────────
+            $('#filter-date').on('change', function () {
+                table.ajax.reload();
+            });
+            @endif
 
             // ── Delete ───────────────────────────────────────────────────────
             $(document).on('click', '.btn-delete', function () {

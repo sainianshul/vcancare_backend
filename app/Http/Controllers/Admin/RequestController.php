@@ -17,6 +17,15 @@ class RequestController extends Controller
     }
 
     /**
+     * Display a listing of today's requests.
+     */
+    public function todayIndex(RequestDataTable $dataTable)
+    {
+        $isToday = true;
+        return $dataTable->render('admin.request.index', compact('isToday'));
+    }
+
+    /**
      * Get data for datatable (AJAX)
      */
     public function data(RequestDataTable $dataTable)

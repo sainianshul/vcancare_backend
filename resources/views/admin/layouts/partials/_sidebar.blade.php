@@ -175,6 +175,13 @@
                             </a>
                         </div>
                         <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.requests.today') ? 'active' : '' }}"
+                                href="{{ route('admin.requests.today') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Today Requests</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.requests.new') ? 'active' : '' }}"
                                 href="{{ route('admin.requests.new') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
