@@ -42,6 +42,17 @@
 
             <div class="separator my-2" style="border-color: rgba(0,0,0,0.05);"></div>
 
+            <!--begin::Profile-->
+            <div class="menu-item px-3 my-1">
+                <a href="{{ route('admin.profile.edit') }}" class="menu-link px-3 py-2 rounded d-flex align-items-center text-gray-800" style="text-decoration: none; transition: background-color 0.2s ease;">
+                    <span class="menu-icon me-2"><i class="ki-outline ki-user fs-3"></i></span>
+                    <span class="menu-title fw-bold">My Profile</span>
+                </a>
+            </div>
+            <!--end::Profile-->
+
+            <div class="separator my-2" style="border-color: rgba(0,0,0,0.05);"></div>
+
             <!--begin::Theme mode (Premium Nested Dropdown)-->
             <div class="menu-item px-3 my-2 premium-dropdown-parent">
                 <a href="#" class="menu-link px-3 py-2 rounded d-flex justify-content-between align-items-center text-gray-800" style="text-decoration: none;">
