@@ -20,13 +20,20 @@ class RequestBidsDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('nurse', function (RequestBid $bid) {
-                $name = $bid->nurse->user->name ?? 'Unknown';
+                $user = $bid->nurse->user;
+                $name = $user->name ?? 'Unknown';
                 $initial = mb_strtoupper(mb_substr($name, 0, 2));
+
+                $avatar = '';
+                if ($user && $user->profile_photo) {
+                    $avatar = '<div class="symbol symbol-30px symbol-circle me-3"><img src="' . \Illuminate\Support\Facades\Storage::url($user->profile_photo) . '" class="object-fit-cover" alt="Pic"></div>';
+                } else {
+                    $avatar = '<div class="symbol symbol-30px symbol-circle me-3"><span class="symbol-label bg-light-dark text-dark fw-bold fs-7">' . $initial . '</span></div>';
+                }
+
                 return '
                     <div class="d-flex align-items-center">
-                        <div class="symbol symbol-30px me-3">
-                            <span class="symbol-label bg-light-dark text-dark fw-bold fs-7">' . $initial . '</span>
-                        </div>
+                        ' . $avatar . '
                         <div class="d-flex flex-column">
                             <span class="text-gray-900 fw-bold fs-7">' . e($name) . '</span>
                             <span class="text-gray-900 fs-8">ID: ' . $bid->nurse_id . '</span>

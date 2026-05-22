@@ -26,13 +26,12 @@ class RequestDataTable extends DataTable
                 $colors = ['bg-light-primary text-primary', 'bg-light-success text-success', 'bg-light-warning text-warning', 'bg-light-danger text-danger', 'bg-light-info text-info'];
                 $colorClass = $colors[ord($initial) % count($colors)];
 
-                $avatar = '
-                    <span class="symbol symbol-38px">
-                        <span class="symbol-label rounded-2 fw-bold fs-6 ' . $colorClass . '">
-                            ' . e($initial) . '
-                        </span>
-                    </span>
-                ';
+                $avatar = '';
+                if ($user->profile_photo) {
+                    $avatar = '<div class="symbol symbol-38px symbol-circle"><img src="' . \Illuminate\Support\Facades\Storage::url($user->profile_photo) . '" class="object-fit-cover" alt="Pic"></div>';
+                } else {
+                    $avatar = '<span class="symbol symbol-38px symbol-circle"><span class="symbol-label fw-bold fs-6 ' . $colorClass . '">' . e($initial) . '</span></span>';
+                }
 
                 return '
                     <div class="d-flex align-items-center gap-3">
@@ -93,21 +92,6 @@ class RequestDataTable extends DataTable
                 ';
             })
 
-            // ── Bidding Expired At ───────────────────────────────────
-            ->addColumn('bidding_ends_at', function (CareRequest $request) {
-                if (!$request->bidding_ends_at) {
-                    return '<span class="text-muted">N/A</span>';
-                }
-
-                return '
-                    <div class="fw-semibold text-gray-800">
-                        ' . $request->bidding_ends_at->format('d M Y H:i') . '
-                    </div>
-                    <div class="text-muted fs-7">
-                        ' . $request->bidding_ends_at->diffForHumans() . '
-                    </div>
-                ';
-            })
 
             // ── Created At ──────────────────────────────────────────
             ->editColumn('created_at', function (CareRequest $request) {
@@ -150,7 +134,6 @@ class RequestDataTable extends DataTable
                 'status',
                 'date_time',
                 'location',
-                'bidding_ends_at',
                 'created_at',
                 'actions',
             ]);
