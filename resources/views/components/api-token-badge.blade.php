@@ -214,7 +214,7 @@ function copyFullToken(userId) {
 
     if (!input.value) return;
 
-    navigator.clipboard.writeText(input.value).then(() => {
+    function onSuccess() {
         success.classList.remove('d-none');
         btn.innerHTML = '<i class="ki-outline ki-check fs-6 me-1"></i>Copied!';
         btn.classList.replace('btn-dark', 'btn-success');
@@ -224,9 +224,30 @@ function copyFullToken(userId) {
             btn.innerHTML = '<i class="ki-outline ki-copy fs-6 me-1"></i>Copy';
             btn.classList.replace('btn-success', 'btn-dark');
         }, 2500);
-    }).catch(() => {
-        alert('Copy failed. Please select and copy manually.');
-    });
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(input.value).then(onSuccess).catch(() => {
+            alert('Copy failed. Please select and copy manually.');
+        });
+    } else {
+        // Fallback for non-HTTPS environments
+        let textArea = document.createElement("textarea");
+        textArea.value = input.value;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            onSuccess();
+        } catch (err) {
+            alert('Copy failed. Please select and copy manually.');
+        }
+        textArea.remove();
+    }
 }
 </script>
 @endpush

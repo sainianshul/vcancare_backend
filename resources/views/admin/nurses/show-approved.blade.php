@@ -263,6 +263,13 @@
                             </div>
                         </div>
                         <div class="d-flex align-items-start mb-4">
+                            <span class="bullet bullet-vertical h-30px bg-dark me-3 mt-1"></span>
+                            <div class="flex-grow-1">
+                                <span class="text-gray-600 fw-semibold d-block fs-8">Coordinates (Lat / Lng)</span>
+                                <span class="fw-bold fs-7 text-gray-900">{{ $profile->latitude ?? 'N/A' }} / {{ $profile->longitude ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-4">
                             <span class="bullet bullet-vertical h-30px bg-primary me-3 mt-1"></span>
                             <div class="flex-grow-1">
                                 <span class="text-gray-600 fw-semibold d-block fs-8">City & State</span>
