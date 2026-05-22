@@ -35,10 +35,14 @@
                         
                         <!--begin: Pic-->
                         <div class="me-7 mb-4">
-                            <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                <span class="symbol-label bg-light-warning border border-warning fs-2x fw-bold text-warning">
-                                    {{ mb_strtoupper(mb_substr($user->name, 0, 2)) }}
-                                </span>
+                            <div class="symbol symbol-100px symbol-lg-160px symbol-circle position-relative shadow-sm" style="border: 4px solid #fff;">
+                                @if($user->profile_photo)
+                                    <img src="{{ Storage::url($user->profile_photo) }}" alt="{{ $user->name }}" class="object-fit-cover" />
+                                @else
+                                    <span class="symbol-label bg-light-warning border border-warning fs-2x fw-bold text-warning">
+                                        {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
+                                    </span>
+                                @endif
                                 <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-warning rounded-circle border border-4 border-body h-20px w-20px"></div>
                             </div>
                         </div>

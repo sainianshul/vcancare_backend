@@ -226,27 +226,21 @@ function copyFullToken(userId) {
         }, 2500);
     }
 
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(input.value).then(onSuccess).catch(() => {
-            alert('Copy failed. Please select and copy manually.');
-        });
-    } else {
-        // Fallback for non-HTTPS environments
-        let textArea = document.createElement("textarea");
-        textArea.value = input.value;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
+    function fallbackCopy() {
+        input.select();
+        input.setSelectionRange(0, 99999); // For mobile devices
         try {
-            document.execCommand('copy');
+            document.execCommand("copy");
             onSuccess();
         } catch (err) {
             alert('Copy failed. Please select and copy manually.');
         }
-        textArea.remove();
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(input.value).then(onSuccess).catch(fallbackCopy);
+    } else {
+        fallbackCopy();
     }
 }
 </script>
