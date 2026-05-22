@@ -26,17 +26,21 @@ class NurseService
             $userData = [
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'phone' => $data['phone'] ?? null,
             ];
+
+            if (array_key_exists('phone', $data)) {
+                $userData['phone'] = $data['phone'];
+            }
 
             // Handle Profile Photo Upload
             if (isset($data['profile_photo']) && $data['profile_photo'] instanceof \Illuminate\Http\UploadedFile) {
+                $disk = config('filesystems.default', 'public');
                 // Delete old photo if exists
-                if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-                    Storage::disk('public')->delete($user->profile_photo);
+                if ($user->profile_photo && Storage::disk($disk)->exists($user->profile_photo)) {
+                    Storage::disk($disk)->delete($user->profile_photo);
                 }
                 
-                $path = $data['profile_photo']->store('profile_photos', 'public');
+                $path = $data['profile_photo']->store('profile_photos', $disk);
                 $userData['profile_photo'] = $path;
             }
 

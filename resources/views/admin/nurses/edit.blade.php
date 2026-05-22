@@ -40,6 +40,15 @@
             <x-alert-success />
             <x-form-errors />
 
+            <!-- Top Warning Alert -->
+            <div class="alert alert-dismissible bg-light-warning border border-warning d-flex flex-column flex-sm-row p-4 mb-7">
+                <i class="ki-outline ki-information-5 fs-1 text-warning mb-2 mb-sm-0 me-3"></i>
+                <div class="d-flex flex-column pe-0 pe-sm-10">
+                    <h5 class="fw-semibold text-warning mb-1 fs-6">Important Notice</h5>
+                    <span class="text-gray-700 fs-7">You cannot edit the Nurse's core Onboarding data (e.g., Education, Work History, Documents) from this screen. To update those, the nurse must re-submit their onboarding application.</span>
+                </div>
+            </div>
+
             <!--begin::Form-->
             <form id="kt_nurse_edit_form" action="{{ route('admin.nurses.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="form d-flex flex-column gap-5 gap-lg-7">
                 @csrf
@@ -80,7 +89,7 @@
                                         <label class="form-label text-gray-700 fw-semibold fs-7 mb-1">Phone Number</label>
                                         <div class="position-relative">
                                             <i class="ki-outline ki-phone fs-4 position-absolute top-50 translate-middle-y ms-3 text-gray-500"></i>
-                                            <input type="text" name="phone" class="form-control form-control-sm text-gray-900 border border-gray-300 bg-transparent ps-10 fs-7" value="{{ old('phone', $user->phone) }}" />
+                                            <input type="text" name="phone" class="form-control form-control-sm text-gray-500 border border-gray-300 bg-secondary ps-10 fs-7" value="{{ old('phone', $user->phone) }}" disabled readonly />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -271,9 +280,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-
-                    </div>
                 </div>
             </form>
             <!--end::Form-->
