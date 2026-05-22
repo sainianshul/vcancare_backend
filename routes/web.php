@@ -250,4 +250,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Admin Profile
+    Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+
 });
