@@ -13,11 +13,18 @@ class BookingDataTable extends DataTable
             ->eloquent($query)
 
             // ── Reference ID ─────────────────────────────────────────
-            ->addColumn('reference_id', function (Booking $booking) {
+            ->editColumn('reference_id', function (Booking $booking) {
                 return '<span class="fw-bold text-gray-800 text-nowrap">' . e($booking->reference_id) . '</span>';
             })
 
             // ── User Info ────────────────────────────────────────────
+            ->filterColumn('user', function($query, $keyword) {
+                $query->whereHas('user', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%")
+                      ->orWhere('email', 'like', "%{$keyword}%")
+                      ->orWhere('phone', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('user', function (Booking $booking) {
                 $user = $booking->user;
                 if (!$user) return '<span class="text-muted">Unknown</span>';

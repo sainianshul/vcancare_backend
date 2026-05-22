@@ -13,11 +13,18 @@ class RequestDataTable extends DataTable
             ->eloquent($query)
             
             // ── Request ID ─────────────────────────────────────────────
-            ->addColumn('reference_id', function (CareRequest $request) {
+            ->editColumn('reference_id', function (CareRequest $request) {
                 return '<span class="fw-bold text-gray-800 text-nowrap">' . e($request->reference_id) . '</span>';
             })
             
             // ── User Info ─────────────────────────────────────────────
+            ->filterColumn('user', function($query, $keyword) {
+                $query->whereHas('user', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%")
+                      ->orWhere('email', 'like', "%{$keyword}%")
+                      ->orWhere('phone', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('user', function (CareRequest $request) {
                 $user = $request->user;
                 if (!$user) return '<span class="text-muted">Unknown</span>';
