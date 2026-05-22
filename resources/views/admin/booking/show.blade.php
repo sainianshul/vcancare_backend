@@ -562,10 +562,14 @@
                     <div class="card-body pt-2 pb-5">
                         @if($booking->user)
                             <div class="d-flex flex-center flex-column mb-4">
-                                <div class="symbol symbol-60px symbol-circle mb-3">
-                                    <span class="symbol-label bg-light-primary text-primary fs-3 fw-bold border border-primary">
-                                        {{ mb_strtoupper(mb_substr($booking->user->name ?? 'U', 0, 2)) }}
-                                    </span>
+                                <div class="symbol symbol-60px symbol-circle mb-3 shadow-sm" style="border: 3px solid #fff;">
+                                    @if($booking->user->profile_photo)
+                                        <img src="{{ Storage::url($booking->user->profile_photo) }}" alt="{{ $booking->user->name }}" class="object-fit-cover" />
+                                    @else
+                                        <span class="symbol-label bg-light-primary text-primary fs-3 fw-bold border border-primary">
+                                            {{ mb_strtoupper(mb_substr($booking->user->name ?? 'U', 0, 2)) }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <a href="{{ route('admin.patients.show', $booking->user->id) }}"
                                     class="fs-6 text-gray-900 text-hover-primary fw-bold mb-1">
@@ -635,10 +639,14 @@
                         @if($booking->nurse && $booking->nurse->user)
                             @php $nurseUser = $booking->nurse->user; @endphp
                             <div class="d-flex flex-center flex-column mb-4">
-                                <div class="symbol symbol-60px symbol-circle mb-3">
-                                    <span class="symbol-label bg-light-info text-info fs-3 fw-bold border border-info">
-                                        {{ mb_strtoupper(mb_substr($nurseUser->name ?? 'N', 0, 2)) }}
-                                    </span>
+                                <div class="symbol symbol-60px symbol-circle mb-3 shadow-sm" style="border: 3px solid #fff;">
+                                    @if($nurseUser->profile_photo)
+                                        <img src="{{ Storage::url($nurseUser->profile_photo) }}" alt="{{ $nurseUser->name }}" class="object-fit-cover" />
+                                    @else
+                                        <span class="symbol-label bg-light-info text-info fs-3 fw-bold border border-info">
+                                            {{ mb_strtoupper(mb_substr($nurseUser->name ?? 'N', 0, 2)) }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <a href="{{ route('admin.nurses.show', $nurseUser->id) }}"
                                     class="fs-6 text-gray-900 text-hover-primary fw-bold mb-1">

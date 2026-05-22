@@ -99,10 +99,14 @@
                     </div>
                     <div class="card-body pt-2 pb-5">
                         <div class="d-flex align-items-sm-center flex-column flex-sm-row mb-5">
-                            <div class="symbol symbol-60px me-4 mb-3 mb-sm-0">
-                                <span class="symbol-label bg-light-primary text-primary fw-bolder fs-2">
-                                    {{ mb_strtoupper(mb_substr($bid->nurse->user->name ?? '?', 0, 2)) }}
-                                </span>
+                            <div class="symbol symbol-60px symbol-circle me-4 mb-3 mb-sm-0 shadow-sm" style="border: 3px solid #fff;">
+                                @if(isset($bid->nurse->user->profile_photo) && $bid->nurse->user->profile_photo)
+                                    <img src="{{ Storage::url($bid->nurse->user->profile_photo) }}" alt="{{ $bid->nurse->user->name ?? 'Nurse' }}" class="object-fit-cover" />
+                                @else
+                                    <span class="symbol-label bg-light-primary text-primary fw-bolder fs-2 border border-primary">
+                                        {{ mb_strtoupper(mb_substr($bid->nurse->user->name ?? '?', 0, 2)) }}
+                                    </span>
+                                @endif
                             </div>
                             <div class="d-flex flex-column flex-grow-1 pe-8">
                                 <span class="text-gray-900 fw-bolder fs-4 mb-1">{{ $bid->nurse->user->name ?? 'Unknown' }}</span>
