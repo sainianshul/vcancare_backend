@@ -19,6 +19,7 @@ class Activity extends Model
     public const ACTION_ONBOARDING_SUBMIT = 4;
     public const ACTION_APPROVED = 5;
     public const ACTION_REJECTED = 6;
+    public const ACTION_UPDATED = 7;
 
     public function subject()
     {
