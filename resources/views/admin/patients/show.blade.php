@@ -122,7 +122,9 @@
                                         <div class="border border-gray-300 rounded min-w-125px py-2 px-4 me-4 mb-3">
                                             <div class="d-flex align-items-center mb-1">
                                                 <i class="ki-outline ki-document fs-4 text-primary me-2"></i>
-                                                <div class="fs-4 fw-bold text-gray-900" data-kt-countup="true" data-kt-countup-value="14" data-kt-countup-prefix="">14</div>
+                                                <div class="fs-4 fw-bold text-gray-900" id="stat-total-requests">
+                                                    <span class="spinner-border spinner-border-sm text-primary align-middle" role="status"></span>
+                                                </div>
                                             </div>
                                             <div class="fw-medium fs-8 text-gray-600 text-uppercase">Total Requests</div>
                                         </div>
@@ -130,7 +132,9 @@
                                         <div class="border border-gray-300 rounded min-w-125px py-2 px-4 me-4 mb-3">
                                             <div class="d-flex align-items-center mb-1">
                                                 <i class="ki-outline ki-check-square fs-4 text-success me-2"></i>
-                                                <div class="fs-4 fw-bold text-gray-900" data-kt-countup="true" data-kt-countup-value="8">8</div>
+                                                <div class="fs-4 fw-bold text-gray-900" id="stat-completed">
+                                                    <span class="spinner-border spinner-border-sm text-success align-middle" role="status"></span>
+                                                </div>
                                             </div>
                                             <div class="fw-medium fs-8 text-gray-600 text-uppercase">Completed</div>
                                         </div>
@@ -196,20 +200,7 @@
                 
                 <!-- Request List Tab -->
                 <div class="tab-pane fade show active" id="kt_tab_requests" role="tabpanel">
-                    <div class="card card-bordered border-gray-300">
-                        <div class="card-header border-bottom border-gray-300 pt-6">
-                            <div class="card-title">
-                                <h3 class="fw-bold text-gray-900 m-0">Recent Requests</h3>
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div class="d-flex flex-column align-items-center justify-content-center py-10">
-                                <img src="{{ asset('media/illustrations/empty.svg') }}" onerror="this.onerror=null; this.src='https://preview.keenthemes.com/metronic8/demo1/assets/media/illustrations/sketchy-1/2.png'" alt="No data" class="w-150px mb-5" />
-                                <h4 class="text-gray-900 fw-bold mb-1">No Requests Found</h4>
-                                <p class="text-gray-600 fs-6">This patient has not submitted any service requests yet.</p>
-                            </div>
-                        </div>
-                    </div>
+                    @include('admin.patients.tabs.requests')
                 </div>
 
                 <!-- Bookings Tab -->
@@ -301,6 +292,20 @@
 
 @push('scripts')
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch Stats
+        fetch('{{ route('admin.patients.stats', $patient->id) }}')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('stat-total-requests').innerHTML = data.total_requests;
+                document.getElementById('stat-completed').innerHTML = data.completed;
+            })
+            .catch(error => {
+                document.getElementById('stat-total-requests').innerHTML = '-';
+                document.getElementById('stat-completed').innerHTML = '-';
+            });
+    });
+
     function loadTabContent(url, tabId) {
         const tabPane = document.getElementById(tabId);
         

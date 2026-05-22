@@ -43,6 +43,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/rejected/data', [NurseController::class, 'rejectedData'])->name('rejected.data');
         Route::get('/pending-count', [NurseController::class, 'pendingCount'])->name('pending-count');
         Route::get('/{user}', [NurseController::class, 'show'])->name('show');
+        Route::get('/{user}/stats', [NurseController::class, 'stats'])->name('stats');
         Route::get('/{user}/application', [NurseController::class, 'showApplication'])->name('show-application');
         Route::get('/{user}/reviews', [NurseController::class, 'reviews'])->name('reviews');
         Route::get('/{user}/reviews/data', [NurseController::class, 'reviewsData'])->name('reviews.data');
@@ -66,6 +67,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::post('{patient}/unblock', [PatientController::class, 'unblock'])->name('unblock');
         
         Route::get('{patient}', [PatientController::class, 'show'])->name('show');
+        Route::get('{patient}/stats', [PatientController::class, 'stats'])->name('stats');
+        Route::get('{patient}/requests', [PatientController::class, 'requests'])->name('requests');
+        Route::get('{patient}/requests/data', [PatientController::class, 'requestsData'])->name('requests.data');
         Route::get('{patient}/bookings', [PatientController::class, 'bookings'])->name('bookings');
         Route::get('{patient}/bookings/data', [PatientController::class, 'bookingsData'])->name('bookings.data');
         Route::get('{patient}/login-history', [PatientController::class, 'loginHistory'])->name('login-history');

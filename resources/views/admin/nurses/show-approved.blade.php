@@ -94,7 +94,9 @@
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Avg Rating</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->avg_rating ?? '0.0' }}</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-avg-rating">
+                                            <span class="spinner-border spinner-border-sm text-warning align-middle" role="status"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -105,7 +107,9 @@
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Total Reviews</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->total_reviews ?? 0 }}</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-total-reviews">
+                                            <span class="spinner-border spinner-border-sm text-success align-middle" role="status"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -116,7 +120,9 @@
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Trust Score</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->trust_score ?? 100 }}%</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-trust-score">
+                                            <span class="spinner-border spinner-border-sm text-primary align-middle" role="status"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -127,7 +133,9 @@
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Jobs Done</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1">{{ $profile->total_bookings_completed ?? 0 }}</div>
+                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-jobs-done">
+                                            <span class="spinner-border spinner-border-sm text-info align-middle" role="status"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -426,6 +434,22 @@
 
     // Tab AJAX Loading Logic
     document.addEventListener('DOMContentLoaded', function() {
+        // Fetch Nurse Stats
+        fetch('{{ route('admin.nurses.stats', $user->id) }}')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('stat-avg-rating').innerHTML = data.avg_rating;
+                document.getElementById('stat-total-reviews').innerHTML = data.total_reviews;
+                document.getElementById('stat-trust-score').innerHTML = data.trust_score + '%';
+                document.getElementById('stat-jobs-done').innerHTML = data.jobs_done;
+            })
+            .catch(error => {
+                document.getElementById('stat-avg-rating').innerHTML = '-';
+                document.getElementById('stat-total-reviews').innerHTML = '-';
+                document.getElementById('stat-trust-score').innerHTML = '-';
+                document.getElementById('stat-jobs-done').innerHTML = '-';
+            });
+
         initChart();
 
         const tabs = document.querySelectorAll('#nurse-profile-tabs .nav-link');

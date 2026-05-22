@@ -205,6 +205,11 @@
                                 {{ $bid->careRequest->city ?? '' }}, {{ $bid->careRequest->state ?? '' }}
                             </div>
                         </div>
+
+                        <a href="{{ route('admin.requests.show', $bid->care_request_id ?? 0) }}"
+                            class="btn btn-light-primary border border-primary btn-sm w-100 fw-bold fs-8 px-3 py-2 mt-4">
+                            Go to Request <i class="ki-outline ki-arrow-right fs-6 ms-1"></i>
+                        </a>
                     </div>
                 </div>
 

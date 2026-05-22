@@ -10,8 +10,10 @@
                         <th class="min-w-150px">Nurse</th>
                         <th class="min-w-100px">Status</th>
                         <th class="min-w-100px">Payment</th>
+                        <th class="min-w-100px">Sessions</th>
                         <th class="min-w-100px">Total</th>
-                        <th class="rounded-end min-w-125px">Created At</th>
+                        <th class="min-w-125px">Created At</th>
+                        <th class="rounded-end text-end min-w-80px pe-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,12 +48,14 @@
                 }
             },
             columns: [
-                { data: 'reference_id', className: 'ps-3' },
-                { data: 'nurse' },
-                { data: 'status' },
-                { data: 'payment_status' },
-                { data: 'total_amount' },
-                { data: 'created_at' }
+                { data: 'reference_id', name: 'reference_id', className: 'ps-3' },
+                { data: 'nurse', name: 'nurse', orderable: false, searchable: false },
+                { data: 'status', name: 'status' },
+                { data: 'payment_status', name: 'payment_status' },
+                { data: 'sessions', name: 'sessions', orderable: false, searchable: false },
+                { data: 'amount', name: 'total_amount' },
+                { data: 'created_at', name: 'created_at' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end pe-3' },
             ],
             initComplete: function () {
                 $('#patient-bookings-skeleton').fadeOut(200, function () {

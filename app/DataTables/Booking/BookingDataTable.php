@@ -163,6 +163,11 @@ class BookingDataTable extends DataTable
     {
         $query = $model->newQuery()->with(['user', 'nurse.user'])->select('bookings.*');
 
+        // Filter by user_id
+        if (request()->filled('user_id')) {
+            $query->where('user_id', request('user_id'));
+        }
+
         // Filter by status
         if (request()->filled('status')) {
             $query->where('status', request('status'));

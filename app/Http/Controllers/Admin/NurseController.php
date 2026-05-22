@@ -94,6 +94,32 @@ class NurseController extends Controller
         }
     }
 
+    public function stats($id)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+        
+        $profileId = $user->nurseProfile->id;
+
+        $totalReviews = \App\Models\NurseReview::where('nurse_id', $profileId)->count();
+        $avgRating = \App\Models\NurseReview::where('nurse_id', $profileId)->avg('rating') ?? 0;
+        
+        $totalBookings = \App\Models\Booking::where('nurse_id', $profileId)->count();
+        $completedBookings = \App\Models\Booking::where('nurse_id', $profileId)->where('status', \App\Models\Booking::STATUS_COMPLETED)->count();
+        
+        $trustScore = $user->nurseProfile->trust_score ?? 100;
+        if ($totalBookings > 0) {
+            $trustScore = round(($completedBookings / $totalBookings) * 100);
+        }
+
+        return response()->json([
+            'avg_rating' => number_format($avgRating, 1),
+            'total_reviews' => $totalReviews,
+            'trust_score' => $trustScore,
+            'jobs_done' => $completedBookings,
+        ]);
+    }
+
     public function reviews(\Illuminate\Http\Request $request, $id)
     {
         $user = User::findOrFail($id);
