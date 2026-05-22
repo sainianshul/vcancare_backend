@@ -40,11 +40,15 @@
                                 <span class="path2"></span>
                             </i>
                             <input
-                                type="date"
-                                class="form-control form-control-transparent border border-gray-800 text-gray-900 form-control-sm fw-semibold ps-11 shadow-sm"
+                                type="text"
+                                class="form-control form-control-transparent border border-gray-800 text-gray-900 form-control-sm fw-semibold ps-11 pe-8 shadow-sm cursor-pointer"
                                 placeholder="Filter by Date"
                                 id="filter-date"
                             />
+                            <i class="ki-duotone ki-cross fs-3 text-gray-600 position-absolute top-50 end-0 translate-middle-y me-2 z-index-3 cursor-pointer d-none" id="clear-date-btn">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
                         </div>
                     </div>
 
@@ -198,8 +202,23 @@
                 table.ajax.reload();
             });
 
-            $('#filter-date').on('change', function () {
-                table.ajax.reload();
+            let fp = $('#filter-date').flatpickr({
+                altInput: true,
+                altFormat: "d M Y",
+                dateFormat: "Y-m-d",
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (dateStr) {
+                        $('#clear-date-btn').removeClass('d-none');
+                    } else {
+                        $('#clear-date-btn').addClass('d-none');
+                    }
+                    table.ajax.reload();
+                }
+            });
+
+            $('#clear-date-btn').on('click', function(e) {
+                e.stopPropagation();
+                fp.clear();
             });
         });
     </script>
