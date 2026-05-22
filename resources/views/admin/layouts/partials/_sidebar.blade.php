@@ -191,34 +191,7 @@
                                 <span class="menu-title">Today Requests</span>
                             </a>
                         </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.new') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.new') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">New</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.active') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.active') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Active</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.completed') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.completed') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Completed</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.cancelled') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.cancelled') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Cancelled</span>
-                            </a>
-                        </div>
+
                     </div>
                 </div>
 
@@ -240,6 +213,20 @@
                                 <span class="menu-title">All Bookings</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bookings.active') ? 'active' : '' }}"
+                                href="{{ route('admin.bookings.active') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Active Bookings</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bookings.cancelled') ? 'active' : '' }}"
+                                href="{{ route('admin.bookings.cancelled') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Cancelled Bookings</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -255,6 +242,20 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion">
                         <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bids.index') ? 'active' : '' }}"
+                                href="{{ route('admin.bids.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">All Bids</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bids.today') ? 'active' : '' }}"
+                                href="{{ route('admin.bids.today') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Today Bids</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.bids.active') ? 'active' : '' }}"
                                 href="{{ route('admin.bids.active') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
@@ -265,14 +266,14 @@
                             <a class="menu-link {{ request()->routeIs('admin.bids.accepted') ? 'active' : '' }}"
                                 href="{{ route('admin.bids.accepted') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Accepted</span>
+                                <span class="menu-title">Accepted Bids</span>
                             </a>
                         </div>
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.bids.rejected') ? 'active' : '' }}"
                                 href="{{ route('admin.bids.rejected') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Rejected</span>
+                                <span class="menu-title">Rejected Bids</span>
                             </a>
                         </div>
                     </div>

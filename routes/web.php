@@ -115,6 +115,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::prefix('bookings')->name('bookings.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('index');
         Route::get('/data', [\App\Http\Controllers\Admin\BookingController::class, 'data'])->name('data');
+        Route::get('active', [\App\Http\Controllers\Admin\BookingController::class, 'active'])->name('active');
+        Route::get('active/data', [\App\Http\Controllers\Admin\BookingController::class, 'activeData'])->name('active-data');
+        Route::get('cancelled', [\App\Http\Controllers\Admin\BookingController::class, 'cancelled'])->name('cancelled');
+        Route::get('cancelled/data', [\App\Http\Controllers\Admin\BookingController::class, 'cancelledData'])->name('cancelled-data');
         Route::get('{booking}/sessions-data', [\App\Http\Controllers\Admin\BookingController::class, 'sessionsData'])->name('sessions-data');
         Route::get('{booking}/payment-logs-data', [\App\Http\Controllers\Admin\BookingController::class, 'paymentLogsData'])->name('payment-logs-data');
         Route::get('{booking}/reviews-data', [\App\Http\Controllers\Admin\BookingController::class, 'reviewsData'])->name('reviews-data');
@@ -124,15 +128,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // OPERATIONS — Bids
     Route::prefix('bids')->name('bids.')->group(function () {
-        Route::get('active', function () {
-            echo "Active Bids";
-        })->name('active');
-        Route::get('accepted', function () {
-            echo "Accepted Bids";
-        })->name('accepted');
-        Route::get('rejected', function () {
-            echo "Rejected Bids";
-        })->name('rejected');
+        Route::get('/', [\App\Http\Controllers\Admin\BidController::class, 'index'])->name('index');
+        Route::get('/data', [\App\Http\Controllers\Admin\BidController::class, 'data'])->name('data');
+        Route::get('today', [\App\Http\Controllers\Admin\BidController::class, 'todayIndex'])->name('today');
+        Route::get('today/data', [\App\Http\Controllers\Admin\BidController::class, 'todayData'])->name('today.data');
+        Route::get('active', [\App\Http\Controllers\Admin\BidController::class, 'active'])->name('active');
+        Route::get('active/data', [\App\Http\Controllers\Admin\BidController::class, 'activeData'])->name('active.data');
+        Route::get('accepted', [\App\Http\Controllers\Admin\BidController::class, 'accepted'])->name('accepted');
+        Route::get('accepted/data', [\App\Http\Controllers\Admin\BidController::class, 'acceptedData'])->name('accepted.data');
+        Route::get('rejected', [\App\Http\Controllers\Admin\BidController::class, 'rejected'])->name('rejected');
+        Route::get('rejected/data', [\App\Http\Controllers\Admin\BidController::class, 'rejectedData'])->name('rejected.data');
         
         Route::get('{bid}', [\App\Http\Controllers\Admin\BidController::class, 'show'])->name('show');
     });

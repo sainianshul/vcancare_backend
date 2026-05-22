@@ -24,6 +24,36 @@ class BookingController extends Controller
         return $dataTable->ajax();
     }
 
+    public function active(BookingDataTable $dataTable)
+    {
+        return $dataTable->render('admin.booking.index', [
+            'title' => 'Active Bookings',
+            'dataUrl' => route('admin.bookings.active-data'),
+            'hideStatusFilter' => true
+        ]);
+    }
+
+    public function activeData(BookingDataTable $dataTable)
+    {
+        request()->merge(['status' => Booking::STATUS_ACTIVE]);
+        return $dataTable->ajax();
+    }
+
+    public function cancelled(BookingDataTable $dataTable)
+    {
+        return $dataTable->render('admin.booking.index', [
+            'title' => 'Cancelled Bookings',
+            'dataUrl' => route('admin.bookings.cancelled-data'),
+            'hideStatusFilter' => true
+        ]);
+    }
+
+    public function cancelledData(BookingDataTable $dataTable)
+    {
+        request()->merge(['status' => Booking::STATUS_CANCELLED]);
+        return $dataTable->ajax();
+    }
+
     /**
      * Display the specified booking with all details.
      */
