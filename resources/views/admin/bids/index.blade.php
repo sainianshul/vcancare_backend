@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Care Requests')
+@section('title', 'Bids')
 
 @section('content')
 
     <x-breadcrumb :items="[
-        ['label' => 'Care Requests', 'url' => route('admin.requests.index')],
-        ['label' => 'All Requests'],
+        ['label' => 'Bids', 'url' => route('admin.bids.index')],
+        ['label' => $title ?? 'All Bids'],
     ]" />
 
     <div class="card shadow-sm">
@@ -25,14 +25,13 @@
                         type="text"
                         id="dt-search"
                         class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
-                        placeholder="Search requests..."
+                        placeholder="Search bids..."
                     />
                 </div>
 
                 {{-- Right Controls --}}
                 <div class="d-flex align-items-center gap-2">
 
-                    @if(empty($isToday))
                     {{-- Date Filter --}}
                     <div style="width: 175px;">
                         <div class="position-relative">
@@ -48,10 +47,10 @@
                             />
                         </div>
                     </div>
-                    @endif
 
+                    @if(!isset($hideStatusFilter))
                     {{-- Status Filter --}}
-                    <div style="width: 145px;">
+                    <div style="width: 160px;">
                         <div class="position-relative">
                             <i class="ki-duotone ki-filter fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
                                 <span class="path1"></span>
@@ -66,14 +65,13 @@
                                 data-hide-search="true"
                             >
                                 <option></option>
-                                @foreach (\App\Models\CareRequest::getStatusList() as $value => $label)
-                                    <option value="{{ $value }}">
-                                        {{ $label }}
-                                    </option>
+                                @foreach (\App\Models\RequestBid::getStatusList() as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -81,21 +79,20 @@
         {{-- Body --}}
         <div class="card-body py-4">
 
-            <div id="requests-table-wrapper" class="table-responsive">
+            <div id="bids-table-wrapper" class="table-responsive">
                 <table
-                    id="requests-table"
+                    id="bids-table"
                     class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100"
                 >
                     <thead>
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
                             <th class="w-50px">ID</th>
-                            <th class="min-w-200px">User</th>
-                            <th class="min-w-150px">Status</th>
-                            <th class="min-w-150px">Date & Time</th>
-                            <th class="min-w-200px">Location</th>
-                            <th class="min-w-150px">Bidding Ends At</th>
-                            <th class="min-w-150px">Created At</th>
-                            <th class="text-end min-w-120px pe-3">Actions</th>
+                            <th class="min-w-175px">Care Request</th>
+                            <th class="min-w-175px">Nurse</th>
+                            <th class="min-w-120px">Amount</th>
+                            <th class="min-w-120px">Status</th>
+                            <th class="min-w-130px">Created At</th>
+                            <th class="text-end min-w-80px pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -103,11 +100,11 @@
             </div>
 
             @include('admin.layouts.partials._table-skeleton', [
-                'id' => 'requests-skeleton'
+                'id' => 'bids-skeleton'
             ])
 
             @include('admin.layouts.partials._table-empty', [
-                'id' => 'requests-empty'
+                'id' => 'bids-empty'
             ])
 
         </div>
@@ -126,28 +123,28 @@
     <script>
         $(function () {
             // ── Init ──────────────────────────────────────────────────────────
-            let table = $('#requests-table').DataTable({
+            let table = $('#bids-table').DataTable({
                 serverSide: true,
                 processing: false,
                 ajax: {
-                    url: '{{ route('admin.requests.data') }}',
+                    url: '{!! $dataUrl ?? route("admin.bids.data") !!}',
                     data: function (d) {
-                        d.status = $('#filter-status').val();
+                        if ($('#filter-status').length) {
+                            d.status = $('#filter-status').val();
+                        }
                         d.date = $('#filter-date').val();
-                        d.is_today = '{{ $isToday ?? false }}';
                     }
                 },
                 columns: [
-                    { data: 'reference_id', name: 'reference_id' },
-                    { data: 'user', name: 'user', orderable: false, searchable: false },
+                    { data: 'id', name: 'id' },
+                    { data: 'care_request', name: 'care_request', orderable: false, searchable: false },
+                    { data: 'nurse', name: 'nurse', orderable: false, searchable: false },
+                    { data: 'amount', name: 'total_amount' },
                     { data: 'status', name: 'status' },
-                    { data: 'date_time', name: 'date_time', orderable: false, searchable: false },
-                    { data: 'location', name: 'location', orderable: false, searchable: false },
-                    { data: 'bidding_ends_at', name: 'bidding_ends_at' },
                     { data: 'created_at', name: 'created_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end pe-3' },
                 ],
-                order: [[6, 'desc']],
+                order: [[5, 'desc']],
                 pageLength: 15,
                 lengthMenu: [[10, 15, 25, 50], [10, 15, 25, 50]],
                 dom:
@@ -159,8 +156,8 @@
                     emptyTable: ' ',
                     zeroRecords: ' ',
                     loadingRecords: ' ',
-                    info: 'Showing _START_–_END_ of _TOTAL_ requests',
-                    infoEmpty: 'No requests to show',
+                    info: 'Showing _START_–_END_ of _TOTAL_ bids',
+                    infoEmpty: 'No bids to show',
                     infoFiltered: '(filtered from _MAX_)',
                     lengthMenu: 'Show _MENU_',
                     paginate: {
@@ -169,18 +166,18 @@
                     },
                 },
                 initComplete: function () {
-                    $('#requests-skeleton').fadeOut(200, function () {
+                    $('#bids-skeleton').fadeOut(200, function () {
                         $(this).remove();
                     });
                 },
                 drawCallback: function () {
                     let total = this.api().page.info().recordsDisplay;
                     if (total === 0) {
-                        $('#requests-table-wrapper').addClass('d-none');
-                        $('#requests-empty').removeClass('d-none');
+                        $('#bids-table-wrapper').addClass('d-none');
+                        $('#bids-empty').removeClass('d-none');
                     } else {
-                        $('#requests-empty').addClass('d-none');
-                        $('#requests-table-wrapper').removeClass('d-none');
+                        $('#bids-empty').addClass('d-none');
+                        $('#bids-table-wrapper').removeClass('d-none');
                     }
                     $('[data-bs-toggle="tooltip"]').tooltip({ trigger: 'hover' });
                 }
@@ -196,46 +193,13 @@
                 }, 400);
             });
 
-            // ── Status Filter ────────────────────────────────────────────────
+            // ── Filters ─────────────────────────────────────────────────────
             $('#filter-status').on('change', function () {
                 table.ajax.reload();
             });
 
-            @if(empty($isToday))
-            // ── Date Filter ──────────────────────────────────────────────────
             $('#filter-date').on('change', function () {
                 table.ajax.reload();
-            });
-            @endif
-
-            // ── Delete ───────────────────────────────────────────────────────
-            $(document).on('click', '.btn-delete', function () {
-                let id = $(this).data('id');
-                Swal.fire({
-                    title: 'Delete Request?',
-                    text: 'This action cannot be undone.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, Delete',
-                    customClass: {
-                        confirmButton: 'btn btn-danger',
-                        cancelButton: 'btn btn-light ms-2'
-                    },
-                    buttonsStyling: false,
-                }).then(function (result) {
-                    if (!result.isConfirmed) return;
-                    $.post('/admin/requests/' + id, {
-                        _method: 'DELETE',
-                        _token: '{{ csrf_token() }}'
-                    })
-                    .done(function () {
-                        table.ajax.reload(null, false);
-                        toastr.success('Care request deleted.');
-                    })
-                    .fail(function () {
-                        toastr.error('Something went wrong.');
-                    });
-                });
             });
         });
     </script>

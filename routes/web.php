@@ -20,9 +20,8 @@ Route::get('/', function () {
 
 Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group(function () {
 
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/stats', [\App\Http\Controllers\Admin\DashboardController::class, 'stats'])->name('dashboard.stats');
 
     // =====================
     // PEOPLE — Nurses
@@ -43,7 +42,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/rejected/data', [NurseController::class, 'rejectedData'])->name('rejected.data');
         Route::get('/pending-count', [NurseController::class, 'pendingCount'])->name('pending-count');
         Route::get('/{user}', [NurseController::class, 'show'])->name('show');
+        Route::get('/{user}/stats', [NurseController::class, 'stats'])->name('stats');
         Route::get('/{user}/application', [NurseController::class, 'showApplication'])->name('show-application');
+        Route::get('/{user}/reviews', [NurseController::class, 'reviews'])->name('reviews');
+        Route::get('/{user}/reviews/data', [NurseController::class, 'reviewsData'])->name('reviews.data');
+        Route::get('/{user}/bids', [NurseController::class, 'bids'])->name('bids');
+        Route::get('/{user}/bids/data', [NurseController::class, 'bidsData'])->name('bids.data');
+        Route::get('/{user}/bookings', [NurseController::class, 'bookings'])->name('bookings');
+        Route::get('/{user}/bookings/data', [NurseController::class, 'bookingsData'])->name('bookings.data');
+        Route::get('/{user}/login-history', [NurseController::class, 'loginHistory'])->name('login-history');
+        Route::get('/{user}/login-history/data', [NurseController::class, 'loginHistoryData'])->name('login-history.data');
         Route::get('/{user}/review-step-view/{step}', [NurseController::class, 'getReviewStepView'])->name('review-step-view');
         Route::post('/{user}/review-step', [NurseController::class, 'reviewStep'])->name('review-step');
         Route::post('/{user}/finalize-review', [NurseController::class, 'finalizeReview'])->name('finalize-review');
@@ -58,6 +66,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::post('{patient}/unblock', [PatientController::class, 'unblock'])->name('unblock');
         
         Route::get('{patient}', [PatientController::class, 'show'])->name('show');
+        Route::get('{patient}/stats', [PatientController::class, 'stats'])->name('stats');
+        Route::get('{patient}/requests', [PatientController::class, 'requests'])->name('requests');
+        Route::get('{patient}/requests/data', [PatientController::class, 'requestsData'])->name('requests.data');
+        Route::get('{patient}/bookings', [PatientController::class, 'bookings'])->name('bookings');
+        Route::get('{patient}/bookings/data', [PatientController::class, 'bookingsData'])->name('bookings.data');
+        Route::get('{patient}/login-history', [PatientController::class, 'loginHistory'])->name('login-history');
+        Route::get('{patient}/login-history/data', [PatientController::class, 'loginHistoryData'])->name('login-history.data');
         Route::get('{patient}/edit', [PatientController::class, 'edit'])->name('edit');
         Route::post('{patient}', [PatientController::class, 'update'])->name('update');
         Route::delete('{patient}', [PatientController::class, 'destroy'])->name('destroy');
@@ -77,6 +92,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::prefix('requests')->name('requests.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RequestController::class, 'index'])->name('index');
         Route::get('/data', [\App\Http\Controllers\Admin\RequestController::class, 'data'])->name('data');
+        Route::get('today', [\App\Http\Controllers\Admin\RequestController::class, 'todayIndex'])->name('today');
         Route::get('{request}/bids-data', [\App\Http\Controllers\Admin\RequestController::class, 'bidsData'])->name('bids-data');
         Route::get('{request}/notified-nurses-data', [\App\Http\Controllers\Admin\RequestController::class, 'notifiedNursesData'])->name('notified-nurses-data');
         Route::get('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'show'])->name('show');
@@ -96,17 +112,35 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('cancelled');
     });
 
+    // =====================
+    // OPERATIONS — Bookings
+    // =====================
+    Route::prefix('bookings')->name('bookings.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('index');
+        Route::get('/data', [\App\Http\Controllers\Admin\BookingController::class, 'data'])->name('data');
+        Route::get('active', [\App\Http\Controllers\Admin\BookingController::class, 'active'])->name('active');
+        Route::get('active/data', [\App\Http\Controllers\Admin\BookingController::class, 'activeData'])->name('active-data');
+        Route::get('cancelled', [\App\Http\Controllers\Admin\BookingController::class, 'cancelled'])->name('cancelled');
+        Route::get('cancelled/data', [\App\Http\Controllers\Admin\BookingController::class, 'cancelledData'])->name('cancelled-data');
+        Route::get('{booking}/sessions-data', [\App\Http\Controllers\Admin\BookingController::class, 'sessionsData'])->name('sessions-data');
+        Route::get('{booking}/payment-logs-data', [\App\Http\Controllers\Admin\BookingController::class, 'paymentLogsData'])->name('payment-logs-data');
+        Route::get('{booking}/reviews-data', [\App\Http\Controllers\Admin\BookingController::class, 'reviewsData'])->name('reviews-data');
+        Route::get('{booking}/bids-data', [\App\Http\Controllers\Admin\BookingController::class, 'bidsData'])->name('bids-data');
+        Route::get('{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'show'])->name('show');
+    });
+
     // OPERATIONS — Bids
     Route::prefix('bids')->name('bids.')->group(function () {
-        Route::get('active', function () {
-            echo "Active Bids";
-        })->name('active');
-        Route::get('accepted', function () {
-            echo "Accepted Bids";
-        })->name('accepted');
-        Route::get('rejected', function () {
-            echo "Rejected Bids";
-        })->name('rejected');
+        Route::get('/', [\App\Http\Controllers\Admin\BidController::class, 'index'])->name('index');
+        Route::get('/data', [\App\Http\Controllers\Admin\BidController::class, 'data'])->name('data');
+        Route::get('today', [\App\Http\Controllers\Admin\BidController::class, 'todayIndex'])->name('today');
+        Route::get('today/data', [\App\Http\Controllers\Admin\BidController::class, 'todayData'])->name('today.data');
+        Route::get('active', [\App\Http\Controllers\Admin\BidController::class, 'active'])->name('active');
+        Route::get('active/data', [\App\Http\Controllers\Admin\BidController::class, 'activeData'])->name('active.data');
+        Route::get('accepted', [\App\Http\Controllers\Admin\BidController::class, 'accepted'])->name('accepted');
+        Route::get('accepted/data', [\App\Http\Controllers\Admin\BidController::class, 'acceptedData'])->name('accepted.data');
+        Route::get('rejected', [\App\Http\Controllers\Admin\BidController::class, 'rejected'])->name('rejected');
+        Route::get('rejected/data', [\App\Http\Controllers\Admin\BidController::class, 'rejectedData'])->name('rejected.data');
         
         Route::get('{bid}', [\App\Http\Controllers\Admin\BidController::class, 'show'])->name('show');
     });
@@ -188,6 +222,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('backups', function () {
             echo "Backups";
         })->name('backups');
+    });
+
+    // SUPPORT TICKETS
+    Route::prefix('support')->name('support.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\SupportController::class, 'index'])->name('index');
+        Route::get('/data', [\App\Http\Controllers\Admin\SupportController::class, 'data'])->name('data');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\SupportController::class, 'show'])->name('show');
+        Route::post('/{id}/reply', [\App\Http\Controllers\Admin\SupportController::class, 'reply'])->name('reply');
+        Route::post('/{id}/status', [\App\Http\Controllers\Admin\SupportController::class, 'updateStatus'])->name('update-status');
     });
 
     // SYSTEM — Settings

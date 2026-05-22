@@ -290,19 +290,36 @@
         function processStepReview(stepId, status, existingReason = '') {
             if (status === {{ \App\Models\NurseProfileVerification::STATUS_REJECTED }}) {
                 Swal.fire({
-                    title: 'Reject Section',
                     html: `
-                                <div class="text-start mt-4">
-                                    <label class="form-label fw-semibold text-gray-700">Reason for Rejection (Optional)</label>
-                                    <textarea id="swal-step-reject-reason" class="form-control border-gray-300" rows="4" placeholder="Enter detailed reason to help the nurse fix this section...">${existingReason}</textarea>
+                        <div class="d-flex flex-column text-start">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="symbol symbol-40px me-3">
+                                    <div class="symbol-label bg-light-danger">
+                                        <i class="ki-outline ki-cross-square fs-1 text-danger"></i>
+                                    </div>
                                 </div>
-                            `,
+                                <div>
+                                    <h4 class="fw-bold text-gray-900 mb-1 fs-5">Reject Section</h4>
+                                    <span class="text-gray-500 fs-8">Please provide a reason to help the nurse fix this.</span>
+                                </div>
+                            </div>
+                            <div class="separator separator-dashed mb-4"></div>
+                            <div class="d-flex flex-column mb-2 fv-row">
+                                <label class="d-flex align-items-center fs-7 fw-semibold mb-2">
+                                    <span>Rejection Reason</span>
+                                </label>
+                                <textarea id="swal-step-reject-reason" class="form-control form-control-sm fs-7 resize-none" rows="3" placeholder="Type your detailed reason here...">${existingReason}</textarea>
+                            </div>
+                        </div>
+                    `,
                     showCancelButton: true,
+                    buttonsStyling: false,
                     confirmButtonText: 'Submit Rejection',
-                    confirmButtonColor: '#252f4a', // Dark theme color
+                    cancelButtonText: 'Cancel',
                     customClass: {
-                        confirmButton: 'btn btn-dark fw-bold px-6',
-                        cancelButton: 'btn btn-light fw-bold px-6'
+                        popup: 'shadow-sm',
+                        confirmButton: 'btn btn-sm btn-danger fw-bold px-5',
+                        cancelButton: 'btn btn-sm btn-light btn-active-light-primary fw-bold px-5'
                     },
                     preConfirm: () => {
                         return document.getElementById('swal-step-reject-reason').value.trim();
@@ -378,26 +395,46 @@
         function finalizeReview(status) {
             if (status === {{ \App\Models\NurseProfile::STATUS_REJECTED }}) {
                 Swal.fire({
-                    title: 'Reject Application',
                     html: `
-                                <div class="text-start mt-4">
-                                    <label class="form-label fw-semibold text-gray-700">Rejection Reason</label>
-                                    <textarea id="swal-reject-reason" class="form-control mb-5 border-gray-300" rows="4" placeholder="Enter detailed reason for rejection..."></textarea>
-
-                                    <div class="form-check form-check-custom form-check-solid mt-2">
-                                        <input class="form-check-input border-gray-400" type="checkbox" value="1" id="swal-can-reapply" checked />
-                                        <label class="form-check-label text-gray-700 fw-medium ms-2 cursor-pointer" for="swal-can-reapply">
-                                            Allow applicant to reapply
-                                        </label>
+                        <div class="d-flex flex-column text-start">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="symbol symbol-40px me-3">
+                                    <div class="symbol-label bg-light-danger">
+                                        <i class="ki-outline ki-shield-cross fs-1 text-danger"></i>
                                     </div>
                                 </div>
-                            `,
+                                <div>
+                                    <h4 class="fw-bold text-gray-900 mb-1 fs-5">Reject Application</h4>
+                                    <span class="text-gray-500 fs-8">This will mark the nurse's profile as rejected.</span>
+                                </div>
+                            </div>
+                            <div class="separator separator-dashed mb-4"></div>
+                            <div class="d-flex flex-column mb-4 fv-row">
+                                <label class="d-flex align-items-center fs-7 fw-semibold mb-2">
+                                    <span class="required">Rejection Reason</span>
+                                </label>
+                                <textarea id="swal-reject-reason" class="form-control form-control-sm fs-7 resize-none" rows="3" placeholder="Explain why the application was rejected..."></textarea>
+                            </div>
+                            <div class="d-flex align-items-center bg-light-warning border border-warning border-dashed rounded p-3">
+                                <div class="d-flex flex-stack w-100">
+                                    <div class="d-flex flex-column me-2">
+                                        <span class="fw-bold text-gray-900 fs-7">Allow Reapplication</span>
+                                    </div>
+                                    <div class="form-check form-check-custom form-check-sm form-check-solid form-check-warning form-switch">
+                                        <input class="form-check-input w-35px h-20px" type="checkbox" id="swal-can-reapply" checked />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
                     showCancelButton: true,
-                    confirmButtonText: 'Submit Rejection',
-                    confirmButtonColor: '#252f4a', // Dark theme color
+                    buttonsStyling: false,
+                    confirmButtonText: 'Confirm Rejection',
+                    cancelButtonText: 'Cancel',
                     customClass: {
-                        confirmButton: 'btn btn-dark fw-bold px-6',
-                        cancelButton: 'btn btn-light fw-bold px-6'
+                        popup: 'shadow-sm',
+                        confirmButton: 'btn btn-sm btn-danger fw-bold px-5',
+                        cancelButton: 'btn btn-sm btn-light btn-active-light-primary fw-bold px-5'
                     },
                     preConfirm: () => {
                         const reason = document.getElementById('swal-reject-reason').value.trim();

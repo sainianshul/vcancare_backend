@@ -156,6 +156,16 @@
                     </div>
                 </div>
 
+                <!-- Support Tickets -->
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('admin.support.*') ? 'active' : '' }}" href="{{ route('admin.support.index') }}">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-message-text-2 fs-2"></i>
+                        </span>
+                        <span class="menu-title">Support Tickets</span>
+                    </a>
+                </div>
+
                 {{-- Care Requests --}}
                 <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ request()->routeIs('admin.requests.*') ? 'here show' : '' }}">
@@ -175,31 +185,46 @@
                             </a>
                         </div>
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.new') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.new') }}">
+                            <a class="menu-link {{ request()->routeIs('admin.requests.today') ? 'active' : '' }}"
+                                href="{{ route('admin.requests.today') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">New</span>
+                                <span class="menu-title">Today Requests</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- Bookings --}}
+                <div data-kt-menu-trigger="click"
+                    class="menu-item menu-accordion {{ request()->routeIs('admin.bookings.*') ? 'here show' : '' }}">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-calendar-tick fs-2"></i>
+                        </span>
+                        <span class="menu-title">Bookings</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bookings.index') ? 'active' : '' }}"
+                                href="{{ route('admin.bookings.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">All Bookings</span>
                             </a>
                         </div>
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.active') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.active') }}">
+                            <a class="menu-link {{ request()->routeIs('admin.bookings.active') ? 'active' : '' }}"
+                                href="{{ route('admin.bookings.active') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Active</span>
+                                <span class="menu-title">Active Bookings</span>
                             </a>
                         </div>
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.completed') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.completed') }}">
+                            <a class="menu-link {{ request()->routeIs('admin.bookings.cancelled') ? 'active' : '' }}"
+                                href="{{ route('admin.bookings.cancelled') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Completed</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.requests.cancelled') ? 'active' : '' }}"
-                                href="{{ route('admin.requests.cancelled') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Cancelled</span>
+                                <span class="menu-title">Cancelled Bookings</span>
                             </a>
                         </div>
                     </div>
@@ -217,6 +242,20 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion">
                         <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bids.index') ? 'active' : '' }}"
+                                href="{{ route('admin.bids.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">All Bids</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.bids.today') ? 'active' : '' }}"
+                                href="{{ route('admin.bids.today') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Today Bids</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.bids.active') ? 'active' : '' }}"
                                 href="{{ route('admin.bids.active') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
@@ -227,14 +266,14 @@
                             <a class="menu-link {{ request()->routeIs('admin.bids.accepted') ? 'active' : '' }}"
                                 href="{{ route('admin.bids.accepted') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Accepted</span>
+                                <span class="menu-title">Accepted Bids</span>
                             </a>
                         </div>
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.bids.rejected') ? 'active' : '' }}"
                                 href="{{ route('admin.bids.rejected') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Rejected</span>
+                                <span class="menu-title">Rejected Bids</span>
                             </a>
                         </div>
                     </div>

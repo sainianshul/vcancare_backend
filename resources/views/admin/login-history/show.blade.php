@@ -142,6 +142,16 @@
                                 <span class="text-gray-800 fw-bold fs-7">{{ $loginHistory->user->phone ?: '—' }}</span>
                             </div>
                         </div>
+
+                        @if((int)$loginHistory->user->role === \App\Models\User::ROLE_USER)
+                            <a href="{{ route('admin.patients.show', $loginHistory->user->id) }}" class="btn btn-light-primary border border-primary btn-sm w-100 fw-bold fs-8 px-3 py-2 mt-4">
+                                Go to Profile <i class="ki-outline ki-arrow-right fs-6 ms-1"></i>
+                            </a>
+                        @elseif((int)$loginHistory->user->role === \App\Models\User::ROLE_NURSE)
+                            <a href="{{ route('admin.nurses.show', $loginHistory->user->id) }}" class="btn btn-light-success border border-success btn-sm w-100 fw-bold fs-8 px-3 py-2 mt-4">
+                                Go to Profile <i class="ki-outline ki-arrow-right fs-6 ms-1"></i>
+                            </a>
+                        @endif
                     @else
                         <div class="d-flex flex-column align-items-center text-center py-4">
                             <i class="ki-outline ki-user-cross fs-3x text-gray-400 mb-2"></i>
