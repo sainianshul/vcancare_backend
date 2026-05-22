@@ -13,7 +13,14 @@ class PatientDataTable extends DataTable
             ->eloquent($query)
 
             // ── User Info ─────────────────────────────────────────────
-            ->addColumn('name', function (User $user) {
+            ->filterColumn('name', function($query, $keyword) {
+                $query->where(function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%")
+                      ->orWhere('email', 'like', "%{$keyword}%")
+                      ->orWhere('phone', 'like', "%{$keyword}%");
+                });
+            })
+            ->editColumn('name', function (User $user) {
 
                 $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
 

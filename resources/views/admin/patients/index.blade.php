@@ -27,7 +27,7 @@
         type="text"
         id="dt-search"
         class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
-        placeholder="Search patients..."
+        placeholder="Search by patient name, email or phone..."
     />
 
 </div>
