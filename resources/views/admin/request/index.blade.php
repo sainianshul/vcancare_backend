@@ -93,7 +93,6 @@
                             <th class="min-w-150px">Status</th>
                             <th class="min-w-150px">Date & Time</th>
                             <th class="min-w-200px">Location</th>
-                            <th class="min-w-150px">Bidding Ends At</th>
                             <th class="min-w-150px">Created At</th>
                             <th class="text-end min-w-120px pe-3">Actions</th>
                         </tr>
@@ -143,11 +142,10 @@
                     { data: 'status', name: 'status' },
                     { data: 'date_time', name: 'date_time', orderable: false, searchable: false },
                     { data: 'location', name: 'location', orderable: false, searchable: false },
-                    { data: 'bidding_ends_at', name: 'bidding_ends_at' },
                     { data: 'created_at', name: 'created_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end pe-3' },
                 ],
-                order: [[6, 'desc']],
+                order: [[5, 'desc']],
                 pageLength: 15,
                 lengthMenu: [[10, 15, 25, 50], [10, 15, 25, 50]],
                 dom:
