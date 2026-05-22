@@ -69,6 +69,9 @@
                                             <button class="btn btn-sm btn-light-info border border-info fw-bold px-4 py-2 shadow-sm">
                                                 <i class="ki-outline ki-sms fs-5 me-1"></i> Send Email
                                             </button>
+                                            <a href="{{ route('admin.nurses.edit', $user->id) }}" class="btn btn-sm btn-light-warning border border-warning fw-bold px-4 py-2 shadow-sm">
+                                                <i class="ki-outline ki-pencil fs-5 me-1"></i> Edit
+                                            </a>
                                         </div>
                                     </div>
 

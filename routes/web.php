@@ -41,6 +41,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/rejected', [NurseController::class, 'rejected'])->name('rejected');
         Route::get('/rejected/data', [NurseController::class, 'rejectedData'])->name('rejected.data');
         Route::get('/pending-count', [NurseController::class, 'pendingCount'])->name('pending-count');
+        Route::get('/{user}/edit', [NurseController::class, 'edit'])->name('edit');
+        Route::post('/{user}/update', [NurseController::class, 'update'])->name('update');
         Route::get('/{user}', [NurseController::class, 'show'])->name('show');
         Route::get('/{user}/stats', [NurseController::class, 'stats'])->name('stats');
         Route::get('/{user}/application', [NurseController::class, 'showApplication'])->name('show-application');

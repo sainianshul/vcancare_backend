@@ -18,7 +18,8 @@ use Illuminate\Http\Request;
 class NurseController extends Controller
 {
     public function __construct(
-        private readonly OnboardingService $onboardingService
+        private readonly OnboardingService $onboardingService,
+        private readonly \App\Services\Admin\NurseService $nurseService
     ) {
     }
     // ── All ────────────────────────────────────────────────
@@ -91,6 +92,45 @@ class NurseController extends Controller
         } else {
             // PENDING or SUSPENDED
             return view('admin.nurses.show-pending', compact('user', 'profile', 'apiToken'));
+        }
+    }
+
+    // ── Edit Profile ──────────────────────────────────────
+    public function edit($id)
+    {
+        $user = User::with(['nurseProfile', 'nurseProfile.careTypes'])->findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+
+        $careTypes = \App\Models\CareType::where('status', 1)->get();
+
+        return view('admin.nurses.edit', compact('user', 'careTypes'));
+    }
+
+    // ── Update Profile ────────────────────────────────────
+    public function update(\App\Http\Requests\Admin\UpdateNurseRequest $request, $id)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+
+        try {
+            $this->nurseService->updateNurse($user, $request->validated());
+
+            try {
+                ActivityLogger::log(
+                    Activity::ACTION_UPDATED,
+                    'Admin updated nurse profile details.',
+                    $user->nurseProfile
+                );
+            } catch (\Exception $e) {
+                // Ignore logging errors to ensure the main transaction remains stable
+            }
+
+            return redirect()->route('admin.nurses.edit', $user->id)
+                ->with('success', 'Nurse profile updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to update nurse profile. Please try again.');
         }
     }
 

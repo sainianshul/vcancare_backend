@@ -1254,6 +1254,118 @@
                 ]
             }
         },
+        "/api/v1/nurse/profile/update": {
+            "post": {
+                "tags": [
+                    "Nurse Profile"
+                ],
+                "summary": "Update Nurse Profile (Post-Onboarding)",
+                "operationId": "nurseUpdateProfile",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "available_from",
+                                    "available_to",
+                                    "available_days"
+                                ],
+                                "properties": {
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "Experienced ICU nurse.",
+                                        "nullable": true
+                                    },
+                                    "available_from": {
+                                        "type": "string",
+                                        "example": "09:00"
+                                    },
+                                    "available_to": {
+                                        "type": "string",
+                                        "example": "18:00"
+                                    },
+                                    "available_days": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            5
+                                        ]
+                                    },
+                                    "timezone": {
+                                        "type": "string",
+                                        "example": "Asia/Kolkata",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Validation Error"
+                    },
+                    "403": {
+                        "description": "Forbidden (Not Approved)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/profile/toggle-availability": {
+            "post": {
+                "tags": [
+                    "Nurse Profile"
+                ],
+                "summary": "Toggle Nurse Availability",
+                "operationId": "nurseToggleAvailability",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "is_available"
+                                ],
+                                "properties": {
+                                    "is_available": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Forbidden (Not Approved)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/support/tickets": {
             "get": {
                 "tags": [
@@ -2171,6 +2283,10 @@
         {
             "name": "Nurse Onboarding",
             "description": "Nurse Onboarding"
+        },
+        {
+            "name": "Nurse Profile",
+            "description": "Nurse Profile"
         },
         {
             "name": "User Bookings",

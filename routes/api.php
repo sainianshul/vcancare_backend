@@ -76,6 +76,10 @@ Route::prefix('v1')->group(function () {
             // Protected routes that require an approved nurse profile
             Route::middleware(['nurse_approved'])->group(function () {
 
+                // Profile
+                Route::post('profile/update', [\App\Http\Controllers\Api\Nurse\ProfileController::class, 'updateProfile']);
+                Route::post('profile/toggle-availability', [\App\Http\Controllers\Api\Nurse\ProfileController::class, 'toggleAvailability']);
+
                 // Care Requests (bidding)
                 Route::get('care-requests', [NurseCareRequestController::class, 'index']);
                 Route::get('care-requests/{id}', [NurseCareRequestController::class, 'show']);
