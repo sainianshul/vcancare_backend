@@ -5,36 +5,38 @@
 @section('content')
 
     <x-breadcrumb :items="[
-        ['label' => 'Support Tickets', 'url' => route('admin.support.index')],
-        ['label' => 'Manage Categories']
+        ['label' => 'Support', 'url' => route('admin.support.index')],
+        ['label' => 'Support Categories']
     ]" />
 
     <div class="row g-5 g-xl-8">
-        <div class="col-xl-8">
-            <div class="card border border-gray-200 mb-5">
-                <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+        <div class="col-xl-12">
+            <div class="card border border-gray-200 mb-5 shadow-sm">
+                <div class="card-header border-0 pt-5 pb-3">
                     <div class="card-title">
                         <h3 class="card-title align-items-start flex-column">
-                            <span class="card-label fw-bold fs-3 mb-1">Support Categories</span>
+                            <span class="card-label fw-bold text-gray-900 fs-3 mb-1">Support Categories</span>
                             <span class="text-muted fw-semibold fs-7">Manage ticket categories</span>
                         </h3>
                     </div>
                     <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_add_category">
-                            <i class="ki-outline ki-plus fs-4"></i> Add Category
+                        <button type="button" class="btn btn-primary btn-sm fw-semibold btn-flex btn-center" data-bs-toggle="modal" data-bs-target="#kt_modal_add_category">
+                            <i class="ki-outline ki-plus-square fs-5 me-1"></i> Add Category
                         </button>
                     </div>
                 </div>
                 
-                <div class="card-body pt-0">
+                <div class="card-body py-4">
                     <div class="table-responsive">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_categories_table">
                             <thead>
-                                <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                    <th class="min-w-50px">ID</th>
+                                <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
+                                    <th class="w-50px">ID</th>
                                     <th class="min-w-200px">Name</th>
                                     <th class="min-w-100px text-center">Status</th>
-                                    <th class="text-end min-w-100px">Actions</th>
+                                    <th class="min-w-150px">Created At</th>
+                                    <th class="min-w-150px">Updated At</th>
+                                    <th class="text-end min-w-100px pe-3">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="fw-semibold text-gray-600">
@@ -44,34 +46,44 @@
                                         <td class="text-gray-900 fw-bold">{{ $category->name }}</td>
                                         <td class="text-center">
                                             @if($category->status)
-                                                <span class="badge badge-light-success border border-success px-2 py-1 fs-8 fw-bold">
+                                                <span class="badge badge-light-success border border-success px-3 py-2 fs-8 fw-bold">
                                                     <i class="ki-outline ki-check-circle fs-7 text-success me-1"></i> Active
                                                 </span>
                                             @else
-                                                <span class="badge badge-light-danger border border-danger px-2 py-1 fs-8 fw-bold">
+                                                <span class="badge badge-light-danger border border-danger px-3 py-2 fs-8 fw-bold">
                                                     <i class="ki-outline ki-cross-circle fs-7 text-danger me-1"></i> Inactive
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-icon btn-light-primary border border-primary btn-sm me-2" 
-                                                    onclick="editCategory({{ $category->id }}, '{{ addslashes($category->name) }}', {{ $category->status }})"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                                                <i class="ki-outline ki-pencil fs-5"></i>
-                                            </button>
-                                            
-                                            <form action="{{ route('admin.support.categories.destroy', $category->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this category? (Soft Delete will be applied)');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-icon btn-light-danger border border-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-                                                    <i class="ki-outline ki-trash fs-5"></i>
+                                        <td>
+                                            <div class="fw-semibold text-gray-800">{{ $category->created_at ? $category->created_at->format('d M Y') : 'N/A' }}</div>
+                                            <div class="text-muted fs-7">{{ $category->created_at ? $category->created_at->format('h:i A') : '' }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold text-gray-800">{{ $category->updated_at ? $category->updated_at->format('d M Y') : 'N/A' }}</div>
+                                            <div class="text-muted fs-7">{{ $category->updated_at ? $category->updated_at->format('h:i A') : '' }}</div>
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <div class="d-flex gap-1 justify-content-end">
+                                                <button class="btn btn-sm btn-icon btn-light-primary border border-primary w-30px h-30px" 
+                                                        onclick="editCategory({{ $category->id }}, '{{ addslashes($category->name) }}', {{ $category->status }})"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                                    <i class="ki-outline ki-pencil fs-5"></i>
                                                 </button>
-                                            </form>
+                                                
+                                                <form action="{{ route('admin.support.categories.destroy', $category->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this category? (Soft Delete will be applied)');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-icon btn-light-danger border border-danger w-30px h-30px" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                                                        <i class="ki-outline ki-trash fs-5"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center text-muted py-5">
+                                        <td colspan="6" class="text-center text-muted py-5">
                                             <div class="d-flex flex-column flex-center">
                                                 <i class="ki-outline ki-file text-muted fs-4x mb-3"></i>
                                                 <span class="fs-6">No categories found. Create one to get started.</span>
@@ -81,45 +93,6 @@
                                 @endforelse
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-4">
-            <div class="card border border-gray-200">
-                <div class="card-body p-8">
-                    <div class="d-flex align-items-center mb-5">
-                        <i class="ki-outline ki-information-5 text-primary fs-1 me-3"></i>
-                        <h2 class="text-gray-900 fw-bold mb-0">About Categories</h2>
-                    </div>
-                    
-                    <p class="text-gray-700 fs-6 fw-semibold mb-6">
-                        Categories help you organize and filter support tickets efficiently. When creating a new category, it will immediately be available for users when they open new tickets.
-                    </p>
-
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="symbol symbol-30px me-3">
-                            <span class="symbol-label bg-light-success border border-success">
-                                <i class="ki-outline ki-check-circle text-success fs-4"></i>
-                            </span>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <span class="text-gray-900 fw-bold fs-6">Active Categories</span>
-                            <span class="text-muted fs-8">Visible to users to select.</span>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center">
-                        <div class="symbol symbol-30px me-3">
-                            <span class="symbol-label bg-light-danger border border-danger">
-                                <i class="ki-outline ki-cross-circle text-danger fs-4"></i>
-                            </span>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <span class="text-gray-900 fw-bold fs-6">Inactive Categories</span>
-                            <span class="text-muted fs-8">Hidden from users but retained.</span>
-                        </div>
                     </div>
                 </div>
             </div>

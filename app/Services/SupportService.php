@@ -73,7 +73,7 @@ class SupportService
     {
         $ticket = SupportTicket::with(['messages' => function ($q) {
             $q->with('user:id,name,profile_photo')
-              ->orderBy('created_at', 'asc');
+                ->orderBy('created_at', 'asc');
         }])->find($ticketId);
 
         if (!$ticket) {
@@ -216,7 +216,7 @@ class SupportService
      */
     public function getActiveCategories(): Collection
     {
-        return SupportCategory::where('status', 1)
+        return SupportCategory::where('status', SupportCategory::STATUS_ACTIVE)
             ->orderBy('name')
             ->get(['id', 'name']);
     }

@@ -391,7 +391,7 @@
 
                 <!-- Support Tickets -->
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.support.*') ? 'active' : '' }}" href="{{ route('admin.support.index') }}">
+                    <a class="menu-link {{ request()->routeIs('admin.support.index') || request()->routeIs('admin.support.show') ? 'active' : '' }}" href="{{ route('admin.support.index') }}">
                         <span class="menu-icon">
                             <i class="ki-outline ki-message-text-2 fs-2"></i>
                         </span>
@@ -401,11 +401,21 @@
 
                 <!-- FAQ -->
                 <div class="menu-item">
-                    <a class="menu-link" href="#">
+                    <a class="menu-link {{ request()->routeIs('admin.support.faqs.*') ? 'active' : '' }}" href="{{ route('admin.support.faqs.index') }}">
                         <span class="menu-icon">
                             <i class="ki-outline ki-message-question fs-2"></i>
                         </span>
                         <span class="menu-title">FAQ</span>
+                    </a>
+                </div>
+
+                <!-- Support Categories -->
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('admin.support.categories.*') ? 'active' : '' }}" href="{{ route('admin.support.categories.index') }}">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-category fs-2"></i>
+                        </span>
+                        <span class="menu-title">Support Categories</span>
                     </a>
                 </div>
 
