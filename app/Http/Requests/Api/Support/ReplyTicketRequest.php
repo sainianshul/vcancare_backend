@@ -16,7 +16,17 @@ class ReplyTicketRequest extends FormRequest
         return [
             'message' => 'required|string',
             'attachments' => 'nullable|array',
-            'attachments.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'attachments.*' => 'file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'message.required' => 'Please enter a message.',
+            'attachments.*.file' => 'Each attachment must be a valid file.',
+            'attachments.*.mimes' => 'Attachments must be of type: jpeg, png, jpg, gif, pdf, doc, or docx.',
+            'attachments.*.max' => 'Each attachment must not exceed 5MB.',
         ];
     }
 }

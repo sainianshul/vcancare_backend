@@ -2,178 +2,232 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Support\StoreTicketRequest;
 use App\Http\Requests\Api\Support\ReplyTicketRequest;
-use App\Models\SupportTicket;
 use App\Services\SupportService;
-use App\Exceptions\Support\TicketClosedException;
-use App\Exceptions\Support\UnauthorizedTicketAccessException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'Support Tickets', description: 'API Endpoints for managing support tickets (For both Patients and Nurses)')]
 class SupportController extends Controller
 {
-    protected $supportService;
+    public function __construct(
+        protected SupportService $supportService
+    ) {}
 
-    public function __construct(SupportService $supportService)
+    // ─── Categories ──────────────────────────────────────────────
+
+    #[OA\Get(
+        path: '/api/v1/support/categories',
+        operationId: 'getSupportCategories',
+        summary: 'List active support categories',
+        description: 'Returns a list of active support categories that users can select when creating a ticket.',
+        security: [['bearerAuth' => []]],
+        tags: ['Support Tickets'],
+        responses: [
+            new OA\Response(response: 200, description: 'Categories retrieved successfully')
+        ]
+    )]
+    public function categories(): JsonResponse
     {
-        $this->supportService = $supportService;
+        $categories = $this->supportService->getActiveCategories();
+
+        return ApiResponse::success('Categories retrieved successfully.', [
+            'categories' => $categories,
+        ]);
     }
 
-    /**
-     * List all support tickets for the authenticated user.
-     */
+    // ─── Ticket CRUD ─────────────────────────────────────────────
+
     #[OA\Get(
-        path: '/api/support/tickets',
+        path: '/api/v1/support/tickets',
         operationId: 'getSupportTickets',
         summary: 'List user tickets',
-        security: [['sanctum' => []]],
-        tags: ['Support Tickets']
+        description: 'Get a paginated list of support tickets for the authenticated user.',
+        security: [['bearerAuth' => []]],
+        tags: ['Support Tickets'],
+        responses: [
+            new OA\Response(response: 200, description: 'Tickets retrieved successfully')
+        ]
     )]
-    #[OA\Response(response: 200, description: 'Success')]
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $tickets = SupportTicket::where('user_id', Auth::id())
-            ->latest()
-            ->paginate(15);
+        $tickets = $this->supportService->listTickets($request->user()->id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $tickets
+        return ApiResponse::success('Support tickets retrieved successfully.', [
+            'tickets' => $tickets,
         ]);
     }
 
-    /**
-     * Create a new support ticket.
-     */
     #[OA\Post(
-        path: '/api/support/tickets',
+        path: '/api/v1/support/tickets',
         operationId: 'storeSupportTicket',
         summary: 'Create a new support ticket',
-        security: [['sanctum' => []]],
-        tags: ['Support Tickets']
-    )]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\MediaType(
-            mediaType: 'multipart/form-data',
-            schema: new OA\Schema(
-                required: ['category', 'subject', 'description'],
-                properties: [
-                    new OA\Property(property: 'category', type: 'string', example: 'technical'),
-                    new OA\Property(property: 'subject', type: 'string', example: 'App keeps crashing'),
-                    new OA\Property(property: 'description', type: 'string', example: 'My app crashes on startup'),
-                    new OA\Property(property: 'priority', type: 'integer', description: '0: Low, 1: Medium, 2: High', example: 1),
-                    new OA\Property(property: 'attachments[]', type: 'array', items: new OA\Items(type: 'string', format: 'binary'), description: 'Array of image files')
-                ]
+        description: 'Create a new support ticket with subject, description, category, optional priority and attachments.',
+        security: [['bearerAuth' => []]],
+        tags: ['Support Tickets'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    required: ['category', 'subject', 'description'],
+                    properties: [
+                        new OA\Property(property: 'category', type: 'string', example: 'Technical'),
+                        new OA\Property(property: 'subject', type: 'string', example: 'App keeps crashing'),
+                        new OA\Property(property: 'description', type: 'string', example: 'My app crashes on startup'),
+                        new OA\Property(property: 'priority', type: 'integer', description: '0: Low, 1: Medium, 2: High', example: 1),
+                        new OA\Property(property: 'attachments[]', type: 'array', items: new OA\Items(type: 'string', format: 'binary'), description: 'Array of files (images, pdf, doc, docx)')
+                    ]
+                )
             )
-        )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Ticket created successfully'),
+            new OA\Response(response: 422, description: 'Validation errors')
+        ]
     )]
-    #[OA\Response(response: 201, description: 'Ticket created successfully')]
-    #[OA\Response(response: 422, description: 'Validation errors')]
-    #[OA\Response(response: 500, description: 'Server error')]
-    public function store(StoreTicketRequest $request)
+    public function store(StoreTicketRequest $request): JsonResponse
     {
-        try {
-            $ticket = $this->supportService->createTicket(Auth::user(), $request->validated());
+        $ticket = $this->supportService->createTicket(
+            $request->user(),
+            $request->validated()
+        );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Support ticket created successfully.',
-                'data' => $ticket
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create support ticket. ' . $e->getMessage()
-            ], 500);
-        }
+        return ApiResponse::success('Support ticket created successfully.', [
+            'ticket' => $ticket,
+        ], 201);
     }
 
-    /**
-     * Show a specific ticket and its messages.
-     */
     #[OA\Get(
-        path: '/api/support/tickets/{id}',
+        path: '/api/v1/support/tickets/{id}',
         operationId: 'showSupportTicket',
         summary: 'Get ticket details and messages',
-        security: [['sanctum' => []]],
-        tags: ['Support Tickets']
+        description: 'Get full details of a specific ticket with all messages and attachment URLs.',
+        security: [['bearerAuth' => []]],
+        tags: ['Support Tickets'],
+        parameters: [
+            new OA\Parameter(name: 'id', description: 'Ticket ID', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Ticket details retrieved'),
+            new OA\Response(response: 403, description: 'Unauthorized access'),
+            new OA\Response(response: 404, description: 'Ticket not found')
+        ]
     )]
-    #[OA\Parameter(name: 'id', description: 'Ticket ID', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))]
-    #[OA\Response(response: 200, description: 'Success')]
-    #[OA\Response(response: 403, description: 'Unauthorized access')]
-    #[OA\Response(response: 404, description: 'Ticket not found')]
-    public function show($id)
+    public function show(Request $request, int $id): JsonResponse
     {
-        $ticket = SupportTicket::with(['messages' => function($q) {
-            $q->orderBy('created_at', 'asc');
-        }])->findOrFail($id);
+        $ticket = $this->supportService->getTicket($id, $request->user()->id);
 
-        if ($ticket->user_id !== Auth::id()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized access.'], 403);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $ticket
+        return ApiResponse::success('Ticket retrieved successfully.', [
+            'ticket' => $ticket,
         ]);
     }
 
-    /**
-     * Reply to a ticket.
-     */
+    // ─── Chat / Messages ─────────────────────────────────────────
+
     #[OA\Post(
-        path: '/api/support/tickets/{id}/reply',
+        path: '/api/v1/support/tickets/{id}/reply',
         operationId: 'replySupportTicket',
         summary: 'Reply to an existing ticket',
-        security: [['sanctum' => []]],
-        tags: ['Support Tickets']
-    )]
-    #[OA\Parameter(name: 'id', description: 'Ticket ID', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\MediaType(
-            mediaType: 'multipart/form-data',
-            schema: new OA\Schema(
-                required: ['message'],
-                properties: [
-                    new OA\Property(property: 'message', type: 'string', example: 'Thank you for your help.'),
-                    new OA\Property(property: 'attachments[]', type: 'array', items: new OA\Items(type: 'string', format: 'binary'), description: 'Array of image files')
-                ]
+        description: 'Send a message to an existing ticket. Supports file attachments (images, pdf, doc, docx).',
+        security: [['bearerAuth' => []]],
+        tags: ['Support Tickets'],
+        parameters: [
+            new OA\Parameter(name: 'id', description: 'Ticket ID', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    required: ['message'],
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Thank you for your help.'),
+                        new OA\Property(property: 'attachments[]', type: 'array', items: new OA\Items(type: 'string', format: 'binary'), description: 'Array of files')
+                    ]
+                )
             )
-        )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Reply sent successfully'),
+            new OA\Response(response: 403, description: 'Unauthorized access'),
+            new OA\Response(response: 404, description: 'Ticket not found'),
+            new OA\Response(response: 409, description: 'Ticket is closed')
+        ]
     )]
-    #[OA\Response(response: 200, description: 'Reply sent successfully')]
-    #[OA\Response(response: 400, description: 'Ticket is closed')]
-    #[OA\Response(response: 403, description: 'Unauthorized access')]
-    #[OA\Response(response: 404, description: 'Ticket not found')]
-    public function reply(ReplyTicketRequest $request, $id)
+    public function reply(ReplyTicketRequest $request, int $id): JsonResponse
     {
-        $ticket = SupportTicket::findOrFail($id);
+        $ticket = $this->supportService->getTicket($id, $request->user()->id);
 
-        try {
-            $message = $this->supportService->addMessage(
-                $ticket, 
-                Auth::user(), 
-                $request->message, 
-                $request->file('attachments') ?? []
-            );
+        $message = $this->supportService->addMessage(
+            $ticket,
+            $request->user(),
+            $request->message,
+            $request->file('attachments') ?? []
+        );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Reply sent successfully.',
-                'data' => $message
-            ]);
-        } catch (UnauthorizedTicketAccessException $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 403);
-        } catch (TicketClosedException $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Failed to send reply. ' . $e->getMessage()], 500);
-        }
+        return ApiResponse::success('Reply sent successfully.', [
+            'message' => $message,
+        ]);
+    }
+
+    #[OA\Get(
+        path: '/api/v1/support/tickets/{id}/messages',
+        operationId: 'pollSupportMessages',
+        summary: 'Poll for new messages (chat polling)',
+        description: 'Get messages for a ticket. Pass `after` query parameter (ISO 8601 timestamp) to fetch only newer messages for efficient polling.',
+        security: [['bearerAuth' => []]],
+        tags: ['Support Tickets'],
+        parameters: [
+            new OA\Parameter(name: 'id', description: 'Ticket ID', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'after', description: 'ISO 8601 timestamp. Only messages after this time will be returned.', in: 'query', required: false, schema: new OA\Schema(type: 'string', format: 'date-time', example: '2024-01-01T00:00:00Z'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Messages retrieved'),
+            new OA\Response(response: 403, description: 'Unauthorized access'),
+            new OA\Response(response: 404, description: 'Ticket not found')
+        ]
+    )]
+    public function messages(Request $request, int $id): JsonResponse
+    {
+        $messages = $this->supportService->getMessagesSince(
+            $id,
+            $request->user()->id,
+            $request->query('after')
+        );
+
+        return ApiResponse::success('Messages retrieved successfully.', [
+            'messages' => $messages,
+            'server_time' => now()->toIso8601String(),
+        ]);
+    }
+
+    #[OA\Post(
+        path: '/api/v1/support/tickets/{id}/read',
+        operationId: 'markSupportMessagesRead',
+        summary: 'Mark messages as read',
+        description: 'Marks all admin messages on this ticket as read by the user.',
+        security: [['bearerAuth' => []]],
+        tags: ['Support Tickets'],
+        parameters: [
+            new OA\Parameter(name: 'id', description: 'Ticket ID', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Messages marked as read'),
+            new OA\Response(response: 403, description: 'Unauthorized access'),
+            new OA\Response(response: 404, description: 'Ticket not found')
+        ]
+    )]
+    public function markRead(Request $request, int $id): JsonResponse
+    {
+        $count = $this->supportService->markMessagesAsRead($id, $request->user()->id);
+
+        return ApiResponse::success('Messages marked as read.', [
+            'read_count' => $count,
+        ]);
     }
 }

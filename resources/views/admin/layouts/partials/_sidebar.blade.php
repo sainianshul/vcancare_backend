@@ -156,15 +156,7 @@
                     </div>
                 </div>
 
-                <!-- Support Tickets -->
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.support.*') ? 'active' : '' }}" href="{{ route('admin.support.index') }}">
-                        <span class="menu-icon">
-                            <i class="ki-outline ki-message-text-2 fs-2"></i>
-                        </span>
-                        <span class="menu-title">Support Tickets</span>
-                    </a>
-                </div>
+
 
                 {{-- Care Requests --}}
                 <div data-kt-menu-trigger="click"
@@ -386,6 +378,35 @@
                             </a>
                         </div>
                     </div>
+                </div>
+
+                {{-- ===================== --}}
+                {{-- SUPPORT --}}
+                {{-- ===================== --}}
+                <div class="menu-item pt-5">
+                    <div class="menu-content">
+                        <span class="menu-heading fw-bold text-uppercase fs-7">Support</span>
+                    </div>
+                </div>
+
+                <!-- Support Tickets -->
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('admin.support.*') ? 'active' : '' }}" href="{{ route('admin.support.index') }}">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-message-text-2 fs-2"></i>
+                        </span>
+                        <span class="menu-title">Tickets</span>
+                    </a>
+                </div>
+
+                <!-- FAQ -->
+                <div class="menu-item">
+                    <a class="menu-link" href="#">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-message-question fs-2"></i>
+                        </span>
+                        <span class="menu-title">FAQ</span>
+                    </a>
                 </div>
 
                 {{-- ===================== --}}

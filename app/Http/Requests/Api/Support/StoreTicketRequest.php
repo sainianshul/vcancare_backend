@@ -19,7 +19,19 @@ class StoreTicketRequest extends FormRequest
             'description' => 'required|string',
             'priority' => 'nullable|integer|in:0,1,2',
             'attachments' => 'nullable|array',
-            'attachments.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'attachments.*' => 'file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'category.required' => 'Please select a category for your ticket.',
+            'subject.required' => 'Please provide a subject for your ticket.',
+            'description.required' => 'Please describe your issue.',
+            'attachments.*.file' => 'Each attachment must be a valid file.',
+            'attachments.*.mimes' => 'Attachments must be of type: jpeg, png, jpg, gif, pdf, doc, or docx.',
+            'attachments.*.max' => 'Each attachment must not exceed 5MB.',
         ];
     }
 }

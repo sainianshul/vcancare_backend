@@ -2,12 +2,14 @@
 
 namespace App\Exceptions\Support;
 
-use Exception;
+use App\Exceptions\ApiException;
 
-class TicketClosedException extends Exception
+class TicketClosedException extends ApiException
 {
-    public function __construct($message = "This support ticket is closed and cannot be modified.")
+    protected int $defaultStatus = 409;
+
+    public function __construct(string $message = 'This support ticket is closed and cannot be modified.')
     {
-        parent::__construct($message);
+        parent::__construct($message, $this->defaultStatus);
     }
 }

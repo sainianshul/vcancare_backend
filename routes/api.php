@@ -114,10 +114,13 @@ Route::prefix('v1')->group(function () {
         // SUPPORT TICKETS (For Both Patients and Nurses)
         // ─────────────────────────────────────────────────────────
         Route::prefix('support')->group(function () {
+            Route::get('categories', [\App\Http\Controllers\Api\SupportController::class, 'categories']);
             Route::get('tickets', [\App\Http\Controllers\Api\SupportController::class, 'index']);
             Route::post('tickets', [\App\Http\Controllers\Api\SupportController::class, 'store']);
             Route::get('tickets/{id}', [\App\Http\Controllers\Api\SupportController::class, 'show']);
             Route::post('tickets/{id}/reply', [\App\Http\Controllers\Api\SupportController::class, 'reply']);
+            Route::get('tickets/{id}/messages', [\App\Http\Controllers\Api\SupportController::class, 'messages']);
+            Route::post('tickets/{id}/read', [\App\Http\Controllers\Api\SupportController::class, 'markRead']);
         });
 
     });

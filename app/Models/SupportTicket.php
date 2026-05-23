@@ -14,10 +14,18 @@ class SupportTicket extends Model
     const PRIORITY_MEDIUM = 1;
     const PRIORITY_HIGH = 2;
 
-    const STATUS_OPEN = 0;
-    const STATUS_IN_PROGRESS = 1;
-    const STATUS_RESOLVED = 2;
-    const STATUS_CLOSED = 3;
+    const STATUS_PENDING = 0;
+    const STATUS_OPEN = 1;
+    const STATUS_DEFERRED = 2;
+    const STATUS_CANCELLED = 3;
+    const STATUS_RESOLVED = 4;
+    const STATUS_OTHER = 5;
+
+    const CAT_TECHNICAL = 'technical';
+    const CAT_REFUND = 'refund';
+    const CAT_CANCELLATION = 'cancellation';
+    const CAT_GENERAL = 'general';
+    const CAT_OTHER = 'other';
 
     protected $fillable = [
         'reference_id',
@@ -66,17 +74,32 @@ class SupportTicket extends Model
 
     public function isClosed()
     {
-        return $this->status === self::STATUS_CLOSED || $this->status === self::STATUS_RESOLVED;
+        return in_array($this->status, [self::STATUS_CANCELLED, self::STATUS_RESOLVED, self::STATUS_DEFERRED]);
     }
 
     public function getStatusTextAttribute()
     {
         return match($this->status) {
+            self::STATUS_PENDING => 'Pending',
             self::STATUS_OPEN => 'Open',
-            self::STATUS_IN_PROGRESS => 'In Progress',
+            self::STATUS_DEFERRED => 'Deferred',
+            self::STATUS_CANCELLED => 'Cancelled',
             self::STATUS_RESOLVED => 'Resolved',
-            self::STATUS_CLOSED => 'Closed',
+            self::STATUS_OTHER => 'Other',
             default => 'Unknown',
+        };
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return match($this->status) {
+            self::STATUS_PENDING => 'warning',
+            self::STATUS_OPEN => 'primary',
+            self::STATUS_DEFERRED => 'info',
+            self::STATUS_CANCELLED => 'danger',
+            self::STATUS_RESOLVED => 'success',
+            self::STATUS_OTHER => 'secondary',
+            default => 'dark',
         };
     }
 
@@ -89,4 +112,42 @@ class SupportTicket extends Model
             default => 'Unknown',
         };
     }
+
+    public static function getStatusList()
+    {
+        return [
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_OPEN => 'Open',
+            self::STATUS_DEFERRED => 'Deferred',
+            self::STATUS_CANCELLED => 'Cancelled',
+            self::STATUS_RESOLVED => 'Resolved',
+            self::STATUS_OTHER => 'Other',
+        ];
+    }
+
+    public static function getCategoryList()
+    {
+        $legacy = [
+            self::CAT_TECHNICAL => 'Technical',
+            self::CAT_REFUND => 'Refund',
+            self::CAT_CANCELLATION => 'Cancellation',
+            self::CAT_GENERAL => 'General',
+            self::CAT_OTHER => 'Other',
+        ];
+
+        // Try to fetch active categories from the database
+        try {
+            $categories = \App\Models\SupportCategory::where('status', 1)->pluck('name', 'name')->toArray();
+            if (!empty($categories)) {
+                return array_merge($legacy, $categories);
+            }
+        } catch (\Exception $e) {
+            // Fallback during migrations/setup if table doesn't exist
+        }
+
+        // Fallback backward compatible list
+        return $legacy;
+    }
+
+
 }

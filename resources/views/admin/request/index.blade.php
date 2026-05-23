@@ -16,7 +16,7 @@
             <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
 
                 {{-- Search --}}
-                <div class="d-flex align-items-center position-relative">
+                <div class="d-flex align-items-center position-relative w-100 w-md-250px">
                     <i class="ki-duotone ki-magnifier fs-5 text-gray-900 position-absolute ms-4 z-index-3">
                         <span class="path1"></span>
                         <span class="path2"></span>
@@ -24,17 +24,17 @@
                     <input
                         type="text"
                         id="dt-search"
-                        class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
+                        class="form-control form-control-transparent border border-gray-800 text-gray-900 w-100 ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search by request ID or patient name..."
                     />
                 </div>
 
                 {{-- Right Controls --}}
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap w-100 w-md-auto justify-content-md-end">
 
                     @if(empty($isToday))
                     {{-- Date Filter --}}
-                    <div style="width: 175px;">
+                    <div class="w-100 w-md-175px">
                         <div class="position-relative">
                             <i class="ki-duotone ki-calendar fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
                                 <span class="path1"></span>
@@ -55,7 +55,7 @@
                     @endif
 
                     {{-- Status Filter --}}
-                    <div style="width: 145px;">
+                    <div class="w-100 w-md-145px">
                         <div class="position-relative">
                             <i class="ki-duotone ki-filter fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
                                 <span class="path1"></span>

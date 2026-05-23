@@ -25,6 +25,7 @@
             <!--begin::Alert Containers (existing AJAX alerts)-->
             <div id="pending-errors-container"></div>
             <div id="pending-nurses-container"></div>
+            <div id="pending-tickets-container"></div>
             <!--end::Alert Containers-->
 
             <!--begin::Row 1 — Overview Stat Cards-->
@@ -484,6 +485,24 @@ document.addEventListener('DOMContentLoaded', function() {
             `);
         }
     });
+
+    $.get('{{ route("admin.support.pending-count") }}').done(function(res) {
+        if (res.count > 0) {
+            $('#pending-tickets-container').html(`
+                <div class="alert alert-dismissible bg-light-primary border border-primary border-dashed d-flex align-items-center flex-sm-row flex-column w-100 p-4 mb-7 shadow-sm">
+                    <i class="ki-outline ki-message-text-2 fs-2hx text-primary me-4 mb-sm-0 mb-4"></i>
+                    <div class="d-flex flex-column pe-0 pe-sm-10 text-center text-sm-start">
+                        <h6 class="mb-1 text-primary fw-bold">Support Tickets Pending</h6>
+                        <span class="text-gray-800 fw-medium fs-7">${res.count} support ticket${res.count > 1 ? 's are' : ' is'} in pending state and need${res.count === 1 ? 's' : ''} attention.</span>
+                    </div>
+                    <div class="ms-sm-auto mt-sm-0 mt-4">
+                        <a href="{{ route('admin.support.index') }}?status=0" class="btn btn-sm btn-primary fw-bold px-4 py-2">View Tickets</a>
+                    </div>
+                </div>
+            `);
+        }
+    });
+
 
     // ── Fetch Dashboard Stats ───────────────────────────
     fetch('{{ route("admin.dashboard.stats") }}')
