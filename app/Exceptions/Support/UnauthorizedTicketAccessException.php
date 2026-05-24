@@ -2,12 +2,14 @@
 
 namespace App\Exceptions\Support;
 
-use Exception;
+use App\Exceptions\ApiException;
 
-class UnauthorizedTicketAccessException extends Exception
+class UnauthorizedTicketAccessException extends ApiException
 {
-    public function __construct($message = "You are not authorized to access this support ticket.")
+    protected int $defaultStatus = 403;
+
+    public function __construct(string $message = 'You are not authorized to access this support ticket.')
     {
-        parent::__construct($message);
+        parent::__construct($message, $this->defaultStatus);
     }
 }

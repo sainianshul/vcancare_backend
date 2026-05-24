@@ -18,16 +18,17 @@ class BookingDataTable extends DataTable
             })
 
             // ── User Info ────────────────────────────────────────────
-            ->filterColumn('user', function($query, $keyword) {
-                $query->whereHas('user', function($q) use ($keyword) {
+            ->filterColumn('user', function ($query, $keyword) {
+                $query->whereHas('user', function ($q) use ($keyword) {
                     $q->where('name', 'like', "%{$keyword}%")
-                      ->orWhere('email', 'like', "%{$keyword}%")
-                      ->orWhere('phone', 'like', "%{$keyword}%");
+                        ->orWhere('email', 'like', "%{$keyword}%")
+                        ->orWhere('phone', 'like', "%{$keyword}%");
                 });
             })
             ->addColumn('user', function (Booking $booking) {
                 $user = $booking->user;
-                if (!$user) return '<span class="text-muted">Unknown</span>';
+                if (!$user)
+                    return '<span class="text-muted">Unknown</span>';
 
                 $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
                 $colors = ['bg-light-primary text-primary', 'bg-light-success text-success', 'bg-light-warning text-warning', 'bg-light-danger text-danger', 'bg-light-info text-info'];
@@ -54,7 +55,8 @@ class BookingDataTable extends DataTable
             // ── Nurse Info ───────────────────────────────────────────
             ->addColumn('nurse', function (Booking $booking) {
                 $nurse = $booking->nurse;
-                if (!$nurse || !$nurse->user) return '<span class="text-muted">Unassigned</span>';
+                if (!$nurse || !$nurse->user)
+                    return '<span class="text-muted">Unassigned</span>';
 
                 $user = $nurse->user;
                 $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
@@ -197,10 +199,5 @@ class BookingDataTable extends DataTable
         }
 
         return $query;
-    }
-
-    public function filename(): string
-    {
-        return 'Bookings_' . date('Y_m_d_His');
     }
 }

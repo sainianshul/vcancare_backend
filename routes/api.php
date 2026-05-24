@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\Nurse\OnboardingController;
 use App\Http\Controllers\Api\User\CareRequestController as UserCareRequestController;
 use App\Http\Controllers\Api\User\BookingController as UserBookingController;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Api\Auth\AuthController;
 
 
@@ -33,18 +32,12 @@ Route::prefix('v1')->group(function () {
         Route::prefix('auth')->group(function () {
 
             Route::get('me', [AuthController::class, 'me']);
-
             Route::post('logout', [AuthController::class, 'logout']);
         });
 
-        Route::get(
-            'care-types',
-            [CareTypeController::class, 'index']
-        );
+        Route::get('care-types', [CareTypeController::class, 'index']);
 
-        // =====================
         // User Routes
-        // =====================
         Route::prefix('user')->group(function () {
 
             // Care Requests
@@ -68,9 +61,7 @@ Route::prefix('v1')->group(function () {
             Route::get('wallet', [UserBookingController::class, 'wallet']);
         });
 
-        // =====================
         // Nurse Routes
-        // =====================
         Route::prefix('nurse')->group(function () {
 
             // Protected routes that require an approved nurse profile
@@ -110,14 +101,15 @@ Route::prefix('v1')->group(function () {
             Route::post('onboarding/reapply', [OnboardingController::class, 'reapply']);
         });
 
-        // ─────────────────────────────────────────────────────────
-        // SUPPORT TICKETS (For Both Patients and Nurses)
-        // ─────────────────────────────────────────────────────────
+        // Support Routes For Both 
         Route::prefix('support')->group(function () {
+            Route::get('categories', [\App\Http\Controllers\Api\SupportController::class, 'categories']);
             Route::get('tickets', [\App\Http\Controllers\Api\SupportController::class, 'index']);
             Route::post('tickets', [\App\Http\Controllers\Api\SupportController::class, 'store']);
             Route::get('tickets/{id}', [\App\Http\Controllers\Api\SupportController::class, 'show']);
             Route::post('tickets/{id}/reply', [\App\Http\Controllers\Api\SupportController::class, 'reply']);
+            Route::get('tickets/{id}/messages', [\App\Http\Controllers\Api\SupportController::class, 'messages']);
+            Route::post('tickets/{id}/read', [\App\Http\Controllers\Api\SupportController::class, 'markRead']);
         });
 
     });

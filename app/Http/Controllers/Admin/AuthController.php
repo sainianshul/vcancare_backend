@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Auth\LoginRequest;
+use App\Models\Activity;
+use App\Models\LoginHistory;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -56,16 +59,16 @@ class AuthController extends Controller
 
         $user->update(['last_login_at' => now()]);
 
-        \App\Models\LoginHistory::create([
+        LoginHistory::create([
             'user_id' => $user->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'logged_in_at' => now(),
-            'status' => \App\Models\LoginHistory::STATUS_ACTIVE,
+            'status' => LoginHistory::STATUS_ACTIVE,
         ]);
 
-        \App\Helpers\ActivityLogger::log(
-            \App\Models\Activity::ACTION_LOGIN,
+        ActivityLogger::log(
+            Activity::ACTION_LOGIN,
             'Admin logged in via Web.',
             $user,
             ['ip' => $request->ip(), 'user_agent' => $request->userAgent()]
@@ -80,8 +83,8 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         if ($user) {
-            \App\Helpers\ActivityLogger::log(
-                \App\Models\Activity::ACTION_LOGOUT,
+            ActivityLogger::log(
+                Activity::ACTION_LOGOUT,
                 'Admin logged out via Web.',
                 $user
             );

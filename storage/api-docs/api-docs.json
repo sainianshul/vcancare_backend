@@ -1366,22 +1366,42 @@
                 ]
             }
         },
-        "/api/support/tickets": {
+        "/api/v1/support/categories": {
+            "get": {
+                "tags": [
+                    "Support Tickets"
+                ],
+                "summary": "List active support categories",
+                "description": "Returns a list of active support categories that users can select when creating a ticket.",
+                "operationId": "getSupportCategories",
+                "responses": {
+                    "200": {
+                        "description": "Categories retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/support/tickets": {
             "get": {
                 "tags": [
                     "Support Tickets"
                 ],
                 "summary": "List user tickets",
-                "description": "List all support tickets for the authenticated user.",
+                "description": "Get a paginated list of support tickets for the authenticated user.",
                 "operationId": "getSupportTickets",
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Tickets retrieved successfully"
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             },
@@ -1390,7 +1410,7 @@
                     "Support Tickets"
                 ],
                 "summary": "Create a new support ticket",
-                "description": "Create a new support ticket.",
+                "description": "Create a new support ticket with subject, description, category, optional priority and attachments.",
                 "operationId": "storeSupportTicket",
                 "requestBody": {
                     "required": true,
@@ -1405,7 +1425,7 @@
                                 "properties": {
                                     "category": {
                                         "type": "string",
-                                        "example": "technical"
+                                        "example": "Technical"
                                     },
                                     "subject": {
                                         "type": "string",
@@ -1421,7 +1441,7 @@
                                         "example": 1
                                     },
                                     "attachments[]": {
-                                        "description": "Array of image files",
+                                        "description": "Array of files (images, pdf, doc, docx)",
                                         "type": "array",
                                         "items": {
                                             "type": "string",
@@ -1440,25 +1460,22 @@
                     },
                     "422": {
                         "description": "Validation errors"
-                    },
-                    "500": {
-                        "description": "Server error"
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
         },
-        "/api/support/tickets/{id}": {
+        "/api/v1/support/tickets/{id}": {
             "get": {
                 "tags": [
                     "Support Tickets"
                 ],
                 "summary": "Get ticket details and messages",
-                "description": "Show a specific ticket and its messages.",
+                "description": "Get full details of a specific ticket with all messages and attachment URLs.",
                 "operationId": "showSupportTicket",
                 "parameters": [
                     {
@@ -1473,7 +1490,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Ticket details retrieved"
                     },
                     "403": {
                         "description": "Unauthorized access"
@@ -1484,18 +1501,18 @@
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
         },
-        "/api/support/tickets/{id}/reply": {
+        "/api/v1/support/tickets/{id}/reply": {
             "post": {
                 "tags": [
                     "Support Tickets"
                 ],
                 "summary": "Reply to an existing ticket",
-                "description": "Reply to a ticket.",
+                "description": "Send a message to an existing ticket. Supports file attachments (images, pdf, doc, docx).",
                 "operationId": "replySupportTicket",
                 "parameters": [
                     {
@@ -1522,7 +1539,7 @@
                                         "example": "Thank you for your help."
                                     },
                                     "attachments[]": {
-                                        "description": "Array of image files",
+                                        "description": "Array of files",
                                         "type": "array",
                                         "items": {
                                             "type": "string",
@@ -1539,8 +1556,56 @@
                     "200": {
                         "description": "Reply sent successfully"
                     },
-                    "400": {
+                    "403": {
+                        "description": "Unauthorized access"
+                    },
+                    "404": {
+                        "description": "Ticket not found"
+                    },
+                    "409": {
                         "description": "Ticket is closed"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/support/tickets/{id}/messages": {
+            "get": {
+                "tags": [
+                    "Support Tickets"
+                ],
+                "summary": "Poll for new messages (chat polling)",
+                "description": "Get messages for a ticket. Pass `after` query parameter (ISO 8601 timestamp) to fetch only newer messages for efficient polling.",
+                "operationId": "pollSupportMessages",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Ticket ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "after",
+                        "in": "query",
+                        "description": "ISO 8601 timestamp. Only messages after this time will be returned.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-01-01T00:00:00Z"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Messages retrieved"
                     },
                     "403": {
                         "description": "Unauthorized access"
@@ -1551,7 +1616,44 @@
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/support/tickets/{id}/read": {
+            "post": {
+                "tags": [
+                    "Support Tickets"
+                ],
+                "summary": "Mark messages as read",
+                "description": "Marks all admin messages on this ticket as read by the user.",
+                "operationId": "markSupportMessagesRead",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Ticket ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Messages marked as read"
+                    },
+                    "403": {
+                        "description": "Unauthorized access"
+                    },
+                    "404": {
+                        "description": "Ticket not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
                     }
                 ]
             }

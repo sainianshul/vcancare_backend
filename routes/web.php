@@ -228,6 +228,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // SUPPORT TICKETS
     Route::prefix('support')->name('support.')->group(function () {
+        Route::get('/pending-count', [\App\Http\Controllers\Admin\SupportController::class, 'pendingCount'])->name('pending-count');
+        
+        // Categories
+        Route::get('/categories', [\App\Http\Controllers\Admin\SupportCategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [\App\Http\Controllers\Admin\SupportCategoryController::class, 'store'])->name('categories.store');
+        Route::put('/categories/{id}', [\App\Http\Controllers\Admin\SupportCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{id}', [\App\Http\Controllers\Admin\SupportCategoryController::class, 'destroy'])->name('categories.destroy');
+
+        // Faqs
+        Route::get('/faqs/data', [\App\Http\Controllers\Admin\Support\FaqController::class, 'data'])->name('faqs.data');
+        Route::resource('/faqs', \App\Http\Controllers\Admin\Support\FaqController::class)->except(['show']);
+
         Route::get('/', [\App\Http\Controllers\Admin\SupportController::class, 'index'])->name('index');
         Route::get('/data', [\App\Http\Controllers\Admin\SupportController::class, 'data'])->name('data');
         Route::get('/{id}', [\App\Http\Controllers\Admin\SupportController::class, 'show'])->name('show');
