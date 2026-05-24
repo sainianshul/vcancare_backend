@@ -2,7 +2,7 @@
 
 namespace App\Services\Nurse;
 
-use App\Exceptions\NurseProfileException;
+use App\Exceptions\Nurse\NurseProfileException;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

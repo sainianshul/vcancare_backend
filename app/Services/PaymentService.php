@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Contracts\PaymentGatewayInterface;
-use App\Exceptions\PaymentException;
+use App\Exceptions\Payment\PaymentFailedException;
+use App\Exceptions\Payment\InvalidPaymentAmountException;
+use App\Exceptions\Booking\InvalidBookingStateException;
 use App\Models\Booking;
 use App\Models\PaymentLog;
 use App\Models\WalletTransaction;
@@ -49,11 +51,11 @@ class PaymentService
     public function initiatePayment(Booking $booking, int $userId): array
     {
         if ($booking->user_id !== $userId) {
-            throw new PaymentException('Unauthorized.', 403);
+            throw new PaymentFailedException('Unauthorized.', 403);
         }
 
         if ($booking->status !== Booking::STATUS_PENDING_PAYMENT) {
-            throw new PaymentException('This booking is not awaiting payment.', 409);
+            throw new InvalidBookingStateException('This booking is not awaiting payment.', 409);
         }
 
         $totalAmount = (float) $booking->total_amount;
@@ -88,15 +90,15 @@ class PaymentService
         ?string $userAgent = null
     ): Booking {
         if ($booking->user_id !== $userId) {
-            throw new PaymentException('Unauthorized.', 403);
+            throw new PaymentFailedException('Unauthorized.', 403);
         }
 
         if ($booking->status !== Booking::STATUS_PENDING_PAYMENT) {
-            throw new PaymentException('This booking is not awaiting payment.', 409);
+            throw new InvalidBookingStateException('This booking is not awaiting payment.', 409);
         }
 
         if (!$booking->gateway_order_id) {
-            throw new PaymentException('No gateway order found for this booking.', 409);
+            throw new InvalidBookingStateException('No gateway order found for this booking.', 409);
         }
 
         // 1. Verify payment signature with gateway
@@ -122,7 +124,7 @@ class PaymentService
                 'error' => $e->getMessage(),
             ]);
 
-            throw new PaymentException('Payment verification failed. Please contact support.', 402);
+            throw new PaymentFailedException('Payment verification failed. Please contact support.', 402);
         }
 
         if (!$isValid) {
@@ -133,7 +135,7 @@ class PaymentService
                 'gateway_status' => 'invalid_signature',
             ], ['ip' => $ipAddress, 'user_agent' => $userAgent]);
 
-            throw new PaymentException('Payment signature verification failed.', 402);
+            throw new PaymentFailedException('Payment signature verification failed.', 402);
         }
 
         // 2. Fetch payment details from gateway for audit
@@ -295,7 +297,7 @@ class PaymentService
                 'error' => $e->getMessage(),
             ]);
 
-            throw new PaymentException('Unable to create payment order. Please try again.', 502);
+            throw new PaymentFailedException('Unable to create payment order. Please try again.', 502);
         }
 
         $gatewayOrderId = $orderResult['order_id'];

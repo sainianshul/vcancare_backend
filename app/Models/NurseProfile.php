@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Exceptions\InvalidOnboardingStepException;
+use App\Exceptions\Nurse\InvalidOnboardingStepException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,11 +20,7 @@ class NurseProfile extends Model
         });
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Status
-    |--------------------------------------------------------------------------
-    */
+    // Status
 
     const STATUS_PENDING = 0;
 
@@ -36,23 +32,15 @@ class NurseProfile extends Model
 
     const STATUS_SUSPENDED = 4;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Gender
-    |--------------------------------------------------------------------------
-    */
 
+    // Gender
     const GENDER_MALE = 1;
 
     const GENDER_FEMALE = 2;
 
     const GENDER_OTHER = 3;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Days of the Week
-    |--------------------------------------------------------------------------
-    */
+    // Week days
     const DAY_SUNDAY = 0;
     const DAY_MONDAY = 1;
     const DAY_TUESDAY = 2;
@@ -61,12 +49,8 @@ class NurseProfile extends Model
     const DAY_FRIDAY = 5;
     const DAY_SATURDAY = 6;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Onboarding Steps
-    |--------------------------------------------------------------------------
-    */
 
+    // Onboarding Steps
     const STEP_BASIC_PROFILE = 1;
     const STEP_CARE_TYPES = 2;
     const STEP_EDUCATION = 3;
@@ -122,64 +106,35 @@ class NurseProfile extends Model
 
     protected $casts = [
         'years_of_experience' => 'integer',
-
         'gender' => 'integer',
-
         'avg_rating' => 'float',
-
         'total_reviews' => 'integer',
-
         'trust_score' => 'float',
-
         'total_bookings_completed' => 'integer',
-
         'total_bookings_cancelled' => 'integer',
-
         'total_reports' => 'integer',
-
         'resolved_reports' => 'integer',
-
         'latitude' => 'float',
-
         'longitude' => 'float',
-
         'available_days' => 'array',
-
         'is_available' => 'boolean',
-
         'onboarding_step' => 'integer',
-
         'is_onboarding_completed' => 'boolean',
-
         'status' => 'integer',
-
         'license_date' => 'date',
-
         'license_expiry_date' => 'date',
-
         'approved_at' => 'datetime',
-
         'trust_score_updated_at' => 'datetime',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Status Lists
-    |--------------------------------------------------------------------------
-    */
-
+    // Status List
     public static function getStatusList()
     {
         return [
-
             self::STATUS_PENDING => 'Pending',
-
             self::STATUS_UNDER_REVIEW => 'Under Review',
-
             self::STATUS_APPROVED => 'Approved',
-
             self::STATUS_REJECTED => 'Rejected',
-
             self::STATUS_SUSPENDED => 'Suspended',
         ];
     }
@@ -187,11 +142,8 @@ class NurseProfile extends Model
     public static function getGenderList()
     {
         return [
-
             self::GENDER_MALE => 'Male',
-
             self::GENDER_FEMALE => 'Female',
-
             self::GENDER_OTHER => 'Other',
         ];
     }
@@ -214,17 +166,11 @@ class NurseProfile extends Model
         return [
 
             self::STEP_BASIC_PROFILE => 'Basic Profile',
-
             self::STEP_CARE_TYPES => 'Care Types',
-
             self::STEP_EDUCATION => 'Education',
-
             self::STEP_WORK_HISTORY => 'Work History',
-
             self::STEP_DOCUMENTS => 'Documents',
-
             self::STEP_AVAILABILITY => 'Availability',
-
             self::STEP_SUBMIT_FOR_REVIEW => 'Submit For Review',
         ];
     }

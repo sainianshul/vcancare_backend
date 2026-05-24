@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\NurseController;
 use App\Http\Controllers\Admin\PatientController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\System\ErrroLogsController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -20,13 +22,10 @@ Route::get('/', function () {
 
 Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group(function () {
 
-    Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/stats', [\App\Http\Controllers\Admin\DashboardController::class, 'stats'])->name('dashboard.stats');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
 
-    // =====================
-    // PEOPLE — Nurses
-    // =====================
-
+    // Nurses
     Route::prefix('nurses')->name('nurses.')->group(function () {
 
         Route::get('/', [NurseController::class, 'index'])->name('index');
@@ -66,7 +65,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('blocked', [PatientController::class, 'blocked'])->name('blocked');
         Route::get('blocked/data', [PatientController::class, 'blockedData'])->name('blocked.data');
         Route::post('{patient}/unblock', [PatientController::class, 'unblock'])->name('unblock');
-        
+
         Route::get('{patient}', [PatientController::class, 'show'])->name('show');
         Route::get('{patient}/stats', [PatientController::class, 'stats'])->name('stats');
         Route::get('{patient}/requests', [PatientController::class, 'requests'])->name('requests');
@@ -88,9 +87,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('{id}', [LoginHistoryController::class, 'show'])->name('show');
     });
 
-    // =====================
-    // OPERATIONS — Care Requests
-    // =====================
+    // Care Request
     Route::prefix('requests')->name('requests.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RequestController::class, 'index'])->name('index');
         Route::get('/data', [\App\Http\Controllers\Admin\RequestController::class, 'data'])->name('data');
@@ -99,7 +96,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('{request}/notified-nurses-data', [\App\Http\Controllers\Admin\RequestController::class, 'notifiedNursesData'])->name('notified-nurses-data');
         Route::get('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'show'])->name('show');
         Route::delete('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'destroy'])->name('destroy');
-        
+
         Route::get('new', function () {
             echo "New Requests";
         })->name('new');
@@ -114,9 +111,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('cancelled');
     });
 
-    // =====================
-    // OPERATIONS — Bookings
-    // =====================
+    // Care
     Route::prefix('bookings')->name('bookings.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('index');
         Route::get('/data', [\App\Http\Controllers\Admin\BookingController::class, 'data'])->name('data');
@@ -143,7 +138,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('accepted/data', [\App\Http\Controllers\Admin\BidController::class, 'acceptedData'])->name('accepted.data');
         Route::get('rejected', [\App\Http\Controllers\Admin\BidController::class, 'rejected'])->name('rejected');
         Route::get('rejected/data', [\App\Http\Controllers\Admin\BidController::class, 'rejectedData'])->name('rejected.data');
-        
+
         Route::get('{bid}', [\App\Http\Controllers\Admin\BidController::class, 'show'])->name('show');
     });
 
@@ -152,9 +147,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::resource('care-types', \App\Http\Controllers\Admin\CareTypeController::class);
     });
 
-    // =====================
-    // FINANCE — Payments
-    // =====================
+    // Payments
     Route::prefix('payments')->name('payments.')->group(function () {
         Route::get('transactions', function () {
             echo "Transactions";
@@ -167,9 +160,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('refunds');
     });
 
-    // =====================
-    // INSIGHTS — Reports
-    // =====================
+    // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('revenue', function () {
             echo "Revenue Reports";
@@ -182,13 +173,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('requests');
     });
 
-    // =====================
-    // COMMENTS
-    // =====================
+    // Comments
     Route::post('comments', [\App\Http\Controllers\Admin\CommentController::class, 'store'])->name('comments.store');
     Route::delete('comments/{comment}', [\App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
 
-    // API Token management (for patient/nurse profile pages)
+    // API Token management 
     Route::delete('api-tokens/{tokenId}/revoke', function ($tokenId) {
         $token = \Laravel\Sanctum\PersonalAccessToken::findOrFail($tokenId);
         $token->delete();
@@ -196,15 +185,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     })->name('api-tokens.revoke');
 
     Route::post('api-tokens/{userId}/issue', function ($userId) {
-        $user = \App\Models\User::findOrFail($userId);
+        $user = User::findOrFail($userId);
         // Issue an additional token for admin testing without revoking user's active sessions
         $plainTextToken = $user->createToken('admin-swagger-testing')->plainTextToken;
         return response()->json(['success' => true, 'token' => $plainTextToken]);
     })->name('api-tokens.issue');
 
-    // =====================
-    // SYSTEM
-    // =====================
+
+    // System
     Route::prefix('system')->name('system.')->group(function () {
 
         Route::get('error-logs', [ErrroLogsController::class, 'index'])->name('error-logs');
@@ -226,10 +214,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('backups');
     });
 
-    // SUPPORT TICKETS
+    // support ticket
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/pending-count', [\App\Http\Controllers\Admin\SupportController::class, 'pendingCount'])->name('pending-count');
-        
+
         // Categories
         Route::get('/categories', [\App\Http\Controllers\Admin\SupportCategoryController::class, 'index'])->name('categories.index');
         Route::post('/categories', [\App\Http\Controllers\Admin\SupportCategoryController::class, 'store'])->name('categories.store');
@@ -260,12 +248,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         })->name('roles');
     });
 
-
-
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     // Admin Profile
-    Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('profile', [ProfileController::class, 'update'])->name('profile.update');
 
 });

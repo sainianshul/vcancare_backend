@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\Exceptions\Nurse;
+
+use App\Exceptions\ApiException;
 
 class InvalidOnboardingStepException extends ApiException
 {

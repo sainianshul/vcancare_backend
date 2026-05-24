@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
-use App\Exceptions\CareRequestException;
+use App\Exceptions\CareRequest\CareRequestNotFoundException;
+use App\Exceptions\CareRequest\InvalidCareRequestStateException;
+use App\Exceptions\CareRequest\DuplicateBookingException;
 use App\Models\CareRequest;
 use App\Models\CareType;
 use App\Models\NurseRequestCache;
@@ -52,7 +54,7 @@ class CareRequestService
                 'matching_attempt_level' => $matchedLevel,
             ]);
 
-            throw new CareRequestException(
+            throw new InvalidCareRequestStateException(
                 'No nurses available for the requested time and location. Please try adjusting your schedule or location.',
                 422
             );

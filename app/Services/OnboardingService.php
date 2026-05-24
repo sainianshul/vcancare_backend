@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Exceptions\InvalidOnboardingStepException;
+use App\Exceptions\Nurse\InvalidOnboardingStepException;
 use App\Models\CareTypeNurse;
 use App\Models\NurseDocument;
 use App\Models\NurseEducation;
@@ -17,9 +17,10 @@ class OnboardingService
     public function saveBasicProfile(User $user, array $data): void
     {
         DB::transaction(function () use ($user, $data) {
+
             $nurseProfile = $user->nurseProfile;
 
-            // Pehli baar — profile banao
+            // If Nurse Profile Not Present Create it
             if (!$nurseProfile) {
                 $nurseProfile = NurseProfile::create([
                     'user_id' => $user->id,
@@ -432,17 +433,17 @@ class OnboardingService
             $updateData = [
                 'status' => $status,
             ];
-            
+
             if ($status == NurseProfile::STATUS_APPROVED) {
                 $updateData['approved_at'] = now();
                 $updateData['rejection_reason'] = null;
                 $updateData['can_reapply'] = true;
-                
+
                 // Clean up verification steps as they are no longer needed
                 $nurseProfile->verifications()->delete();
             } elseif ($status == NurseProfile::STATUS_REJECTED) {
                 $updateData['rejection_reason'] = $reason;
-                $updateData['can_reapply'] = (bool)$canReapply;
+                $updateData['can_reapply'] = (bool) $canReapply;
             }
 
             $nurseProfile->update($updateData);

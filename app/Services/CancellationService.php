@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
-use App\Exceptions\BookingException;
+use App\Exceptions\Booking\BookingNotFoundException;
+use App\Exceptions\Booking\InvalidBookingStateException;
+use App\Exceptions\CareRequest\CareRequestNotFoundException;
+use App\Exceptions\CareRequest\InvalidCareRequestStateException;
 use App\Models\Booking;
 use App\Models\BookingSession;
 use App\Models\CareRequest;
@@ -34,7 +37,7 @@ class CancellationService
     /**
      * User cancels a booking.
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function cancelByUser(int $bookingId, int $userId, ?string $reason = null): array
     {
@@ -43,11 +46,11 @@ class CancellationService
             ->first();
 
         if (!$booking) {
-            throw new BookingException('Booking not found.', 404);
+            throw new BookingNotFoundException('Booking not found.', 404);
         }
 
         if (!$booking->isCancellable()) {
-            throw new BookingException('This booking cannot be cancelled.', 409);
+            throw new InvalidBookingStateException('This booking cannot be cancelled.', 409);
         }
 
         return DB::transaction(function () use ($booking, $reason) {
@@ -105,7 +108,7 @@ class CancellationService
     /**
      * Nurse cancels a booking.
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function cancelByNurse(int $bookingId, int $nurseId, ?string $reason = null): array
     {
@@ -114,11 +117,11 @@ class CancellationService
             ->first();
 
         if (!$booking) {
-            throw new BookingException('Booking not found.', 404);
+            throw new BookingNotFoundException('Booking not found.', 404);
         }
 
         if (!$booking->isCancellable()) {
-            throw new BookingException('This booking cannot be cancelled.', 409);
+            throw new InvalidBookingStateException('This booking cannot be cancelled.', 409);
         }
 
         return DB::transaction(function () use ($booking, $reason, $nurseId) {
@@ -175,7 +178,7 @@ class CancellationService
     /**
      * User cancels a care request (free if no bids received yet).
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function cancelCareRequest(int $careRequestId, int $userId): CareRequest
     {
@@ -184,7 +187,7 @@ class CancellationService
             ->first();
 
         if (!$careRequest) {
-            throw new BookingException('Care request not found.', 404);
+            throw new CareRequestNotFoundException('Care request not found.', 404);
         }
 
         // Only allow cancellation in pre-booking states
@@ -194,7 +197,7 @@ class CancellationService
         ];
 
         if (!in_array($careRequest->status, $cancellableStatuses)) {
-            throw new BookingException('This care request cannot be cancelled.', 409);
+            throw new InvalidCareRequestStateException('This care request cannot be cancelled.', 409);
         }
 
         $careRequest->update([
