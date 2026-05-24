@@ -20,11 +20,12 @@ class BidDataTable extends DataTable
             // ── Care Request Info ────────────────────────────────────
             ->addColumn('care_request', function (RequestBid $bid) {
                 $careRequest = $bid->careRequest;
-                if (!$careRequest) return '<span class="text-muted">Unknown</span>';
-                
+                if (!$careRequest)
+                    return '<span class="text-muted">Unknown</span>';
+
                 $title = $careRequest->title ?? 'Request #' . $careRequest->id;
                 $url = route('admin.requests.show', $careRequest->id);
-                
+
                 return '
                     <div class="d-flex flex-column">
                         <a href="' . $url . '" class="text-gray-800 text-hover-primary fw-semibold fs-6 lh-1 mb-1">' . e($title) . '</a>
@@ -36,7 +37,8 @@ class BidDataTable extends DataTable
             // ── Nurse Info ───────────────────────────────────────────
             ->addColumn('nurse', function (RequestBid $bid) {
                 $nurse = $bid->nurse;
-                if (!$nurse || !$nurse->user) return '<span class="text-muted">Unknown</span>';
+                if (!$nurse || !$nurse->user)
+                    return '<span class="text-muted">Unknown</span>';
 
                 $user = $nurse->user;
                 $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
@@ -143,10 +145,5 @@ class BidDataTable extends DataTable
         }
 
         return $query;
-    }
-
-    public function filename(): string
-    {
-        return 'Bids_' . date('Y_m_d_His');
     }
 }

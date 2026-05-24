@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\DataTables\Bid\BidDataTable;
 use App\Models\RequestBid;
 use Illuminate\Http\Request;
 
 class BidController extends Controller
 {
-    public function index(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function index(BidDataTable $dataTable)
     {
         return $dataTable->render('admin.bids.index', [
             'title' => 'All Bids',
@@ -16,12 +17,12 @@ class BidController extends Controller
         ]);
     }
 
-    public function data(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function data(BidDataTable $dataTable)
     {
         return $dataTable->ajax();
     }
 
-    public function todayIndex(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function todayIndex(BidDataTable $dataTable)
     {
         return $dataTable->render('admin.bids.index', [
             'title' => 'Today\'s Bids',
@@ -29,13 +30,13 @@ class BidController extends Controller
         ]);
     }
 
-    public function todayData(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function todayData(BidDataTable $dataTable)
     {
         request()->merge(['today' => true]);
         return $dataTable->ajax();
     }
 
-    public function active(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function active(BidDataTable $dataTable)
     {
         return $dataTable->render('admin.bids.index', [
             'title' => 'Active Bids',
@@ -44,13 +45,13 @@ class BidController extends Controller
         ]);
     }
 
-    public function activeData(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function activeData(BidDataTable $dataTable)
     {
         request()->merge(['status' => RequestBid::STATUS_PENDING]);
         return $dataTable->ajax();
     }
 
-    public function accepted(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function accepted(BidDataTable $dataTable)
     {
         return $dataTable->render('admin.bids.index', [
             'title' => 'Accepted Bids',
@@ -59,13 +60,13 @@ class BidController extends Controller
         ]);
     }
 
-    public function acceptedData(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function acceptedData(BidDataTable $dataTable)
     {
         request()->merge(['status' => RequestBid::STATUS_SELECTED]);
         return $dataTable->ajax();
     }
 
-    public function rejected(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function rejected(BidDataTable $dataTable)
     {
         return $dataTable->render('admin.bids.index', [
             'title' => 'Rejected Bids',
@@ -74,7 +75,7 @@ class BidController extends Controller
         ]);
     }
 
-    public function rejectedData(\App\DataTables\Bid\BidDataTable $dataTable)
+    public function rejectedData(BidDataTable $dataTable)
     {
         request()->merge(['status' => RequestBid::STATUS_REJECTED]);
         return $dataTable->ajax();
@@ -86,8 +87,8 @@ class BidController extends Controller
     public function show($id)
     {
         $bid = RequestBid::with([
-            'careRequest.user', 
-            'careRequest.careType', 
+            'careRequest.user',
+            'careRequest.careType',
             'nurse.user',
             'nurse.careTypes'
         ])->findOrFail($id);
