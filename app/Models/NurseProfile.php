@@ -421,3 +421,4 @@ class NurseProfile extends Model
         return $this->hasMany(NurseProfileVerification::class);
     }
 }
+

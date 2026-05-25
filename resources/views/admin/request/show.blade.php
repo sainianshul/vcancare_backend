@@ -11,6 +11,9 @@
 
     <div class="d-flex flex-column gap-7 gap-lg-10">
 
+        <x-alert-success />
+        <x-form-errors />
+
         {{-- ── HEADER ───────────────────────────────────────────────────────── --}}
         <div class="d-flex flex-wrap flex-stack gap-5 gap-lg-10">
             <div class="d-flex align-items-center gap-3">
@@ -233,7 +236,7 @@
                 </div>
 
                 {{-- Comments Component --}}
-                <x-comments type="{{ \App\Models\CareRequest::class }}" :model-id="$careRequest->id" />
+                <x-comments type="{{ \App\Models\Comment::TYPE_CARE_REQUEST }}" :model-id="$careRequest->id" />
 
             </div>
 
@@ -446,7 +449,7 @@
                     url: '{{ route('admin.requests.bids-data', $careRequest->id) }}'
                 },
                 columns: [
-                    { data: 'nurse', name: 'nurse', orderable: false, searchable: false, className: 'ps-3' },
+                    { data: 'nurse', name: 'nurse', orderable: false, searchable: true, className: 'ps-3' },
                     { data: 'nurse_amount', name: 'nurse_amount' },
                     { data: 'commission_amount', name: 'commission_amount' },
                     { data: 'total_amount', name: 'total_amount' },
@@ -491,7 +494,7 @@
                     url: '{{ route('admin.requests.notified-nurses-data', $careRequest->id) }}'
                 },
                 columns: [
-                    { data: 'nurse', name: 'nurse', orderable: false, searchable: false, className: 'ps-3' },
+                    { data: 'nurse', name: 'nurse', orderable: false, searchable: true, className: 'ps-3' },
                     { data: 'distance', name: 'distance', orderable: false, searchable: false },
                     { data: 'created_at', name: 'created_at' },
                     { data: 'status', name: 'status' },

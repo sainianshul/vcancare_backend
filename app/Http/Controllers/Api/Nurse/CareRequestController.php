@@ -57,7 +57,7 @@ class CareRequestController extends Controller
 
         // Fetch requests that are assigned to this nurse's profile and haven't expired yet
         $cachedRequests = NurseRequestCache::where('nurse_id', $nurseProfileId)
-            ->whereIn('status', [NurseRequestCache::STATUS_NOTIFIED])
+            ->whereIn('status', [NurseRequestCache::STATUS_NOTIFIED, NurseRequestCache::STATUS_VIEWED])
             ->where('expires_at', '>', now())
             ->orderBy('created_at', 'desc')
             ->paginate(15);
@@ -97,89 +97,13 @@ class CareRequestController extends Controller
         ),
         responses: [
             new OA\Response(
-                response: 201,
-                description: 'Bid placed successfully',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'message', type: 'string', example: 'Bid placed successfully.'),
-                        new OA\Property(
-                            property: 'data',
-                            type: 'object',
-                            properties: [
-                                new OA\Property(
-                                    property: 'bid',
-                                    type: 'object',
-                                    properties: [
-                                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                                        new OA\Property(property: 'care_request_id', type: 'integer', example: 1),
-                                        new OA\Property(property: 'nurse_id', type: 'integer', example: 3),
-                                        new OA\Property(property: 'nurse_amount', type: 'string', example: '500.00'),
-                                        new OA\Property(property: 'commission_type', type: 'integer', description: '1: Percentage, 2: Flat', example: 1),
-                                        new OA\Property(property: 'commission_value', type: 'string', example: '15.00'),
-                                        new OA\Property(property: 'commission_amount', type: 'string', example: '75.00'),
-                                        new OA\Property(property: 'total_amount', type: 'string', example: '575.00'),
-                                        new OA\Property(property: 'notes', type: 'string', nullable: true, example: 'I specialize in post-surgery care.'),
-                                        new OA\Property(property: 'distance_km', type: 'string', nullable: true, example: '3.45'),
-                                        new OA\Property(property: 'status', type: 'integer', description: '0: Pending, 1: Selected, 2: Rejected, 3: Expired, 4: Cancelled', example: 0),
-                                        new OA\Property(property: 'expires_at', type: 'string', format: 'date-time', example: '2026-05-20T12:00:00Z'),
-                                        new OA\Property(property: 'created_at', type: 'string', format: 'date-time', example: '2026-05-19T10:20:00Z'),
-                                        new OA\Property(property: 'updated_at', type: 'string', format: 'date-time', example: '2026-05-19T10:20:00Z'),
-                                    ]
-                                )
-                            ]
-                        ),
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 400,
-                description: 'Validation failed or bad request',
+                response: 200,
+                description: 'OK',
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: 'success', type: 'boolean', example: false),
                         new OA\Property(property: 'message', type: 'string', example: 'Validation failed'),
                         new OA\Property(property: 'errors', type: 'object'),
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 403,
-                description: 'Forbidden - only approved nurses or not eligible for request',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: false),
-                        new OA\Property(property: 'message', type: 'string', example: 'You are not eligible to bid on this request.'),
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 404,
-                description: 'Not Found - Care request or nurse profile not found',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: false),
-                        new OA\Property(property: 'message', type: 'string', example: 'Care request not found.'),
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 409,
-                description: 'Conflict - Duplicate bid or request not in matching state',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: false),
-                        new OA\Property(property: 'message', type: 'string', example: 'You have already placed a bid on this request.'),
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 410,
-                description: 'Gone - Bidding window has expired',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: false),
-                        new OA\Property(property: 'message', type: 'string', example: 'Bidding window has expired for this request.'),
                     ]
                 )
             )
@@ -226,10 +150,6 @@ class CareRequestController extends Controller
             new OA\Response(
                 response: 200,
                 description: 'Request details retrieved successfully'
-            ),
-            new OA\Response(
-                response: 404,
-                description: 'Not found or not authorized'
             )
         ]
     )]
@@ -256,8 +176,50 @@ class CareRequestController extends Controller
             return ApiResponse::error('Request not found or expired.', 404);
         }
 
-        $data = $cache->toApiArray();
+        if ($cache->status === NurseRequestCache::STATUS_NOTIFIED) {
+            $cache->update([
+                'status' => NurseRequestCache::STATUS_VIEWED,
+                'viewed_at' => now()
+            ]);
+        }
+
+        $data = $cache->toApiShowArray();
 
         return ApiResponse::success('Request details retrieved successfully.', $data, 200);
+    }
+
+    #[OA\Get(
+        path: '/api/v1/nurse/care-requests/my-bids',
+        operationId: 'listNurseMyBids',
+        summary: 'List my bids',
+        description: 'Get all past and active bids placed by the nurse.',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Care Requests'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Bids retrieved successfully'
+            )
+        ]
+    )]
+    public function myBids(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->isNurse()) {
+            return ApiResponse::error('Only nurses can access this endpoint.', 403);
+        }
+
+        $nurseProfileId = $user->nurseProfile->id ?? null;
+
+        if (!$nurseProfileId) {
+            return ApiResponse::error('Nurse profile not found.', 404);
+        }
+
+        $bids = $this->biddingService->getNurseBids($nurseProfileId);
+
+        return ApiResponse::success('Bids retrieved successfully.', [
+            'bids' => $bids
+        ], 200);
     }
 }

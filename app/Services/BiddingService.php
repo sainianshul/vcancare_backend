@@ -203,4 +203,29 @@ class BiddingService
             'created_at' => $bid->created_at->toDateTimeString(),
         ];
     }
+
+    /**
+     * Get all bids placed by a nurse.
+     */
+    public function getNurseBids(int $nurseProfileId, $perPage = 10)
+    {
+        return RequestBid::where('nurse_id', $nurseProfileId)
+            ->with(['careRequest'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage)
+            ->through(function ($bid) {
+                return [
+                    'bid_id' => $bid->id,
+                    'care_request_id' => $bid->care_request_id,
+                    'total_amount' => $bid->total_amount,
+                    'notes' => $bid->notes,
+                    'status' => $bid->status,
+                    'status_text' => $bid->status_text,
+                    'status_color' => $bid->status_color,
+                    'created_at' => $bid->created_at->toDateTimeString(),
+                    'care_request_snapshot' => $bid->request_snapshot,
+                    'care_request_current_status' => $bid->careRequest?->status_text ?? 'Unknown',
+                ];
+            });
+    }
 }

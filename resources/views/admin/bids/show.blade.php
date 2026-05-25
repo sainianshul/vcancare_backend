@@ -12,10 +12,13 @@
 
     <div class="d-flex flex-column gap-7 gap-lg-10">
 
+        <x-alert-success />
+        <x-form-errors />
+
         {{-- ── HEADER ───────────────────────────────────────────────────────── --}}
         <div class="d-flex flex-wrap flex-stack gap-5 gap-lg-10">
             <div class="d-flex align-items-center gap-3">
-                <a href="{{ route('admin.requests.show', $bid->care_request_id) }}" class="btn btn-icon btn-light btn-active-secondary btn-sm border border-gray-300">
+                <a href="{{ url()->previous() }}" class="btn btn-icon btn-light btn-active-secondary btn-sm border border-gray-300">
                     <i class="ki-outline ki-arrow-left fs-4 text-gray-700"></i>
                 </a>
                 <h1 class="fw-bold text-gray-900 fs-3 mb-0">
@@ -137,6 +140,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-12 mt-2">
+                                <div class="d-flex align-items-start">
+                                    <i class="ki-outline ki-geolocation fs-4 text-primary me-2 mt-1"></i>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-gray-500 fs-8 fw-semibold">Nurse Address</span>
+                                        <span class="text-gray-900 fs-7 fw-bold">
+                                            {{ $bid->nurse->address ?? 'N/A' }}<br>
+                                            @if(!empty($bid->nurse->city) || !empty($bid->nurse->state))
+                                                {{ $bid->nurse->city ?? '' }}, {{ $bid->nurse->state ?? '' }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-12 mt-4">
                                 <span class="text-gray-500 fs-8 fw-semibold d-block mb-2">Specialities (Care Types)</span>
                                 <div class="d-flex flex-wrap gap-2">
@@ -155,7 +172,7 @@
 
                 {{-- Comments Component --}}
                 <x-comments 
-                    type="{{ \App\Models\RequestBid::class }}"
+                    type="{{ \App\Models\Comment::TYPE_REQUEST_BID }}"
                     :model-id="$bid->id"
                 />
 
@@ -202,11 +219,21 @@
                         <div class="bg-light-primary rounded p-3 mt-5 border border-primary border-dashed">
                             <div class="d-flex align-items-center mb-1">
                                 <i class="ki-outline ki-geolocation fs-5 text-primary me-2"></i>
-                                <span class="text-gray-900 fw-bold fs-7">Location</span>
+                                <span class="text-gray-900 fw-bold fs-7">Request Location</span>
                             </div>
                             <div class="text-gray-700 fs-8 ps-7">
                                 {{ $bid->careRequest->address ?? 'N/A' }}<br>
                                 {{ $bid->careRequest->city ?? '' }}, {{ $bid->careRequest->state ?? '' }}
+                            </div>
+                        </div>
+
+                        <div class="bg-light-info rounded p-3 mt-3 border border-info border-dashed">
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="ki-outline ki-route fs-5 text-info me-2"></i>
+                                <span class="text-gray-900 fw-bold fs-7">Approximate Distance</span>
+                            </div>
+                            <div class="text-gray-700 fs-8 ps-7">
+                                {{ $bid->distance_km ?? 'N/A' }} km
                             </div>
                         </div>
 

@@ -175,38 +175,7 @@ class CancellationService
         });
     }
 
-    /**
-     * User cancels a care request (free if no bids received yet).
-     *
-     * @throws \\Exception
-     */
-    public function cancelCareRequest(int $careRequestId, int $userId): CareRequest
-    {
-        $careRequest = CareRequest::where('id', $careRequestId)
-            ->where('user_id', $userId)
-            ->first();
 
-        if (!$careRequest) {
-            throw new CareRequestNotFoundException('Care request not found.', 404);
-        }
-
-        // Only allow cancellation in pre-booking states
-        $cancellableStatuses = [
-            CareRequest::STATUS_PENDING,
-            CareRequest::STATUS_MATCHING,
-        ];
-
-        if (!in_array($careRequest->status, $cancellableStatuses)) {
-            throw new InvalidCareRequestStateException('This care request cannot be cancelled.', 409);
-        }
-
-        $careRequest->update([
-            'status' => CareRequest::STATUS_CANCELLED,
-            'cancelled_by' => CareRequest::CANCELLED_BY_USER,
-        ]);
-
-        return $careRequest->fresh();
-    }
 
     /**
      * Get refund percentage based on cancellation slab.

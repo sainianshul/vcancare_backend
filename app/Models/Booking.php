@@ -148,6 +148,30 @@ class Booking extends Model
     | Attributes
     |--------------------------------------------------------------------------
     */
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_PENDING_PAYMENT => 'warning',
+            self::STATUS_CONFIRMED => 'primary',
+            self::STATUS_ACTIVE => 'info',
+            self::STATUS_COMPLETED => 'success',
+            self::STATUS_CANCELLED => 'danger',
+            default => 'secondary',
+        };
+    }
+
+    public function getPaymentStatusColorAttribute(): string
+    {
+        return match ($this->payment_status) {
+            self::PAYMENT_UNPAID => 'warning',
+            self::PAYMENT_PAID => 'success',
+            self::PAYMENT_REFUND_INITIATED => 'warning',
+            self::PAYMENT_REFUNDED => 'info',
+            self::PAYMENT_PARTIALLY_REFUNDED => 'primary',
+            default => 'secondary',
+        };
+    }
+
     public function getStatusTextAttribute(): string
     {
         return self::getStatusList()[$this->status] ?? 'Unknown';
@@ -289,3 +313,4 @@ class Booking extends Model
         return $this->morphMany(PaymentLog::class, 'loggable');
     }
 }
+

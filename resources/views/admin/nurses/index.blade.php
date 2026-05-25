@@ -25,6 +25,11 @@
 
                 <div class="d-flex align-items-center gap-2">
 
+                    {{-- Refresh Button --}}
+                    <button type="button" class="btn btn-icon btn-light btn-active-light-primary border border-gray-300 w-35px h-35px" id="refresh-table-btn" data-bs-toggle="tooltip" title="Refresh">
+                        <i class="ki-outline ki-arrows-circle fs-3"></i>
+                    </button>
+
                     {{-- Status Filter — only All page --}}
                     <div style="width: 160px;">
                         <div class="position-relative">
@@ -34,7 +39,7 @@
                             </i>
                             <select id="filter-profile-status"
                                 class="form-select form-select-transparent border border-gray-800 text-gray-900 form-select-sm fw-semibold ps-11 shadow-sm"
-                                data-control="select2" data-placeholder="All Statuses" data-allow-clear="true"
+                                data-control="select2" data-placeholder="All Status" data-allow-clear="true"
                                 data-hide-search="true">
                                 <option></option>
                                 @foreach (\App\Models\NurseProfile::getStatusList() as $value => $label)
@@ -46,12 +51,12 @@
 
 
                     {{-- Add Nurse — only All page --}}
-                    <a href="#" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
+                    {{-- <a href="#" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
                         <i class="ki-duotone ki-plus-square fs-5 me-1">
                             <span class="path1"></span><span class="path2"></span><span class="path3"></span>
                         </i>
                         Add Nurse
-                    </a>
+                    </a> --}}
 
                 </div>
             </div>
@@ -158,6 +163,9 @@
 
             // Status filter
             $('#filter-profile-status').on('change', function () { table.ajax.reload(); });
+
+            // Refresh Button
+            $('#refresh-table-btn').on('click', function () { table.ajax.reload(null, false); });
 
 
             // Delete

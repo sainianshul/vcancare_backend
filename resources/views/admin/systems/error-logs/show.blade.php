@@ -230,10 +230,24 @@
                 _token: '{{ csrf_token() }}',
                 status: status
             }).done(function (res) {
-                toastr.success(res.message);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: res.message,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
                 setTimeout(() => location.reload(), 1000);
             }).fail(function () {
-                toastr.error('Something went wrong.');
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Something went wrong.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             });
         });
     });

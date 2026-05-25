@@ -244,32 +244,6 @@ class BookingController extends Controller
         return ApiResponse::success('Booking cancelled successfully.', $result);
     }
 
-    #[OA\Post(
-        path: '/api/v1/user/care-requests/{care_request_id}/cancel',
-        operationId: 'cancelUserCareRequest',
-        summary: 'Cancel a care request',
-        description: 'Free cancellation if no booking exists yet.',
-        security: [['bearerAuth' => []]],
-        tags: ['User Bookings'],
-        parameters: [
-            new OA\Parameter(name: 'care_request_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
-        ],
-        responses: [
-            new OA\Response(response: 200, description: 'Care request cancelled'),
-            new OA\Response(response: 409, description: 'Cannot be cancelled')
-        ]
-    )]
-    public function cancelRequest(Request $request, int $careRequestId)
-    {
-        $careRequest = $this->cancellationService->cancelCareRequest(
-            $careRequestId,
-            $request->user()->id
-        );
-
-        return ApiResponse::success('Care request cancelled.', [
-            'care_request' => $careRequest,
-        ]);
-    }
 
     #[OA\Get(
         path: '/api/v1/user/bookings/{booking_id}/otp',

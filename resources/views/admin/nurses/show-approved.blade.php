@@ -159,6 +159,9 @@
                     <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="bids">Bids</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="care-requests">Care Requests</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="reviews">Reviews</a>
                 </li>
                 <li class="nav-item">
@@ -552,6 +555,21 @@
                         },
                         error: function () {
                             container.innerHTML = '<div class="alert alert-danger m-5">Failed to load bids. Please try again.</div>';
+                        }
+                    });
+                } else if (targetTab === 'care-requests') {
+                    $.ajax({
+                        url: '{{ route('admin.nurses.care-requests', $user->id) }}',
+                        type: 'GET',
+                        success: function (response) {
+                            container.innerHTML = response;
+                            const scripts = container.getElementsByTagName('script');
+                            for (let i = 0; i < scripts.length; i++) {
+                                eval(scripts[i].innerText);
+                            }
+                        },
+                        error: function () {
+                            container.innerHTML = '<div class="alert alert-danger m-5">Failed to load care requests. Please try again.</div>';
                         }
                     });
                 } else {

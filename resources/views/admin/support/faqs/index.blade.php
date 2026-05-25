@@ -65,7 +65,7 @@
                                 id="filter-status"
                                 class="form-select form-select-transparent border border-gray-800 text-gray-900 form-select-sm fw-semibold ps-11 shadow-sm"
                                 data-control="select2"
-                                data-placeholder="All Statuses"
+                                data-placeholder="All Status"
                                 data-allow-clear="true"
                                 data-hide-search="true"
                             >

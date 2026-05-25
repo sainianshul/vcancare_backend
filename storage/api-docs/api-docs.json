@@ -538,101 +538,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Bid placed successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Bid placed successfully."
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "bid": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "care_request_id": {
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "nurse_id": {
-                                                            "type": "integer",
-                                                            "example": 3
-                                                        },
-                                                        "nurse_amount": {
-                                                            "type": "string",
-                                                            "example": "500.00"
-                                                        },
-                                                        "commission_type": {
-                                                            "description": "1: Percentage, 2: Flat",
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "commission_value": {
-                                                            "type": "string",
-                                                            "example": "15.00"
-                                                        },
-                                                        "commission_amount": {
-                                                            "type": "string",
-                                                            "example": "75.00"
-                                                        },
-                                                        "total_amount": {
-                                                            "type": "string",
-                                                            "example": "575.00"
-                                                        },
-                                                        "notes": {
-                                                            "type": "string",
-                                                            "example": "I specialize in post-surgery care.",
-                                                            "nullable": true
-                                                        },
-                                                        "distance_km": {
-                                                            "type": "string",
-                                                            "example": "3.45",
-                                                            "nullable": true
-                                                        },
-                                                        "status": {
-                                                            "description": "0: Pending, 1: Selected, 2: Rejected, 3: Expired, 4: Cancelled",
-                                                            "type": "integer",
-                                                            "example": 0
-                                                        },
-                                                        "expires_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-05-20T12:00:00Z"
-                                                        },
-                                                        "created_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-05-19T10:20:00Z"
-                                                        },
-                                                        "updated_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-05-19T10:20:00Z"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation failed or bad request",
+                    "200": {
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -647,86 +554,6 @@
                                         },
                                         "errors": {
                                             "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden - only approved nurses or not eligible for request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You are not eligible to bid on this request."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found - Care request or nurse profile not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Care request not found."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict - Duplicate bid or request not in matching state",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You have already placed a bid on this request."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "410": {
-                        "description": "Gone - Bidding window has expired",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Bidding window has expired for this request."
                                         }
                                     },
                                     "type": "object"
@@ -763,9 +590,26 @@
                 "responses": {
                     "200": {
                         "description": "Request details retrieved successfully"
-                    },
-                    "404": {
-                        "description": "Not found or not authorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/care-requests/my-bids": {
+            "get": {
+                "tags": [
+                    "Nurse Care Requests"
+                ],
+                "summary": "List my bids",
+                "description": "Get all past and active bids placed by the nurse.",
+                "operationId": "listNurseMyBids",
+                "responses": {
+                    "200": {
+                        "description": "Bids retrieved successfully"
                     }
                 },
                 "security": [
@@ -1906,39 +1750,6 @@
                 ]
             }
         },
-        "/api/v1/user/care-requests/{care_request_id}/cancel": {
-            "post": {
-                "tags": [
-                    "User Bookings"
-                ],
-                "summary": "Cancel a care request",
-                "description": "Free cancellation if no booking exists yet.",
-                "operationId": "cancelUserCareRequest",
-                "parameters": [
-                    {
-                        "name": "care_request_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Care request cancelled"
-                    },
-                    "409": {
-                        "description": "Cannot be cancelled"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/v1/user/bookings/{booking_id}/otp": {
             "get": {
                 "tags": [
@@ -2168,6 +1979,128 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/care-requests/{id}": {
+            "get": {
+                "tags": [
+                    "User Care Requests"
+                ],
+                "summary": "View care request details",
+                "description": "Get details of a specific care request.",
+                "operationId": "showCareRequest",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Care request retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "User Care Requests"
+                ],
+                "summary": "Update a care request",
+                "description": "Updates a care request. If matching, only notes/phone allowed. If failed, full edit allowed and matching restarts.",
+                "operationId": "updateCareRequest",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "notes": {
+                                        "type": "string"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Care request updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/care-requests/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "User Care Requests"
+                ],
+                "summary": "Cancel a care request",
+                "description": "Cancels a care request and clears all nurse matching caches/bids.",
+                "operationId": "cancelCareRequest",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "cancel_reason": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Care request cancelled successfully"
                     }
                 },
                 "security": [

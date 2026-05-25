@@ -32,7 +32,7 @@
             <div class="row g-5 mb-7" id="overview-stats">
                 <!--begin::Col-->
                 <div class="col-sm-6 col-xl-3">
-                    <div class="card card-bordered border-gray-300 h-100">
+                    <a href="{{ route('admin.patients.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
                         <div class="card-body d-flex align-items-center p-5">
                             <div class="w-45px h-45px bg-light-primary rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
                                 <i class="ki-outline ki-people fs-2 text-primary"></i>
@@ -44,11 +44,11 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <!--end::Col-->
                 <div class="col-sm-6 col-xl-3">
-                    <div class="card card-bordered border-gray-300 h-100">
+                    <a href="{{ route('admin.nurses.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
                         <div class="card-body d-flex align-items-center p-5">
                             <div class="w-45px h-45px bg-light-success rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
                                 <i class="ki-outline ki-shield-tick fs-2 text-success"></i>
@@ -60,10 +60,10 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-sm-6 col-xl-3">
-                    <div class="card card-bordered border-gray-300 h-100">
+                    <a href="{{ route('admin.requests.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
                         <div class="card-body d-flex align-items-center p-5">
                             <div class="w-45px h-45px bg-light-warning rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
                                 <i class="ki-outline ki-document fs-2 text-warning"></i>
@@ -75,10 +75,10 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-sm-6 col-xl-3">
-                    <div class="card card-bordered border-gray-300 h-100">
+                    <a href="{{ route('admin.bookings.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
                         <div class="card-body d-flex align-items-center p-5">
                             <div class="w-45px h-45px bg-light-info rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
                                 <i class="ki-outline ki-calendar-tick fs-2 text-info"></i>
@@ -90,7 +90,7 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
             <!--end::Row 1-->

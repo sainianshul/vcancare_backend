@@ -57,6 +57,7 @@
                     { data: 'created_at', name: 'created_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end pe-3' },
                 ],
+                order: [[5, 'desc']],
                 initComplete: function () {
                     $('#patient-requests-skeleton').fadeOut(200, function () {
                         $(this).remove();
@@ -65,6 +66,45 @@
                 }
             });
         }
+
+        // ── Delete ───────────────────────────────────────────────────────
+        $(document).on('click', '.btn-delete', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Delete Request?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                customClass: {
+                    confirmButton: 'btn btn-danger',
+                    cancelButton: 'btn btn-light ms-2'
+                },
+                buttonsStyling: false,
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+                $.post('/admin/requests/' + id, {
+                    _method: 'DELETE',
+                    _token: '{{ csrf_token() }}'
+                })
+                .done(function () {
+                    $('#patient-requests-table').DataTable().ajax.reload(null, false);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success('Care request deleted.');
+                    } else {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Care request deleted.', showConfirmButton: false, timer: 1500 });
+                    }
+                })
+                .fail(function () {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Something went wrong.');
+                    } else {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Something went wrong.', showConfirmButton: false, timer: 1500 });
+                    }
+                });
+            });
+        });
+
     });
 </script>
 @endpush

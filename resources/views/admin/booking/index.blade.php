@@ -32,6 +32,11 @@
                 {{-- Right Controls --}}
                 <div class="d-flex align-items-center gap-2">
 
+                    {{-- Refresh Button --}}
+                    <button type="button" class="btn btn-icon btn-light btn-active-light-primary border border-gray-300 w-35px h-35px" id="refresh-table-btn" data-bs-toggle="tooltip" title="Refresh">
+                        <i class="ki-outline ki-arrows-circle fs-3"></i>
+                    </button>
+
                     {{-- Date Filter --}}
                     <div style="width: 175px;">
                         <div class="position-relative">
@@ -64,7 +69,7 @@
                                 id="filter-status"
                                 class="form-select form-select-transparent border border-gray-800 text-gray-900 form-select-sm fw-semibold ps-11 shadow-sm"
                                 data-control="select2"
-                                data-placeholder="All Statuses"
+                                data-placeholder="All Status"
                                 data-allow-clear="true"
                                 data-hide-search="true"
                             >
@@ -228,6 +233,11 @@
             // ── Filters ─────────────────────────────────────────────────────
             $('#filter-status, #filter-payment').on('change', function () {
                 table.ajax.reload();
+            });
+
+            // ── Refresh Button ───────────────────────────────────────────────
+            $('#refresh-table-btn').on('click', function () {
+                table.ajax.reload(null, false);
             });
 
             let fp = $('#filter-date').flatpickr({

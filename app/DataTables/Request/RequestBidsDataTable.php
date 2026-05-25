@@ -19,17 +19,15 @@ class RequestBidsDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->filterColumn('nurse', function($query, $keyword) {
+                $query->whereHas('nurse.user', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('nurse', function (RequestBid $bid) {
                 $user = $bid->nurse->user;
                 $name = $user->name ?? 'Unknown';
-                $initial = mb_strtoupper(mb_substr($name, 0, 2));
-
-                $avatar = '';
-                if ($user && $user->profile_photo) {
-                    $avatar = '<div class="symbol symbol-30px symbol-circle me-3"><img src="' . \Illuminate\Support\Facades\Storage::url($user->profile_photo) . '" class="object-fit-cover" alt="Pic"></div>';
-                } else {
-                    $avatar = '<div class="symbol symbol-30px symbol-circle me-3"><span class="symbol-label bg-light-dark text-dark fw-bold fs-7">' . $initial . '</span></div>';
-                }
+                $avatar = '<div class="symbol symbol-30px symbol-circle me-3">' . $user->avatar_html . '</div>';
 
                 return '
                     <div class="d-flex align-items-center">
@@ -51,13 +49,7 @@ class RequestBidsDataTable extends DataTable
                 return '<span class="text-gray-900 fw-bold fs-7">₹' . number_format($bid->total_amount, 2) . '</span>';
             })
             ->addColumn('status', function (RequestBid $bid) {
-                $colors = [
-                    RequestBid::STATUS_PENDING => 'warning',
-                    RequestBid::STATUS_SELECTED => 'success',
-                    RequestBid::STATUS_REJECTED => 'danger',
-                    RequestBid::STATUS_CANCELLED => 'dark',
-                ];
-                $color = $colors[$bid->status] ?? 'dark';
+                $color = $bid->status_color;
                 return '<span class="badge badge-light-' . $color . ' text-' . $color . ' fw-bold fs-8 px-2 py-1 border border-' . $color . '">' . ($bid->status_text ?? 'Unknown') . '</span>';
             })
             ->addColumn('actions', function (RequestBid $bid) {

@@ -22,26 +22,8 @@ class PatientDataTable extends DataTable
             })
             ->editColumn('name', function (User $user) {
 
-                $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
-
-                $contact = e($user->email ?? $user->phone ?? '—');
-
-                $colors = [
-                    'bg-light-primary text-primary',
-                    'bg-light-success text-success',
-                    'bg-light-warning text-warning',
-                    'bg-light-danger text-danger',
-                    'bg-light-info text-info',
-                ];
-                $colorClass = $colors[ord($initial) % count($colors)];
-
-                $avatar = '
-                    <span class="symbol symbol-38px">
-                        <span class="symbol-label rounded-2 fw-bold fs-6 ' . $colorClass . '">
-                            ' . e($initial) . '
-                        </span>
-                    </span>
-                ';
+            $contact = e($user->email ?? $user->phone ?? '—');
+            $avatar = '<div class="symbol symbol-38px symbol-circle">' . $user->avatar_html . '</div>';
 
                 return '
                     <div class="d-flex align-items-center gap-3">

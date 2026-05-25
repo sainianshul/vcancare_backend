@@ -67,6 +67,18 @@ class BookingSession extends Model
     | Attributes
     |--------------------------------------------------------------------------
     */
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_UPCOMING => 'warning',
+            self::STATUS_STARTED => 'primary',
+            self::STATUS_COMPLETED => 'success',
+            self::STATUS_MISSED => 'danger',
+            self::STATUS_CANCELLED => 'secondary',
+            default => 'secondary',
+        };
+    }
+
     public function getStatusTextAttribute(): string
     {
         return self::getStatusList()[$this->status] ?? 'Unknown';
@@ -149,3 +161,4 @@ class BookingSession extends Model
         return $this->belongsTo(Booking::class);
     }
 }
+

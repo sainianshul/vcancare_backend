@@ -29,16 +29,7 @@ class RequestDataTable extends DataTable
                 $user = $request->user;
                 if (!$user) return '<span class="text-muted">Unknown</span>';
                 
-                $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
-                $colors = ['bg-light-primary text-primary', 'bg-light-success text-success', 'bg-light-warning text-warning', 'bg-light-danger text-danger', 'bg-light-info text-info'];
-                $colorClass = $colors[ord($initial) % count($colors)];
-
-                $avatar = '';
-                if ($user->profile_photo) {
-                    $avatar = '<div class="symbol symbol-38px symbol-circle"><img src="' . \Illuminate\Support\Facades\Storage::url($user->profile_photo) . '" class="object-fit-cover" alt="Pic"></div>';
-                } else {
-                    $avatar = '<span class="symbol symbol-38px symbol-circle"><span class="symbol-label fw-bold fs-6 ' . $colorClass . '">' . e($initial) . '</span></span>';
-                }
+                $avatar = '<div class="symbol symbol-38px symbol-circle">' . $user->avatar_html . '</div>';
 
                 return '
                     <div class="d-flex align-items-center gap-3">
@@ -57,18 +48,7 @@ class RequestDataTable extends DataTable
 
             // ── Status ───────────────────────────────────────────────
             ->addColumn('status', function (CareRequest $request) {
-                $statusColors = [
-                    CareRequest::STATUS_PENDING => 'warning',
-                    CareRequest::STATUS_COMPLETED => 'success',
-                    CareRequest::STATUS_CANCELLED => 'danger',
-                    CareRequest::STATUS_EXPIRED => 'secondary',
-                    CareRequest::STATUS_MATCHING => 'primary',
-                    CareRequest::STATUS_ACCEPTED => 'info',
-                    CareRequest::STATUS_FAILED_NO_NURSES => 'danger',
-                    CareRequest::STATUS_FAILED_NO_BIDS => 'danger',
-                    CareRequest::STATUS_FAILED_UNACCEPTED => 'danger',
-                ];
-                $color = $statusColors[$request->status] ?? 'dark';
+                $color = $request->status_color;
                 
                 return '
                     <span class="badge badge-light-' . $color . ' border border-' . $color . ' fw-bold px-3 py-2">
@@ -178,3 +158,4 @@ class RequestDataTable extends DataTable
         return 'CareRequests_' . date('Y_m_d_His');
     }
 }
+

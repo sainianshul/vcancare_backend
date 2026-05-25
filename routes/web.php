@@ -53,6 +53,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/{user}/bookings/data', [NurseController::class, 'bookingsData'])->name('bookings.data');
         Route::get('/{user}/login-history', [NurseController::class, 'loginHistory'])->name('login-history');
         Route::get('/{user}/login-history/data', [NurseController::class, 'loginHistoryData'])->name('login-history.data');
+        Route::get('/{user}/care-requests', [NurseController::class, 'careRequests'])->name('care-requests');
+        Route::get('/{user}/care-requests/data', [NurseController::class, 'careRequestsData'])->name('care-requests.data');
         Route::get('/{user}/review-step-view/{step}', [NurseController::class, 'getReviewStepView'])->name('review-step-view');
         Route::post('/{user}/review-step', [NurseController::class, 'reviewStep'])->name('review-step');
         Route::post('/{user}/finalize-review', [NurseController::class, 'finalizeReview'])->name('finalize-review');
