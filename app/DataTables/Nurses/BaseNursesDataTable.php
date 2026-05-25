@@ -16,22 +16,8 @@ abstract class BaseNursesDataTable extends DataTable
     protected function nurseColumn($dt)
     {
         return $dt->addColumn('nurse', function (User $user) {
-            $initial = mb_strtoupper(mb_substr($user->name, 0, 2));
             $contact = e($user->email ?? $user->phone ?? '—');
-            $colors = [
-                'bg-light-primary text-primary',
-                'bg-light-success text-success',
-                'bg-light-warning text-warning',
-                'bg-light-danger text-danger',
-                'bg-light-info text-info',
-            ];
-            $colorClass = $colors[ord($initial) % count($colors)];
-
-            if ($user->profile_photo) {
-                $avatar = '<div class="symbol symbol-38px symbol-circle"><img src="' . \Illuminate\Support\Facades\Storage::url($user->profile_photo) . '" class="object-fit-cover" alt="Pic"></div>';
-            } else {
-                $avatar = '<span class="symbol symbol-38px symbol-circle"><span class="symbol-label fw-bold fs-6 ' . $colorClass . '">' . e($initial) . '</span></span>';
-            }
+            $avatar = '<div class="symbol symbol-38px symbol-circle">' . $user->avatar_html . '</div>';
 
             return '
                 <div class="d-flex align-items-center gap-3">

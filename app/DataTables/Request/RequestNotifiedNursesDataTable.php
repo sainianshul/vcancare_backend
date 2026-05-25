@@ -19,17 +19,16 @@ class RequestNotifiedNursesDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->filterColumn('nurse', function($query, $keyword) {
+                $query->whereHas('nurse.user', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('nurse', function (NurseRequestCache $cache) {
                 $user = $cache->nurse->user ?? null;
                 $name = $user->name ?? 'Unknown';
-                $initial = mb_strtoupper(mb_substr($name, 0, 2));
-
-                $avatar = '';
-                if ($user && $user->profile_photo) {
-                    $avatar = '<div class="symbol symbol-30px symbol-circle me-3"><img src="' . \Illuminate\Support\Facades\Storage::url($user->profile_photo) . '" class="object-fit-cover" alt="Pic"></div>';
-                } else {
-                    $avatar = '<div class="symbol symbol-30px symbol-circle me-3"><span class="symbol-label bg-light-info text-info fw-bold fs-7">' . $initial . '</span></div>';
-                }
+                $avatarHtml = $user ? $user->avatar_html : '<span class="symbol-label bg-light-dark text-dark fw-bold fs-7">UN</span>';
+                $avatar = '<div class="symbol symbol-30px symbol-circle me-3">' . $avatarHtml . '</div>';
 
                 return '
                     <div class="d-flex align-items-center">
@@ -47,13 +46,7 @@ class RequestNotifiedNursesDataTable extends DataTable
                 return $dist !== null ? '<span class="text-gray-900 fw-semibold fs-7">' . number_format($dist, 1) . ' km</span>' : '<span class="text-muted fs-8">N/A</span>';
             })
             ->addColumn('status', function (NurseRequestCache $cache) {
-                $colors = [
-                    NurseRequestCache::STATUS_NOTIFIED => 'primary',
-                    NurseRequestCache::STATUS_VIEWED => 'info',
-                    NurseRequestCache::STATUS_BID_PLACED => 'success',
-                    NurseRequestCache::STATUS_EXPIRED => 'danger',
-                ];
-                $color = $colors[$cache->status] ?? 'secondary';
+                $color = $cache->status_color;
                 
                 $statusTexts = [
                     NurseRequestCache::STATUS_NOTIFIED => 'Notified',

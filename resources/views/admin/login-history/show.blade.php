@@ -4,14 +4,34 @@
 
 @section('content')
 
-    {{-- Breadcrumb --}}
-    <x-breadcrumb :items="[
-        ['label' => 'System', 'url' => ''],
-        ['label' => 'Login History', 'url' => route('admin.login-history.index')],
-        ['label' => 'Details'],
-    ]" />
+    <!--begin::Toolbar-->
+    <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+        <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+            <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                <x-page-header title="Login Details" description="View details of this login session" />
+                <x-breadcrumb :items="[
+                    ['label' => 'System', 'url' => ''],
+                    ['label' => 'Login History', 'url' => route('admin.login-history.index')],
+                    ['label' => 'Details'],
+                ]" />
+            </div>
+            
+            <!--begin::Actions-->
+            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                <a href="{{ url()->previous() }}" class="btn btn-sm btn-light fw-bold fs-7">
+                    <i class="ki-outline ki-arrow-left fs-5 me-1"></i>Back
+                </a>
+            </div>
+            <!--end::Actions-->
+        </div>
+    </div>
+    <!--end::Toolbar-->
 
-    <div class="row g-5 g-xl-8 mb-5 mb-xl-8">
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <div id="kt_app_content_container" class="app-container container-fluid">
+
+            <div class="row g-5 g-xl-8 mb-5 mb-xl-8">
 
         {{-- Main Column --}}
         <div class="col-xl-8">
@@ -202,6 +222,9 @@
 
         </div>
 
+    </div>
+
+        </div>
     </div>
 
     <x-comments type="{{ \App\Models\Comment::TYPE_LOGIN_HISTORY }}" :model-id="$loginHistory->id" />

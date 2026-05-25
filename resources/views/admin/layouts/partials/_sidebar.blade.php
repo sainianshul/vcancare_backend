@@ -4,7 +4,7 @@
     <!--begin::Logo-->
     <div class="app-sidebar-logo flex-shrink-0 d-none d-md-flex align-items-center px-8" id="kt_app_sidebar_logo">
         <a href="{{ route('admin.dashboard') }}" class="text-decoration-none">
-            <h1 class="text-gray-900 fs-2 fw-bolder mb-0 ls-1">VCancares</h1>
+            <h1 class="text-gray-900 fs-2 fw-bolder mb-0 ls-1">VCancare</h1>
         </a>
     </div>
     <!--end::Logo-->

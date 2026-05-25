@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
-use App\Exceptions\BiddingException;
+use App\Exceptions\CareRequest\CareRequestNotFoundException;
+use App\Exceptions\CareRequest\InvalidCareRequestStateException;
+use App\Exceptions\Bidding\BidNotFoundException;
 use App\Models\CareRequest;
 use App\Models\CareType;
 use App\Models\NurseRequestCache;
@@ -15,7 +17,7 @@ class BiddingService
     /**
      * Place a bid on a care request.
      *
-     * @throws BiddingException
+     * @throws \\Exception
      */
     public function placeBid(int $nurseProfileId, array $data): RequestBid
     {
@@ -26,11 +28,11 @@ class BiddingService
         $careRequest = CareRequest::find($careRequestId);
 
         if (!$careRequest) {
-            throw new BiddingException('Care request not found.', 404);
+            throw new CareRequestNotFoundException('Care request not found.', 404);
         }
 
         if ($careRequest->status !== CareRequest::STATUS_MATCHING) {
-            throw new BiddingException('This care request is no longer accepting bids.', 409);
+            throw new InvalidCareRequestStateException('This care request is no longer accepting bids.', 409);
         }
 
         // 2. Verify nurse was notified for this request (exists in cache)
@@ -43,12 +45,12 @@ class BiddingService
             ->first();
 
         if (!$cacheEntry) {
-            throw new BiddingException('You are not eligible to bid on this request.', 403);
+            throw new InvalidCareRequestStateException('You are not eligible to bid on this request.', 403);
         }
 
         // 3. Check if bidding window has expired
         if ($cacheEntry->expires_at && $cacheEntry->expires_at->isPast()) {
-            throw new BiddingException('Bidding window has expired for this request.', 410);
+            throw new InvalidCareRequestStateException('Bidding window has expired for this request.', 410);
         }
 
         // 4. Check duplicate bid
@@ -57,7 +59,7 @@ class BiddingService
             ->exists();
 
         if ($existingBid) {
-            throw new BiddingException('You have already placed a bid on this request.', 409);
+            throw new InvalidCareRequestStateException('You have already placed a bid on this request.', 409);
         }
 
         // 5. Calculate commission using single source of truth helper
@@ -112,7 +114,7 @@ class BiddingService
     /**
      * Get bids for a care request (user-facing — limited nurse info).
      *
-     * @throws BiddingException
+     * @throws \\Exception
      */
     public function getBidsForUser(int $careRequestId, int $userId): array
     {
@@ -121,7 +123,7 @@ class BiddingService
             ->first();
 
         if (!$careRequest) {
-            throw new BiddingException('Care request not found.', 404);
+            throw new CareRequestNotFoundException('Care request not found.', 404);
         }
 
         $bids = RequestBid::where('care_request_id', $careRequestId)
@@ -162,7 +164,7 @@ class BiddingService
     /**
      * Get a single bid for a care request (user-facing — limited nurse info + experience).
      *
-     * @throws BiddingException
+     * @throws \\Exception
      */
     public function getBidForUser(int $careRequestId, int $bidId, int $userId): array
     {
@@ -171,7 +173,7 @@ class BiddingService
             ->first();
 
         if (!$careRequest) {
-            throw new BiddingException('Care request not found.', 404);
+            throw new CareRequestNotFoundException('Care request not found.', 404);
         }
 
         $bid = RequestBid::where('id', $bidId)
@@ -180,7 +182,7 @@ class BiddingService
             ->first();
 
         if (!$bid) {
-            throw new BiddingException('Bid not found.', 404);
+            throw new BidNotFoundException('Bid not found.', 404);
         }
 
         $nurse = $bid->nurse;
@@ -200,5 +202,30 @@ class BiddingService
             'status' => $bid->status,
             'created_at' => $bid->created_at->toDateTimeString(),
         ];
+    }
+
+    /**
+     * Get all bids placed by a nurse.
+     */
+    public function getNurseBids(int $nurseProfileId, $perPage = 10)
+    {
+        return RequestBid::where('nurse_id', $nurseProfileId)
+            ->with(['careRequest'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage)
+            ->through(function ($bid) {
+                return [
+                    'bid_id' => $bid->id,
+                    'care_request_id' => $bid->care_request_id,
+                    'total_amount' => $bid->total_amount,
+                    'notes' => $bid->notes,
+                    'status' => $bid->status,
+                    'status_text' => $bid->status_text,
+                    'status_color' => $bid->status_color,
+                    'created_at' => $bid->created_at->toDateTimeString(),
+                    'care_request_snapshot' => $bid->request_snapshot,
+                    'care_request_current_status' => $bid->careRequest?->status_text ?? 'Unknown',
+                ];
+            });
     }
 }

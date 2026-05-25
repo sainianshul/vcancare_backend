@@ -102,4 +102,61 @@ class NurseRequestCache extends Model
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }
+
+    /**
+     * Format cache entry for API response with additional details for show endpoint.
+     */
+    public function toApiShowArray(): array
+    {
+        $base = $this->toApiArray();
+
+        $careRequest = $this->careRequest;
+        $user = $careRequest ? $careRequest->user : null;
+
+        $snapshot = $this->request_snapshot ?? [];
+
+        $daysCount = 1;
+        if ($careRequest && $careRequest->start_date && $careRequest->end_date) {
+            try {
+                $start = Carbon::parse($careRequest->start_date)->startOfDay();
+                $end = Carbon::parse($careRequest->end_date)->startOfDay();
+                $daysCount = max(1, $start->diffInDays($end) + 1);
+            } catch (\Exception $e) {
+                $daysCount = 1;
+            }
+        }
+
+        $hoursPerDay = 0;
+        if ($careRequest && $careRequest->start_time && $careRequest->end_time) {
+            try {
+                $startT = Carbon::parse($careRequest->start_time);
+                $endT = Carbon::parse($careRequest->end_time);
+                if ($endT->lessThan($startT)) {
+                    $endT->addDay();
+                }
+                $hoursPerDay = round($startT->diffInHours($endT, true), 1);
+            } catch (\Exception $e) {
+                $hoursPerDay = 0;
+            }
+        }
+
+        return array_merge($base, [
+            'user_name' => $user ? $user->name : 'Unknown',
+            'patient_name' => $careRequest ? $careRequest->patient_name : 'Unknown',
+            'patient_age' => $careRequest ? $careRequest->patient_age : 'Unknown',
+            'notes' => $careRequest ? $careRequest->notes : '',
+            'days_count' => $daysCount,
+            'hours_per_day' => $hoursPerDay,
+        ]);
+    }
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_NOTIFIED => 'secondary',
+            self::STATUS_VIEWED => 'info',
+            self::STATUS_BID_PLACED => 'success',
+            self::STATUS_EXPIRED => 'danger',
+            default => 'secondary',
+        };
+    }
 }

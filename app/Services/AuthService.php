@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Exceptions\InvalidOtpException;
-use App\Exceptions\TooManyOtpRequestsException;
-use App\Exceptions\UserBlockedException;
+use App\Exceptions\Auth\InvalidOtpException;
+use App\Exceptions\Auth\TooManyOtpRequestsException;
+use App\Exceptions\Auth\UserBlockedException;
 use App\Helpers\ActivityLogger;
 use App\Models\Activity;
 use App\Models\LoginHistory;

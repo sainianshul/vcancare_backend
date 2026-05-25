@@ -43,7 +43,9 @@ Route::prefix('v1')->group(function () {
             // Care Requests
             Route::get('care-requests', [UserCareRequestController::class, 'index']);
             Route::post('care-requests', [UserCareRequestController::class, 'store']);
-            Route::post('care-requests/{care_request_id}/cancel', [UserBookingController::class, 'cancelRequest']);
+            Route::get('care-requests/{id}', [UserCareRequestController::class, 'show']);
+            Route::put('care-requests/{id}', [UserCareRequestController::class, 'update']);
+            Route::post('care-requests/{care_request_id}/cancel', [UserCareRequestController::class, 'cancel']);
             Route::get('care-requests/{care_request_id}/bids', [UserCareRequestController::class, 'bids']);
             Route::get('care-requests/{care_request_id}/bids/{bid_id}', [UserCareRequestController::class, 'showBid']);
 
@@ -73,6 +75,7 @@ Route::prefix('v1')->group(function () {
 
                 // Care Requests (bidding)
                 Route::get('care-requests', [NurseCareRequestController::class, 'index']);
+                Route::get('care-requests/my-bids', [NurseCareRequestController::class, 'myBids']);
                 Route::get('care-requests/{id}', [NurseCareRequestController::class, 'show']);
                 Route::post('care-requests/bid', [NurseCareRequestController::class, 'placeBid']);
 

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\Exceptions\Auth;
+
+use App\Exceptions\ApiException;
 
 class InvalidOtpException extends ApiException
 {

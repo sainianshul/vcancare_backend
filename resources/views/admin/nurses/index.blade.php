@@ -25,6 +25,11 @@
 
                 <div class="d-flex align-items-center gap-2">
 
+                    {{-- Refresh Button --}}
+                    <button type="button" class="btn btn-icon btn-light btn-active-light-primary border border-gray-300 w-35px h-35px" id="refresh-table-btn" data-bs-toggle="tooltip" title="Refresh">
+                        <i class="ki-outline ki-arrows-circle fs-3"></i>
+                    </button>
+
                     {{-- Status Filter — only All page --}}
                     <div style="width: 160px;">
                         <div class="position-relative">
@@ -34,7 +39,7 @@
                             </i>
                             <select id="filter-profile-status"
                                 class="form-select form-select-transparent border border-gray-800 text-gray-900 form-select-sm fw-semibold ps-11 shadow-sm"
-                                data-control="select2" data-placeholder="All Statuses" data-allow-clear="true"
+                                data-control="select2" data-placeholder="All Status" data-allow-clear="true"
                                 data-hide-search="true">
                                 <option></option>
                                 @foreach (\App\Models\NurseProfile::getStatusList() as $value => $label)
@@ -46,12 +51,12 @@
 
 
                     {{-- Add Nurse — only All page --}}
-                    <a href="#" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
+                    {{-- <a href="#" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
                         <i class="ki-duotone ki-plus-square fs-5 me-1">
                             <span class="path1"></span><span class="path2"></span><span class="path3"></span>
                         </i>
                         Add Nurse
-                    </a>
+                    </a> --}}
 
                 </div>
             </div>
@@ -63,7 +68,7 @@
                 <table id="nurses-table" class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100">
                     <thead>
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
-                            <th class="w-50px">#</th>
+                            <th class="w-50px">S.No</th>
                             <th class="min-w-320px">Nurse</th>
                             <th class="min-w-160px">Location</th>
                             <th class="min-w-140px">Bookings</th>
@@ -104,7 +109,7 @@
                     }
                 },
                 columns: [
-                    { data: 'id', name: 'id', searchable: false },
+                    { data: null, name: 'id', render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }, orderable: false, searchable: false },
                     { data: 'nurse', name: 'nurse', orderable: false },
                     { data: 'location', name: 'location', orderable: false, searchable: false },
                     { data: 'bookings', name: 'bookings', orderable: false, searchable: false },
@@ -112,7 +117,7 @@
                     { data: 'created_at', name: 'created_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end pe-3' },
                 ],
-                order: [[0, 'desc']],
+                order: [[5, 'desc']],
                 pageLength: 15,
                 lengthMenu: [[10, 15, 25, 50], [10, 15, 25, 50]],
                 dom:
@@ -158,6 +163,9 @@
 
             // Status filter
             $('#filter-profile-status').on('change', function () { table.ajax.reload(); });
+
+            // Refresh Button
+            $('#refresh-table-btn').on('click', function () { table.ajax.reload(null, false); });
 
 
             // Delete

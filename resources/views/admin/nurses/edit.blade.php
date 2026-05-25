@@ -96,8 +96,11 @@
                                         <label class="form-label text-gray-700 fw-semibold fs-7 mb-1">Emergency Contact</label>
                                         <div class="position-relative">
                                             <i class="ki-outline ki-call fs-4 position-absolute top-50 translate-middle-y ms-3 text-danger"></i>
-                                            <input type="text" name="emergency_contact_phone" class="form-control form-control-sm text-gray-900 border border-gray-300 bg-transparent ps-10 fs-7" value="{{ old('emergency_contact_phone', $user->nurseProfile->emergency_contact_phone ?? '') }}" />
+                                            <input type="text" name="emergency_contact_phone" class="form-control form-control-sm text-gray-900 border border-gray-300 bg-transparent ps-10 fs-7 @error('emergency_contact_phone') is-invalid @enderror" value="{{ old('emergency_contact_phone', $user->nurseProfile->emergency_contact_phone ?? '') }}" />
                                         </div>
+                                        @error('emergency_contact_phone')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -196,6 +199,9 @@
                                     </label>
 
                                     <input type="file" name="profile_photo" id="avatar-upload" accept=".png, .jpg, .jpeg" class="d-none" />
+                                    @error('profile_photo')
+                                        <div class="invalid-feedback d-block text-center mt-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="text-muted fs-8 mt-2">Allowed file types: png, jpg, jpeg. Max size: 2MB.</div>
                             </div>

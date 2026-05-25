@@ -3,7 +3,7 @@
 <!--begin::Head-->
 
 <head>
-    <title>@yield('title', 'VCancares Admin')</title>
+    <title>@yield('title', 'VCancare Admin')</title>
     <meta charset="utf-8" />
     <meta name="description" content="A Nurse Scheduling Software" />
     <meta name="keywords" content="Nurse Scheduling Software" />
@@ -11,8 +11,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="VCancares" />
-    <meta property="og:site_name" content="VCancares" />
+    <meta property="og:title" content="VCancare" />
+    <meta property="og:site_name" content="VCancare" />
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
 
     <!--begin::Theme mode setup — runs BEFORE any render-->

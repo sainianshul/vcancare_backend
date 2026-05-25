@@ -2,7 +2,15 @@
 
 namespace App\Services;
 
-use App\Exceptions\BookingException;
+use App\Exceptions\Booking\BookingNotFoundException;
+use App\Exceptions\Booking\InvalidBookingStateException;
+use App\Exceptions\Booking\SessionNotFoundException;
+use App\Exceptions\Booking\InvalidSessionStateException;
+use App\Exceptions\Booking\InvalidSessionOtpException;
+use App\Exceptions\CareRequest\CareRequestNotFoundException;
+use App\Exceptions\CareRequest\InvalidCareRequestStateException;
+use App\Exceptions\CareRequest\DuplicateBookingException;
+use App\Exceptions\Bidding\BidNotFoundException;
 use App\Models\Booking;
 use App\Models\BookingSession;
 use App\Models\CareRequest;
@@ -37,7 +45,7 @@ class BookingService
     /**
      * Create a booking from a selected bid.
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function createFromBid(int $careRequestId, int $bidId, int $userId): Booking
     {
@@ -46,11 +54,11 @@ class BookingService
             ->first();
 
         if (!$careRequest) {
-            throw new BookingException('Care request not found.', 404);
+            throw new CareRequestNotFoundException('Care request not found.', 404);
         }
 
         if (!in_array($careRequest->status, [CareRequest::STATUS_MATCHING, CareRequest::STATUS_ACCEPTED])) {
-            throw new BookingException('This care request is not in a valid state for booking.', 409);
+            throw new InvalidCareRequestStateException('This care request is not in a valid state for booking.', 409);
         }
 
         // Prevent duplicate bookings for same care request
@@ -59,7 +67,7 @@ class BookingService
             ->exists();
 
         if ($existingBooking) {
-            throw new BookingException('A booking already exists for this care request.', 409);
+            throw new DuplicateBookingException('A booking already exists for this care request.', 409);
         }
 
         $bid = RequestBid::where('id', $bidId)
@@ -68,7 +76,7 @@ class BookingService
             ->first();
 
         if (!$bid) {
-            throw new BookingException('Bid not found or already processed.', 404);
+            throw new BidNotFoundException('Bid not found or already processed.', 404);
         }
 
         // Calculate total sessions (days)
@@ -149,7 +157,7 @@ class BookingService
     /**
      * Get booking details for a user.
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function getBookingForUser(int $bookingId, int $userId): Booking
     {
@@ -159,7 +167,7 @@ class BookingService
             ->first();
 
         if (!$booking) {
-            throw new BookingException('Booking not found.', 404);
+            throw new BookingNotFoundException('Booking not found.', 404);
         }
 
         return $booking;
@@ -217,7 +225,7 @@ class BookingService
     /**
      * Start a session — nurse verifies OTP from patient.
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function startSession(int $sessionId, string $otp, int $nurseId): BookingSession
     {
@@ -228,15 +236,15 @@ class BookingService
             ->first();
 
         if (!$session) {
-            throw new BookingException('Session not found.', 404);
+            throw new SessionNotFoundException('Session not found.', 404);
         }
 
         if ($session->status !== BookingSession::STATUS_UPCOMING) {
-            throw new BookingException('This session cannot be started.', 409);
+            throw new InvalidSessionStateException('This session cannot be started.', 409);
         }
 
         if (!$session->verifyOtp($otp)) {
-            throw new BookingException('Invalid OTP.', 422);
+            throw new InvalidSessionOtpException('Invalid OTP.', 422);
         }
 
         $session->update([
@@ -258,7 +266,7 @@ class BookingService
      * End a session — nurse marks it complete.
      * If all sessions done → booking completes and nurse gets paid.
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function endSession(int $sessionId, int $nurseId, ?string $notes = null): BookingSession
     {
@@ -269,11 +277,11 @@ class BookingService
             ->first();
 
         if (!$session) {
-            throw new BookingException('Session not found.', 404);
+            throw new SessionNotFoundException('Session not found.', 404);
         }
 
         if ($session->status !== BookingSession::STATUS_STARTED) {
-            throw new BookingException('This session has not been started yet.', 409);
+            throw new InvalidSessionStateException('This session has not been started yet.', 409);
         }
 
         return DB::transaction(function () use ($session, $notes) {
@@ -322,7 +330,7 @@ class BookingService
     /**
      * Get today's OTP for a session (user-facing — shows to patient).
      *
-     * @throws BookingException
+     * @throws \\Exception
      */
     public function getSessionOtp(int $bookingId, int $userId): array
     {
@@ -332,7 +340,7 @@ class BookingService
             ->first();
 
         if (!$booking) {
-            throw new BookingException('Booking not found or not active.', 404);
+            throw new BookingNotFoundException('Booking not found or not active.', 404);
         }
 
         $today = now()->format('Y-m-d');
@@ -342,7 +350,7 @@ class BookingService
             ->first();
 
         if (!$session) {
-            throw new BookingException('No upcoming session found for today.', 404);
+            throw new SessionNotFoundException('No upcoming session found for today.', 404);
         }
 
         // Generate fresh OTP

@@ -79,15 +79,7 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($id);
         $sessions = $booking->sessions()->orderBy('session_number');
 
-        $statusColors = [
-            0 => 'warning',   // pending / upcoming
-            1 => 'primary',   // normal / started
-            2 => 'success',   // completed
-            3 => 'danger',    // missed
-            4 => 'danger',    // cancelled
-        ];
-
-        return \Yajra\DataTables\Facades\DataTables::of($sessions)
+                return \Yajra\DataTables\Facades\DataTables::of($sessions)
             ->addColumn('session_date', function ($session) {
                 return $session->session_date ? $session->session_date->format('d M Y') : '—';
             })
@@ -103,8 +95,8 @@ class BookingController extends Controller
             ->addColumn('ended_at', function ($session) {
                 return $session->ended_at ? $session->ended_at->format('d M Y h:i A') : '—';
             })
-            ->editColumn('status', function ($session) use ($statusColors) {
-                $color = $statusColors[$session->status] ?? 'dark';
+            ->editColumn('status', function ($session) {
+                $color = $session->status_color;
                 return '<span class="badge badge-light-' . $color . ' border border-' . $color . ' fw-bold px-3 py-2">' . e($session->status_text) . '</span>';
             })
             ->addColumn('otp_verified', function ($session) {
@@ -194,7 +186,7 @@ class BookingController extends Controller
 
         return datatables()->of($reviews)
             ->editColumn('user', function ($review) {
-                $img = $review->user->profile_photo ? '<img src="' . \Storage::url($review->user->profile_photo) . '" alt="avatar" />' : '<span class="symbol-label bg-light-primary text-primary fw-bold">' . mb_strtoupper(mb_substr($review->user->name, 0, 1)) . '</span>';
+                $img = $review->user->avatar_html;
                 return '
                 <div class="d-flex align-items-center gap-3">
                     <div class="symbol symbol-30px symbol-circle">' . $img . '</div>
@@ -231,15 +223,7 @@ class BookingController extends Controller
 
         $bids = $booking->careRequest->bids()->with('nurse.user');
 
-        $statusColors = [
-            0 => 'warning',
-            1 => 'success',
-            2 => 'danger',
-            3 => 'secondary',
-            4 => 'dark'
-        ];
-
-        return \Yajra\DataTables\Facades\DataTables::of($bids)
+                return \Yajra\DataTables\Facades\DataTables::of($bids)
             ->addColumn('nurse', function ($bid) {
                 $nurseInfo = '<span class="text-gray-500 fs-7">Unknown</span>';
                 if ($bid->nurse && $bid->nurse->user) {
@@ -267,8 +251,8 @@ class BookingController extends Controller
             ->addColumn('total', function ($bid) {
                 return '<span class="text-primary fw-bold fs-7">₹' . number_format($bid->total_amount, 2) . '</span>';
             })
-            ->editColumn('status', function ($bid) use ($statusColors, $booking) {
-                $color = $statusColors[$bid->status] ?? 'dark';
+            ->editColumn('status', function ($bid) use ($booking) {
+                $color = $bid->status_color;
                 $isSelected = ($booking->bid_id == $bid->id);
                 $statusBadge = '<span class="badge badge-light-' . $color . ' fs-8 px-2 py-1">' . e($bid->status_text) . '</span>';
                 if ($isSelected) {
@@ -286,3 +270,4 @@ class BookingController extends Controller
             ->make(true);
     }
 }
+

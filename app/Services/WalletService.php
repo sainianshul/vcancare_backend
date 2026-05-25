@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Exceptions\WalletException;
+use App\Exceptions\Wallet\InvalidWalletAmountException;
+use App\Exceptions\Wallet\InsufficientBalanceException;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,7 @@ class WalletService
     public function credit(int $userId, float $amount, int $reason, string $description = '', ?int $bookingId = null): WalletTransaction
     {
         if ($amount <= 0) {
-            throw new WalletException('Credit amount must be positive.', 422);
+            throw new InvalidWalletAmountException('Credit amount must be positive.', 422);
         }
 
         return DB::transaction(function () use ($userId, $amount, $reason, $description, $bookingId) {
@@ -71,7 +72,7 @@ class WalletService
     public function debit(int $userId, float $amount, int $reason, string $description = '', ?int $bookingId = null): WalletTransaction
     {
         if ($amount <= 0) {
-            throw new WalletException('Debit amount must be positive.', 422);
+            throw new InvalidWalletAmountException('Debit amount must be positive.', 422);
         }
 
         return DB::transaction(function () use ($userId, $amount, $reason, $description, $bookingId) {
@@ -81,7 +82,7 @@ class WalletService
             $wallet = Wallet::where('id', $wallet->id)->lockForUpdate()->first();
 
             if ($wallet->balance < $amount) {
-                throw new WalletException('Insufficient wallet balance.', 422);
+                throw new InsufficientBalanceException('Insufficient wallet balance.', 422);
             }
 
             $newBalance = round($wallet->balance - $amount, 2);

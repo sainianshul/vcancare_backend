@@ -14,7 +14,7 @@ return [
     'time_flexibility_hours' => 1,
 
     // Minimum hours before a care request can start
-    'min_booking_notice_hours' => 3,
+    'min_booking_notice_hours' => 6,
 
     // Maximum days in advance a user can schedule
     'max_booking_advance_days' => 4,

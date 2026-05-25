@@ -41,11 +41,13 @@ class PatientController extends Controller
         abort_unless($patient->isUser(), 404);
 
         $request->validate([
+            'phone' => 'required|string|max:20|unique:users,phone,' . $patient->id,
             'email' => 'nullable|email|unique:users,email,' . $patient->id,
             'status' => 'required|integer|in:' . implode(',', array_keys(User::getStatusList())),
         ]);
 
         $patient->update([
+            'phone' => $request->phone,
             'email' => $request->email,
             'status' => $request->status,
         ]);

@@ -62,6 +62,18 @@ class RequestBid extends Model
         ];
     }
 
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_PENDING => 'warning',
+            self::STATUS_SELECTED => 'success',
+            self::STATUS_REJECTED => 'danger',
+            self::STATUS_EXPIRED => 'secondary',
+            self::STATUS_CANCELLED => 'danger',
+            default => 'secondary',
+        };
+    }
+
     public function getStatusTextAttribute(): string
     {
         return self::getStatusList()[$this->status] ?? 'Unknown';

@@ -89,10 +89,13 @@
                                 <label class="required form-label text-gray-900 fw-semibold">Phone Number</label>
                                 <div class="position-relative">
                                     <i class="ki-outline ki-phone fs-2 position-absolute top-50 translate-middle-y ms-4 text-gray-600"></i>
-                                    <input type="text" class="form-control text-gray-900 border border-gray-300 bg-light ps-12"
-                                        value="{{ $patient->phone }}" disabled readonly />
+                                    <input type="text" name="phone" class="form-control text-gray-900 border border-gray-300 bg-transparent ps-12 @error('phone') is-invalid @enderror"
+                                        value="{{ old('phone', $patient->phone) }}" />
                                 </div>
-                                <div class="text-gray-600 fs-7 mt-2">Phone number is used for OTP login and cannot be modified.</div>
+                                @error('phone')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                <div class="text-gray-600 fs-7 mt-2">Update the patient's primary contact number.</div>
                             </div>
                             <!--end::Input group-->
 

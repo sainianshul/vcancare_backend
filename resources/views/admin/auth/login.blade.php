@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>Sign In — VCancares Admin</title>
+    <title>Sign In — VCancare Admin</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -84,7 +84,7 @@
                                     name="email"
                                     id="email"
                                     value="{{ old('email') }}"
-                                    placeholder="admin@vcancares.com"
+                                    placeholder="admin@vcancare.com"
                                     autocomplete="off"
                                     class="form-control form-control-transparent border border-gray-800 text-gray-900 @error('email') is-invalid @enderror"
                                 />
@@ -167,7 +167,7 @@
 
                 <div class="d-flex justify-content-center pt-8">
                     <span class="text-gray-400 fs-8 fw-normal">
-                        &copy; {{ date('Y') }} VCancares. All rights reserved.
+                        &copy; {{ date('Y') }} VCancare. All rights reserved.
                     </span>
                 </div>
 

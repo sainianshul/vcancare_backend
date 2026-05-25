@@ -231,22 +231,66 @@ class NurseController extends Controller
                 return '<span class="fw-bold text-success fs-6">$' . number_format($bid->total_amount, 2) . '</span>';
             })
             ->editColumn('status', function ($bid) {
-                $statusMap = [
-                    \App\Models\RequestBid::STATUS_PENDING => ['class' => 'badge-light-warning', 'text' => 'Pending'],
-                    \App\Models\RequestBid::STATUS_SELECTED => ['class' => 'badge-light-success', 'text' => 'Selected'],
-                    \App\Models\RequestBid::STATUS_REJECTED => ['class' => 'badge-light-danger', 'text' => 'Rejected'],
-                    \App\Models\RequestBid::STATUS_EXPIRED => ['class' => 'badge-light-secondary', 'text' => 'Expired'],
-                    \App\Models\RequestBid::STATUS_CANCELLED => ['class' => 'badge-light-danger', 'text' => 'Cancelled'],
-                ];
+                $statusColor = $bid->status_color; $statusText = $bid->status_text;
                 
-                $status = $statusMap[$bid->status] ?? ['class' => 'badge-light-secondary', 'text' => 'Unknown'];
-                
-                return '<span class="badge ' . $status['class'] . '">' . $status['text'] . '</span>';
+                return '<span class="badge badge-light-' . $statusColor . '">' . $statusText . '</span>';
             })
             ->editColumn('created_at', function ($bid) {
                 return '<span class="text-gray-600 fs-7">' . $bid->created_at->format('d M Y') . '<br><span class="fs-8 text-gray-500">' . $bid->created_at->format('h:i A') . '</span></span>';
             })
             ->rawColumns(['request', 'amount', 'status', 'created_at'])
+            ->make(true);
+    }
+
+    public function careRequests($id)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+
+        return view('admin.nurses.tabs.care-requests', compact('user'));
+    }
+
+    public function careRequestsData($id)
+    {
+        $user = User::findOrFail($id);
+        $profileId = $user->nurseProfile->id;
+        
+        $requests = \App\Models\NurseRequestCache::with(['careRequest', 'careRequest.user'])
+            ->where('nurse_id', $profileId)
+            ->whereIn('status', [
+                \App\Models\NurseRequestCache::STATUS_NOTIFIED,
+                \App\Models\NurseRequestCache::STATUS_VIEWED
+            ])
+            ->where('expires_at', '>', now())
+            ->latest();
+
+        return datatables()->of($requests)
+            ->addColumn('request', function ($cache) {
+                return '<a href="' . route('admin.requests.show', $cache->care_request_id) . '" class="text-primary fw-bold text-hover-primary mb-1 fs-6">#' . $cache->care_request_id . '</a>';
+            })
+            ->editColumn('status', function ($cache) {
+                $color = $cache->status_color;
+                $text = $cache->status_text;
+                return '<span class="badge badge-light-' . $color . '">' . $text . '</span>';
+            })
+            ->addColumn('patient', function ($cache) {
+                $patient = $cache->careRequest->user ?? null;
+                if ($patient) {
+                    return '<div class="d-flex align-items-center gap-3">
+                                <div class="d-flex flex-column">
+                                    <a href="' . route('admin.patients.show', $patient->id) . '" class="text-gray-900 text-hover-primary fw-bold fs-7">' . htmlspecialchars($patient->name) . '</a>
+                                </div>
+                            </div>';
+                }
+                return '<span class="text-muted">N/A</span>';
+            })
+            ->editColumn('expires_at', function ($cache) {
+                return '<span class="text-gray-600 fs-7">' . \Carbon\Carbon::parse($cache->expires_at)->format('d M Y') . '<br><span class="fs-8 text-gray-500">' . \Carbon\Carbon::parse($cache->expires_at)->format('h:i A') . '</span></span>';
+            })
+            ->editColumn('created_at', function ($cache) {
+                return '<span class="text-gray-600 fs-7">' . $cache->created_at->format('d M Y') . '<br><span class="fs-8 text-gray-500">' . $cache->created_at->format('h:i A') . '</span></span>';
+            })
+            ->rawColumns(['request', 'patient', 'status', 'expires_at', 'created_at'])
             ->make(true);
     }
 
@@ -362,7 +406,7 @@ class NurseController extends Controller
             ->editColumn('user', function ($booking) {
                 if (!$booking->user) return '<span class="text-muted">Unassigned</span>';
                 $patientUser = $booking->user;
-                $img = $patientUser->profile_photo ? '<img src="' . \Storage::url($patientUser->profile_photo) . '" alt="avatar" />' : '<span class="symbol-label bg-light-primary text-primary fw-bold">' . mb_strtoupper(mb_substr($patientUser->name, 0, 1)) . '</span>';
+                $img = $patientUser->avatar_html;
                 return '
                 <div class="d-flex align-items-center gap-3">
                     <div class="symbol symbol-30px symbol-circle">' . $img . '</div>
@@ -370,24 +414,11 @@ class NurseController extends Controller
                 </div>';
             })
             ->editColumn('status', function ($booking) {
-                $statusColors = [
-                    0 => 'warning',
-                    1 => 'primary',
-                    2 => 'info',
-                    3 => 'success',
-                    4 => 'danger'
-                ];
-                $color = $statusColors[$booking->status] ?? 'dark';
+                $color = $booking->status_color;
                 return '<span class="badge badge-light-' . $color . ' border border-' . $color . '">' . $booking->status_text . '</span>';
             })
             ->editColumn('payment_status', function ($booking) {
-                $statusColors = [
-                    0 => 'warning',
-                    1 => 'success',
-                    2 => 'danger',
-                    3 => 'info'
-                ];
-                $color = $statusColors[$booking->payment_status] ?? 'dark';
+                $color = $booking->payment_status_color;
                 return '<span class="badge badge-light-' . $color . ' border border-' . $color . '">' . $booking->payment_status_text . '</span>';
             })
             ->editColumn('total_amount', function ($booking) {

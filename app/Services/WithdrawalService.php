@@ -3,7 +3,12 @@
 namespace App\Services;
 
 use App\Contracts\PaymentGatewayInterface;
-use App\Exceptions\WalletException;
+use App\Exceptions\Wallet\InvalidWalletAmountException;
+use App\Exceptions\Wallet\InsufficientBalanceException;
+use App\Exceptions\Wallet\PendingWithdrawalExistsException;
+use App\Exceptions\Wallet\WithdrawalNotFoundException;
+use App\Exceptions\Wallet\InvalidWithdrawalStateException;
+use App\Exceptions\Wallet\WithdrawalFailedException;
 use App\Models\PaymentLog;
 use App\Models\WalletTransaction;
 use App\Models\WithdrawalRequest;
@@ -45,14 +50,14 @@ class WithdrawalService
         $minAmount = (float) config('care.min_withdrawal_amount', 100);
 
         if ($amount < $minAmount) {
-            throw new WalletException("Minimum withdrawal amount is ₹{$minAmount}.", 422);
+            throw new InvalidWalletAmountException("Minimum withdrawal amount is ₹{$minAmount}.", 422);
         }
 
         // Check balance
         $balance = $this->walletService->getBalance($userId);
 
         if ($balance < $amount) {
-            throw new WalletException('Insufficient wallet balance for this withdrawal.', 422);
+            throw new InsufficientBalanceException('Insufficient wallet balance for this withdrawal.', 422);
         }
 
         // Block duplicate pending requests
@@ -64,7 +69,7 @@ class WithdrawalService
             ->exists();
 
         if ($hasPending) {
-            throw new WalletException('You already have a pending withdrawal request.', 409);
+            throw new PendingWithdrawalExistsException('You already have a pending withdrawal request.', 409);
         }
 
         return WithdrawalRequest::create([
@@ -87,11 +92,11 @@ class WithdrawalService
         $withdrawal = WithdrawalRequest::find($withdrawalId);
 
         if (!$withdrawal) {
-            throw new WalletException('Withdrawal request not found.', 404);
+            throw new WithdrawalNotFoundException('Withdrawal request not found.', 404);
         }
 
         if (!$withdrawal->isProcessable()) {
-            throw new WalletException('This withdrawal cannot be processed.', 409);
+            throw new InvalidWithdrawalStateException('This withdrawal cannot be processed.', 409);
         }
 
         // Re-check balance before processing
@@ -105,7 +110,7 @@ class WithdrawalService
                 'processed_at' => now(),
             ]);
 
-            throw new WalletException('User has insufficient balance. Withdrawal marked as failed.', 422);
+            throw new InsufficientBalanceException('User has insufficient balance. Withdrawal marked as failed.', 422);
         }
 
         // Mark as processing
@@ -142,7 +147,7 @@ class WithdrawalService
                 'error' => $e->getMessage(),
             ]);
 
-            throw new WalletException('Payout failed. The withdrawal has been marked as failed and can be retried.', 502);
+            throw new WithdrawalFailedException('Payout failed. The withdrawal has been marked as failed and can be retried.', 502);
         }
 
         // Payout initiated — now debit wallet and complete
@@ -184,11 +189,11 @@ class WithdrawalService
         $withdrawal = WithdrawalRequest::find($withdrawalId);
 
         if (!$withdrawal) {
-            throw new WalletException('Withdrawal request not found.', 404);
+            throw new WithdrawalNotFoundException('Withdrawal request not found.', 404);
         }
 
         if (!$withdrawal->isPending()) {
-            throw new WalletException('Only pending withdrawals can be rejected.', 409);
+            throw new InvalidWithdrawalStateException('Only pending withdrawals can be rejected.', 409);
         }
 
         $withdrawal->update([

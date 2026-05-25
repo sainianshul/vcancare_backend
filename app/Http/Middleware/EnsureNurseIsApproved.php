@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\NurseProfile;
-use App\Exceptions\NurseNotApprovedException;
+use App\Exceptions\Nurse\NurseNotApprovedException;
 
 class EnsureNurseIsApproved
 {
