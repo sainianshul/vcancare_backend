@@ -100,6 +100,23 @@ class User extends Authenticatable
         };
     }
 
+    public function getAvatarHtmlAttribute(): string
+    {
+        if (!empty($this->profile_photo)) {
+            $url = filter_var($this->profile_photo, FILTER_VALIDATE_URL) 
+                ? $this->profile_photo 
+                : asset('storage/' . $this->profile_photo);
+            return '<img src="' . e($url) . '" alt="' . e($this->name ?? '') . '" class="object-fit-cover" />';
+        }
+
+        $initial = mb_strtoupper(mb_substr($this->name ?? 'U', 0, 1));
+        $colors = ['primary', 'success', 'info', 'warning', 'danger'];
+        $index = abs(crc32($this->name ?? 'U')) % count($colors);
+        $colorClass = $colors[$index];
+
+        return '<span class="symbol-label bg-light-' . $colorClass . ' text-' . $colorClass . ' fw-bold fs-6">' . e($initial) . '</span>';
+    }
+
 
     // ─── Helpers ──────────────────────────────
 
