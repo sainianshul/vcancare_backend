@@ -102,17 +102,17 @@ class CareRequestService
         // If status is MATCHING, only allow notes and secondary_phone
         if ($careRequest->status === CareRequest::STATUS_MATCHING) {
             $allowedEdits = array_intersect_key($data, array_flip(['notes', 'secondary_phone']));
-            
+
             // Check if user is trying to edit restricted fields
             $restrictedFields = array_diff_key($data, array_flip(['notes', 'secondary_phone']));
             if (!empty($restrictedFields)) {
-                 throw new InvalidCareRequestStateException('Only notes and secondary phone can be updated while nurses are matching.', 422);
+                throw new InvalidCareRequestStateException('Only notes and secondary phone can be updated while nurses are matching.', 422);
             }
-            
+
             if (!empty($allowedEdits)) {
                 $careRequest->update($allowedEdits);
             }
-            
+
             return [
                 'care_request' => $careRequest,
                 'message' => 'Request notes/phone updated successfully.',
@@ -121,17 +121,19 @@ class CareRequestService
         }
 
         // If status is FAILED or EXPIRED, allow full edit and re-run matching
-        if (in_array($careRequest->status, [
-            CareRequest::STATUS_FAILED_NO_NURSES, 
-            CareRequest::STATUS_FAILED_NO_BIDS, 
-            CareRequest::STATUS_EXPIRED,
-            CareRequest::STATUS_PENDING
-        ])) {
+        if (
+            in_array($careRequest->status, [
+                CareRequest::STATUS_FAILED_NO_NURSES,
+                CareRequest::STATUS_FAILED_NO_BIDS,
+                CareRequest::STATUS_EXPIRED,
+                CareRequest::STATUS_PENDING
+            ])
+        ) {
             $careRequest->update($data);
-            
+
             // Cleanup old failed attempts to start fresh
             NurseRequestCache::where('care_request_id', $careRequest->id)->delete();
-            
+
             // Re-run matching
             $result = $this->runMatching($careRequest);
             $result['message'] = 'Request updated and matching restarted successfully.';

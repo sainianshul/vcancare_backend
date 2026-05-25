@@ -131,7 +131,7 @@
 
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
 
-                            <th class="w-50px">#</th>
+
 
                             <th class="min-w-320px">
                                 Error
@@ -214,11 +214,7 @@
 
                 columns: [
 
-                    {
-                        data: 'id',
-                        name: 'id',
-                        searchable: false
-                    },
+
 
                     {
                         data: 'error',
@@ -259,7 +255,7 @@
                     },
                 ],
 
-                order: [[0, 'desc']],
+                order: [[4, 'desc']],
 
                 pageLength: 15,
 

@@ -100,7 +100,7 @@
                     <thead>
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
 
-                            <th class="w-50px">#</th>
+                            <th class="w-50px">S.No</th>
 
                             <th class="min-w-250px">
                                 Patient
@@ -167,7 +167,7 @@
                 },
 
                 columns: [
-                    { data: 'id', name: 'id' },
+                    { data: null, name: 'id', render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }, orderable: false, searchable: false },
 
                     { data: 'name', name: 'name' },
 
@@ -186,7 +186,7 @@
                     },
                 ],
 
-                order: [[0, 'desc']],
+                order: [[4, 'desc']],
 
                 pageLength: 15,
 

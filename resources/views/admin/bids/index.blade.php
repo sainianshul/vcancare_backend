@@ -95,7 +95,7 @@
                 >
                     <thead>
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
-                            <th class="w-50px">ID</th>
+                            <th class="w-50px">S.No</th>
                             <th class="min-w-175px">Care Request</th>
                             <th class="min-w-175px">Nurse</th>
                             <th class="min-w-120px">Amount</th>
@@ -145,7 +145,7 @@
                     }
                 },
                 columns: [
-                    { data: 'id', name: 'id' },
+                    { data: null, name: 'id', render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }, orderable: false, searchable: false },
                     { data: 'care_request', name: 'care_request', orderable: false, searchable: false },
                     { data: 'nurse', name: 'nurse', orderable: false, searchable: false },
                     { data: 'amount', name: 'total_amount' },
