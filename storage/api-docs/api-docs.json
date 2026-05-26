@@ -946,6 +946,18 @@
                                         "type": "string",
                                         "format": "binary",
                                         "nullable": true
+                                    },
+                                    "license_document": {
+                                        "description": "License document (jpg, jpeg, png, pdf, max 10MB)",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "degree_document": {
+                                        "description": "Degree document (jpg, jpeg, png, pdf, max 10MB)",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"

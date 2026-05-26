@@ -245,6 +245,8 @@ class OnboardingController extends Controller
                         new OA\Property(property: 'marksheet_10_document', type: 'string', format: 'binary', nullable: true, description: '10th marksheet document (jpg, jpeg, png, pdf, max 10MB)'),
                         new OA\Property(property: 'marksheet_12_document', type: 'string', format: 'binary', nullable: true, description: '12th marksheet document (jpg, jpeg, png, pdf, max 10MB)'),
                         new OA\Property(property: 'nursing_certificate_document', type: 'string', format: 'binary', nullable: true, description: 'Nursing certificate document (jpg, jpeg, png, pdf, max 10MB)'),
+                        new OA\Property(property: 'license_document', type: 'string', format: 'binary', nullable: true, description: 'License document (jpg, jpeg, png, pdf, max 10MB)'),
+                        new OA\Property(property: 'degree_document', type: 'string', format: 'binary', nullable: true, description: 'Degree document (jpg, jpeg, png, pdf, max 10MB)'),
                     ]
                 )
             )

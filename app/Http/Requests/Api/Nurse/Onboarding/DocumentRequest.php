@@ -55,6 +55,18 @@ class DocumentRequest extends FormRequest
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:10240',
+            ],
+            'license_document' => [
+                $rule(NurseDocument::TYPE_LICENSE),
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:10240',
+            ],
+            'degree_document' => [
+                $rule(NurseDocument::TYPE_DEGREE),
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:10240',
             ]
         ];
     }
@@ -68,6 +80,12 @@ class DocumentRequest extends FormRequest
             'nursing_certificate_document.mimes' => 'Certificate must be jpg, jpeg, png or pdf.',
             'aadhar_document.max' => 'Aadhar file must not exceed 10MB.',
             'nursing_certificate_document.max' => 'Certificate file must not exceed 10MB.',
+            'license_document.required' => 'License document is required.',
+            'license_document.mimes' => 'License must be jpg, jpeg, png or pdf.',
+            'license_document.max' => 'License file must not exceed 10MB.',
+            'degree_document.required' => 'Degree document is required.',
+            'degree_document.mimes' => 'Degree must be jpg, jpeg, png or pdf.',
+            'degree_document.max' => 'Degree file must not exceed 10MB.',
         ];
     }
 }
