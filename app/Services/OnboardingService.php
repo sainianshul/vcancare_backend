@@ -220,26 +220,6 @@ class OnboardingService
             }
 
             // Move onboarding forward only
-            $nurseProfile->updateOnboardingStep(NurseProfile::STEP_AVAILABILITY);
-        });
-    }
-    public function saveAvailability(User $user, array $data): void
-    {
-        $nurseProfile = $user->nurseProfile;
-        if (!$nurseProfile) {
-            throw new InvalidOnboardingStepException('Nurse profile not found. Please complete basic profile first.');
-        }
-        $nurseProfile->canSaveStep(NurseProfile::STEP_AVAILABILITY);
-
-        DB::transaction(function () use ($nurseProfile, $data) {
-
-            $nurseProfile->update([
-                'available_from' => $data['available_from'],
-                'available_to' => $data['available_to'],
-                'available_days' => $data['available_days'],
-                'timezone' => 'Asia/Kolkata',
-            ]);
-
             $nurseProfile->updateOnboardingStep(NurseProfile::STEP_SUBMIT_FOR_REVIEW);
         });
     }
@@ -252,9 +232,7 @@ class OnboardingService
 
         if (
             !$nurseProfile->license_number ||
-            !$nurseProfile->years_of_experience ||
-            !$nurseProfile->available_from ||
-            !$nurseProfile->available_to
+            !$nurseProfile->years_of_experience
         ) {
             throw new InvalidOnboardingStepException('Please complete all onboarding details before submission.');
         }
@@ -374,12 +352,6 @@ class OnboardingService
                         ->toArray(),
             ],
 
-            NurseProfile::STEP_AVAILABILITY => [
-                'available_from' => $nurseProfile->available_from,
-                'available_to' => $nurseProfile->available_to,
-                'available_days' => $nurseProfile->available_days,
-                'is_available' => $nurseProfile->is_available,
-            ],
             default => [],
         };
     }

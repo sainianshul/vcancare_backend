@@ -56,8 +56,7 @@ class NurseProfile extends Model
     const STEP_EDUCATION = 3;
     const STEP_WORK_HISTORY = 4;
     const STEP_DOCUMENTS = 5;
-    const STEP_AVAILABILITY = 6;
-    const STEP_SUBMIT_FOR_REVIEW = 7;
+    const STEP_SUBMIT_FOR_REVIEW = 6;
 
     protected $fillable = [
         'user_id',
@@ -170,7 +169,6 @@ class NurseProfile extends Model
             self::STEP_EDUCATION => 'Education',
             self::STEP_WORK_HISTORY => 'Work History',
             self::STEP_DOCUMENTS => 'Documents',
-            self::STEP_AVAILABILITY => 'Availability',
             self::STEP_SUBMIT_FOR_REVIEW => 'Submit For Review',
         ];
     }

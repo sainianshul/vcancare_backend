@@ -977,65 +977,6 @@
                 ]
             }
         },
-        "/api/v1/nurse/onboarding/availability": {
-            "post": {
-                "tags": [
-                    "Nurse Onboarding"
-                ],
-                "summary": "Save Availability",
-                "operationId": "saveAvailability",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "available_from",
-                                    "available_to",
-                                    "available_days"
-                                ],
-                                "properties": {
-                                    "available_from": {
-                                        "type": "string",
-                                        "example": "09:00"
-                                    },
-                                    "available_to": {
-                                        "type": "string",
-                                        "example": "18:00"
-                                    },
-                                    "available_days": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer"
-                                        },
-                                        "example": [
-                                            1,
-                                            2,
-                                            5
-                                        ]
-                                    },
-                                    "is_available": {
-                                        "type": "boolean",
-                                        "example": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/v1/nurse/onboarding/submit": {
             "post": {
                 "tags": [

@@ -98,7 +98,6 @@ Route::prefix('v1')->group(function () {
             Route::post('onboarding/education', [OnboardingController::class, 'saveEducation']);
             Route::post('onboarding/work-history', [OnboardingController::class, 'saveWorkHistory']);
             Route::post('onboarding/documents', [OnboardingController::class, 'saveDocuments']);
-            Route::post('onboarding/availability', [OnboardingController::class, 'saveAvailability']);
             Route::post('onboarding/submit', [OnboardingController::class, 'submitForReview']);
             Route::get('onboarding/step-data/{step}', [OnboardingController::class, 'getStepData']);
             Route::post('onboarding/reapply', [OnboardingController::class, 'reapply']);

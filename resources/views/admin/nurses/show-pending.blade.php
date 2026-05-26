@@ -128,8 +128,7 @@
                             3 => ['name' => 'Education', 'icon' => 'ki-book'],
                             4 => ['name' => 'Work History', 'icon' => 'ki-briefcase'],
                             5 => ['name' => 'Documents', 'icon' => 'ki-document'],
-                            6 => ['name' => 'Availability', 'icon' => 'ki-calendar'],
-                            7 => ['name' => 'Submit', 'icon' => 'ki-send']
+                            6 => ['name' => 'Submit', 'icon' => 'ki-send']
                         ];
                         
                         $currentStep = $profile->onboarding_step ?: 1;
