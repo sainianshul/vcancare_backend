@@ -18,13 +18,7 @@ class RequestDataTable extends DataTable
             })
             
             // ── User Info ─────────────────────────────────────────────
-            ->filterColumn('user', function($query, $keyword) {
-                $query->whereHas('user', function($q) use ($keyword) {
-                    $q->where('name', 'like', "%{$keyword}%")
-                      ->orWhere('email', 'like', "%{$keyword}%")
-                      ->orWhere('phone', 'like', "%{$keyword}%");
-                });
-            })
+
             ->addColumn('user', function (CareRequest $request) {
                 $user = $request->user;
                 if (!$user) return '<span class="text-muted">Unknown</span>';
@@ -103,14 +97,6 @@ class RequestDataTable extends DataTable
                             title="View">
                             <i class="ki-outline ki-eye fs-5"></i>
                         </a>
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-icon btn-light-danger border border-danger w-30px h-30px btn-delete"
-                            data-id="' . $request->id . '"
-                            title="Delete">
-                            <i class="ki-outline ki-trash fs-5"></i>
-                        </button>
                     </div>
                 ';
             })
