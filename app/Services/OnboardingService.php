@@ -181,6 +181,8 @@ class OnboardingService
                 'marksheet_10_document' => NurseDocument::TYPE_MARKSHEET_10,
                 'marksheet_12_document' => NurseDocument::TYPE_MARKSHEET_12,
                 'nursing_certificate_document' => NurseDocument::TYPE_NURSING_CERTIFICATE,
+                'license_document' => NurseDocument::TYPE_LICENSE,
+                'degree_document' => NurseDocument::TYPE_DEGREE,
             ];
 
             foreach ($documents as $field => $documentType) {
