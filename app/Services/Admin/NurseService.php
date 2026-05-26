@@ -39,8 +39,8 @@ class NurseService
                 if ($user->profile_photo && Storage::disk($disk)->exists($user->profile_photo)) {
                     Storage::disk($disk)->delete($user->profile_photo);
                 }
-                
-                $path = $data['profile_photo']->store('profile_photos', $disk);
+
+                $path = $data['profile_photo']->store('users/profile-photos', $disk);
                 $userData['profile_photo'] = $path;
             }
 
