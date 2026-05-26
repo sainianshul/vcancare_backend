@@ -274,53 +274,6 @@ class OnboardingController extends Controller
         );
     }
 
-    //Save nurse availability.
-    #[OA\Post(
-        path: '/api/v1/nurse/onboarding/availability',
-        operationId: 'saveAvailability',
-        summary: 'Save Availability',
-        security: [['bearerAuth' => []]],
-        tags: ['Nurse Onboarding'],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                required: ['available_from', 'available_to', 'available_days'],
-                properties: [
-                    new OA\Property(property: 'available_from', type: 'string', example: '09:00'),
-                    new OA\Property(property: 'available_to', type: 'string', example: '18:00'),
-                    new OA\Property(
-                        property: 'available_days',
-                        type: 'array',
-                        items: new OA\Items(type: 'integer'),
-                        example: [1, 2, 5]
-                    ),
-                    new OA\Property(property: 'is_available', type: 'boolean', example: true),
-                ]
-            )
-        ),
-        responses: [
-            new OA\Response(response: 200, description: 'Success'),
-        ]
-    )]
-    public function saveAvailability(AvailabilityRequest $request)
-    {
-        $this->onboardingService->saveAvailability(
-            $request->user(),
-            $request->validated()
-        );
-
-        $nurseProfile = $request->user()
-            ->nurseProfile
-            ->fresh();
-
-        return ApiResponse::success(
-            message: 'Availability saved successfully.',
-            data: [
-                'onboarding' => $nurseProfile->getOnboardingResponse(),
-            ]
-        );
-    }
-
     //Submit profile for review.
     #[OA\Post(
         path: '/api/v1/nurse/onboarding/submit',

@@ -342,7 +342,6 @@ class NurseController extends Controller
             NurseProfile::STEP_EDUCATION => 'education',
             NurseProfile::STEP_WORK_HISTORY => 'work_history',
             NurseProfile::STEP_DOCUMENTS => 'documents',
-            NurseProfile::STEP_AVAILABILITY => 'availability',
         ];
 
         $viewName = $viewMap[$stepId] ?? 'basic_profile';

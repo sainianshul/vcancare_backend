@@ -292,60 +292,6 @@
                     </div>
                 </div>
 
-                <!-- Schedule / Availability -->
-                <div class="card shadow-sm border border-gray-300 mb-7">
-                    <div class="card-header border-0 pt-4 min-h-50px">
-                        <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">Availability</h3>
-                    </div>
-                    <div class="card-body pt-2 pb-5">
-                        <div class="mb-5 d-flex justify-content-between align-items-center bg-light rounded p-3 border border-gray-200">
-                            <span class="text-gray-700 fw-medium fs-7">Current Status</span>
-                            @if($profile->is_available)
-                                <span class="badge badge-light-success border border-success fw-bold px-3 py-1 fs-8">
-                                    <i class="ki-outline ki-check-circle fs-8 me-1 text-success"></i> Available
-                                </span>
-                            @else
-                                <span class="badge badge-light-danger border border-danger fw-bold px-3 py-1 fs-8">
-                                    <i class="ki-outline ki-minus-circle fs-8 me-1 text-danger"></i> Offline
-                                </span>
-                            @endif
-                        </div>
-                        
-                        <div class="d-flex justify-content-between align-items-center border-bottom border-gray-200 border-dashed pb-3 mb-4">
-                            <span class="text-gray-600 fw-semibold fs-7">Available Hours</span>
-                            <span class="text-gray-900 fw-bold fs-7 d-flex align-items-center gap-2">
-                                <i class="ki-outline ki-sun fs-5 text-warning"></i> 
-                                {{ $profile->available_from ? \Carbon\Carbon::parse($profile->available_from)->format('h:i A') : 'N/A' }} 
-                                <span class="text-muted fw-normal">-</span> 
-                                <i class="ki-outline ki-moon fs-5 text-primary"></i> 
-                                {{ $profile->available_to ? \Carbon\Carbon::parse($profile->available_to)->format('h:i A') : 'N/A' }}
-                            </span>
-                        </div>
-                        
-                        <div class="d-flex flex-column">
-                            <span class="text-gray-600 fw-semibold fs-7 mb-3">Available Days</span>
-                            <div class="d-flex flex-wrap gap-2">
-                                @php
-                                    $allDaysMap = \App\Models\NurseProfile::getDaysList();
-                                    $days = [];
-                                    if(!empty($profile->available_days)) {
-                                        $days = is_string($profile->available_days) ? json_decode($profile->available_days, true) : $profile->available_days;
-                                        if(!is_array($days)) $days = explode(',', $profile->available_days);
-                                    }
-                                    $days = array_map('intval', $days);
-                                @endphp
-                                
-                                @foreach($allDaysMap as $dayValue => $dayName)
-                                    @if(in_array($dayValue, $days))
-                                        <span class="badge badge-light-success border border-success text-success fw-bold px-3 py-2 fs-8">{{ $dayName }}</span>
-                                    @else
-                                        <span class="badge badge-light-danger border border-danger text-danger fw-bold px-3 py-2 fs-8 text-decoration-line-through opacity-75">{{ $dayName }}</span>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </div>

@@ -128,7 +128,6 @@
                     3 => ['name' => 'Education', 'desc' => 'Review degrees and certifications'],
                     4 => ['name' => 'Work History', 'desc' => 'Review past employment records'],
                     5 => ['name' => 'Documents', 'desc' => 'Review uploaded legal documents'],
-                    6 => ['name' => 'Availability', 'desc' => 'Review shift preferences and schedules'],
                 ];
             @endphp
 
