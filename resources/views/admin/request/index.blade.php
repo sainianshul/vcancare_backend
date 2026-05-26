@@ -25,7 +25,7 @@
                         type="text"
                         id="dt-search"
                         class="form-control form-control-transparent border border-gray-800 text-gray-900 w-100 ps-11 pe-4 fs-7 fw-semibold shadow-sm"
-                        placeholder="Search by request ID or patient name..."
+                        placeholder="Search by Request ID..."
                     />
                 </div>
 
@@ -235,35 +235,7 @@
             });
             @endif
 
-            // ── Delete ───────────────────────────────────────────────────────
-            $(document).on('click', '.btn-delete', function () {
-                let id = $(this).data('id');
-                Swal.fire({
-                    title: 'Delete Request?',
-                    text: 'This action cannot be undone.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, Delete',
-                    customClass: {
-                        confirmButton: 'btn btn-danger',
-                        cancelButton: 'btn btn-light ms-2'
-                    },
-                    buttonsStyling: false,
-                }).then(function (result) {
-                    if (!result.isConfirmed) return;
-                    $.post('/admin/requests/' + id, {
-                        _method: 'DELETE',
-                        _token: '{{ csrf_token() }}'
-                    })
-                    .done(function () {
-                        table.ajax.reload(null, false);
-                        toastr.success('Care request deleted.');
-                    })
-                    .fail(function () {
-                        toastr.error('Something went wrong.');
-                    });
-                });
-            });
+
         });
     </script>
 @endpush
