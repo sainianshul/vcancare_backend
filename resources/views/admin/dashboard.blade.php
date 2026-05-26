@@ -29,177 +29,392 @@
             <!--end::Alert Containers-->
 
             <!--begin::Row 1 — Overview Stat Cards-->
-            <div class="row g-5 mb-7" id="overview-stats">
-                <!--begin::Col-->
+            <style>
+                .dash-stat-card {
+                    position: relative;
+                    overflow: hidden;
+                    border: none !important;
+                    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                }
+                .dash-stat-card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 12px 28px rgba(0,0,0,0.08) !important;
+                }
+                .dash-stat-card .stat-accent {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 4px;
+                    border-radius: 4px 0 0 4px;
+                }
+                .dash-stat-card .stat-icon-wrap {
+                    width: 52px;
+                    height: 52px;
+                    border-radius: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    transition: transform 0.3s ease;
+                }
+                .dash-stat-card:hover .stat-icon-wrap {
+                    transform: scale(1.08);
+                }
+                .dash-stat-card .stat-number {
+                    font-size: 1.75rem;
+                    font-weight: 700;
+                    line-height: 1;
+                    letter-spacing: -0.5px;
+                }
+
+                .dash-revenue-card {
+                    border: none !important;
+                    overflow: hidden;
+                    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                }
+                .dash-revenue-card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 12px 28px rgba(0,0,0,0.08) !important;
+                }
+                .dash-revenue-hero {
+                    background: linear-gradient(135deg, #1B84FF 0%, #7239EA 100%);
+                    color: #fff;
+                }
+                .dash-revenue-hero .revenue-icon-wrap {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 12px;
+                    background: rgba(255,255,255,0.2);
+                    backdrop-filter: blur(8px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .dash-revenue-hero .revenue-value {
+                    font-size: 2rem;
+                    font-weight: 800;
+                    letter-spacing: -1px;
+                    line-height: 1.1;
+                }
+                .dash-revenue-hero .revenue-label {
+                    opacity: 0.8;
+                    font-weight: 500;
+                }
+                .dash-revenue-hero::before {
+                    content: '';
+                    position: absolute;
+                    top: -30px;
+                    right: -30px;
+                    width: 120px;
+                    height: 120px;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,0.08);
+                }
+                .dash-revenue-hero::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -20px;
+                    right: 40px;
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,0.05);
+                }
+
+                .dash-revenue-secondary {
+                    position: relative;
+                    overflow: hidden;
+                }
+                .dash-revenue-secondary .revenue-value {
+                    font-size: 1.85rem;
+                    font-weight: 700;
+                    letter-spacing: -0.5px;
+                    line-height: 1.1;
+                }
+                .dash-revenue-secondary .revenue-icon-wrap {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .dash-today-card {
+                    border: none !important;
+                    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                }
+                .dash-today-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.06) !important;
+                }
+                .dash-today-item {
+                    padding: 16px 14px;
+                    border-radius: 12px;
+                    text-align: center;
+                    transition: all 0.25s ease;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .dash-today-item:hover {
+                    transform: scale(1.03);
+                }
+                .dash-today-item .today-icon {
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 10px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 8px;
+                }
+                .dash-today-item .today-value {
+                    font-size: 1.35rem;
+                    font-weight: 700;
+                    line-height: 1;
+                    letter-spacing: -0.3px;
+                }
+            </style>
+
+            <div class="row g-4 g-xl-5 mb-7" id="overview-stats">
+                <!--begin::Patients-->
                 <div class="col-sm-6 col-xl-3">
-                    <a href="{{ route('admin.patients.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
-                        <div class="card-body d-flex align-items-center p-5">
-                            <div class="w-45px h-45px bg-light-primary rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
-                                <i class="ki-outline ki-people fs-2 text-primary"></i>
+                    <a href="{{ route('admin.patients.index') }}" class="card dash-stat-card shadow-sm h-100 text-decoration-none">
+                        <span class="stat-accent bg-primary"></span>
+                        <div class="card-body d-flex align-items-center p-5 ps-7">
+                            <div class="stat-icon-wrap bg-light-primary border border-primary border-dashed me-4">
+                                <i class="ki-outline ki-people fs-1 text-primary"></i>
                             </div>
-                            <div class="d-flex flex-column">
-                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase mb-1">Total Patients</span>
-                                <span class="text-gray-900 fw-bold fs-3 lh-1 stat-value" id="stat-total-patients">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase ls-1 mb-2">Total Patients</span>
+                                <span class="stat-number text-gray-900 stat-value" id="stat-total-patients">
                                     <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
                                 </span>
                             </div>
+                            <i class="ki-outline ki-arrow-right fs-4 text-gray-400 ms-2"></i>
                         </div>
                     </a>
                 </div>
-                <!--end::Col-->
+                <!--end::Patients-->
+
+                <!--begin::Nurses-->
                 <div class="col-sm-6 col-xl-3">
-                    <a href="{{ route('admin.nurses.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
-                        <div class="card-body d-flex align-items-center p-5">
-                            <div class="w-45px h-45px bg-light-success rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
-                                <i class="ki-outline ki-shield-tick fs-2 text-success"></i>
+                    <a href="{{ route('admin.nurses.index') }}" class="card dash-stat-card shadow-sm h-100 text-decoration-none">
+                        <span class="stat-accent bg-success"></span>
+                        <div class="card-body d-flex align-items-center p-5 ps-7">
+                            <div class="stat-icon-wrap bg-light-success border border-success border-dashed me-4">
+                                <i class="ki-outline ki-shield-tick fs-1 text-success"></i>
                             </div>
-                            <div class="d-flex flex-column">
-                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase mb-1">Total Nurses</span>
-                                <span class="text-gray-900 fw-bold fs-3 lh-1 stat-value" id="stat-total-nurses">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase ls-1 mb-2">Total Nurses</span>
+                                <span class="stat-number text-gray-900 stat-value" id="stat-total-nurses">
                                     <span class="spinner-border spinner-border-sm text-success" role="status"></span>
                                 </span>
                             </div>
+                            <i class="ki-outline ki-arrow-right fs-4 text-gray-400 ms-2"></i>
                         </div>
                     </a>
                 </div>
+                <!--end::Nurses-->
+
+                <!--begin::Requests-->
                 <div class="col-sm-6 col-xl-3">
-                    <a href="{{ route('admin.requests.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
-                        <div class="card-body d-flex align-items-center p-5">
-                            <div class="w-45px h-45px bg-light-warning rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
-                                <i class="ki-outline ki-document fs-2 text-warning"></i>
+                    <a href="{{ route('admin.requests.index') }}" class="card dash-stat-card shadow-sm h-100 text-decoration-none">
+                        <span class="stat-accent bg-warning"></span>
+                        <div class="card-body d-flex align-items-center p-5 ps-7">
+                            <div class="stat-icon-wrap bg-light-warning border border-warning border-dashed me-4">
+                                <i class="ki-outline ki-document fs-1 text-warning"></i>
                             </div>
-                            <div class="d-flex flex-column">
-                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase mb-1">Total Requests</span>
-                                <span class="text-gray-900 fw-bold fs-3 lh-1 stat-value" id="stat-total-requests">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase ls-1 mb-2">Total Requests</span>
+                                <span class="stat-number text-gray-900 stat-value" id="stat-total-requests">
                                     <span class="spinner-border spinner-border-sm text-warning" role="status"></span>
                                 </span>
                             </div>
+                            <i class="ki-outline ki-arrow-right fs-4 text-gray-400 ms-2"></i>
                         </div>
                     </a>
                 </div>
+                <!--end::Requests-->
+
+                <!--begin::Bookings-->
                 <div class="col-sm-6 col-xl-3">
-                    <a href="{{ route('admin.bookings.index') }}" class="card card-bordered border-gray-300 h-100 hover-elevate-up shadow-sm">
-                        <div class="card-body d-flex align-items-center p-5">
-                            <div class="w-45px h-45px bg-light-info rounded d-flex align-items-center justify-content-center me-4 flex-shrink-0">
-                                <i class="ki-outline ki-calendar-tick fs-2 text-info"></i>
+                    <a href="{{ route('admin.bookings.index') }}" class="card dash-stat-card shadow-sm h-100 text-decoration-none">
+                        <span class="stat-accent bg-info"></span>
+                        <div class="card-body d-flex align-items-center p-5 ps-7">
+                            <div class="stat-icon-wrap bg-light-info border border-info border-dashed me-4">
+                                <i class="ki-outline ki-calendar-tick fs-1 text-info"></i>
                             </div>
-                            <div class="d-flex flex-column">
-                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase mb-1">Total Bookings</span>
-                                <span class="text-gray-900 fw-bold fs-3 lh-1 stat-value" id="stat-total-bookings">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <span class="text-gray-500 fw-semibold fs-8 text-uppercase ls-1 mb-2">Total Bookings</span>
+                                <span class="stat-number text-gray-900 stat-value" id="stat-total-bookings">
                                     <span class="spinner-border spinner-border-sm text-info" role="status"></span>
                                 </span>
                             </div>
+                            <i class="ki-outline ki-arrow-right fs-4 text-gray-400 ms-2"></i>
                         </div>
                     </a>
                 </div>
+                <!--end::Bookings-->
             </div>
             <!--end::Row 1-->
 
             <!--begin::Row 2 — Revenue Cards-->
-            <div class="row g-5 mb-7" id="revenue-stats">
-                <div class="col-sm-6 col-xl-4">
-                    <div class="card card-bordered border-gray-300 h-100">
-                        <div class="card-body p-5">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="w-40px h-40px bg-light-success rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
-                                    <i class="ki-outline ki-wallet fs-3 text-success"></i>
+            <div class="row g-4 g-xl-5 mb-7" id="revenue-stats">
+                <!--begin::Total Revenue (Hero)-->
+                <div class="col-lg-5 col-xl-4">
+                    <div class="card dash-revenue-card dash-revenue-hero shadow-sm h-100 position-relative">
+                        <div class="card-body p-6 d-flex flex-column justify-content-between">
+                            <div class="d-flex align-items-center mb-5">
+                                <div class="revenue-icon-wrap me-3">
+                                    <i class="ki-outline ki-wallet fs-2 text-white"></i>
                                 </div>
-                                <span class="text-gray-500 fw-semibold fs-7 text-uppercase">Total Revenue</span>
+                                <span class="fw-bold fs-7 text-uppercase revenue-label ls-1">Total Revenue</span>
                             </div>
-                            <div class="fs-2x fw-bold text-gray-900 mb-1" id="stat-total-revenue">
-                                <span class="spinner-border spinner-border-sm text-success" role="status"></span>
+                            <div>
+                                <div class="revenue-value mb-2" id="stat-total-revenue">
+                                    <span class="spinner-border spinner-border-sm text-white" role="status"></span>
+                                </div>
+                                <span class="revenue-label fs-8">Lifetime earnings from all bookings</span>
                             </div>
-                            <span class="text-gray-500 fw-medium fs-8">Lifetime earnings from bookings</span>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-xl-4">
-                    <div class="card card-bordered border-gray-300 h-100">
-                        <div class="card-body p-5">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="w-40px h-40px bg-light-primary rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                <!--end::Total Revenue-->
+
+                <!--begin::This Month-->
+                <div class="col-sm-6 col-lg-3.5 col-xl-4">
+                    <div class="card dash-revenue-card dash-revenue-secondary shadow-sm h-100">
+                        <div class="card-body p-6">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <span class="text-gray-500 fw-bold fs-8 text-uppercase ls-1">This Month</span>
+                                <div class="revenue-icon-wrap bg-light-primary">
                                     <i class="ki-outline ki-chart-simple fs-3 text-primary"></i>
                                 </div>
-                                <span class="text-gray-500 fw-semibold fs-7 text-uppercase">This Month</span>
                             </div>
-                            <div class="fs-2x fw-bold text-gray-900 mb-1" id="stat-month-revenue">
+                            <div class="revenue-value text-gray-900 mb-2" id="stat-month-revenue">
                                 <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
                             </div>
-                            <span class="text-gray-500 fw-medium fs-8">{{ now()->format('F Y') }} earnings</span>
+                            <div class="d-flex align-items-center">
+                                <span class="bullet bullet-dot bg-primary me-2 h-6px w-6px"></span>
+                                <span class="text-gray-500 fw-medium fs-8">{{ now()->format('F Y') }} earnings</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-xl-4">
-                    <div class="card card-bordered border-gray-300 h-100">
-                        <div class="card-body p-5">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="w-40px h-40px bg-light-warning rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                <!--end::This Month-->
+
+                <!--begin::Today-->
+                <div class="col-sm-6 col-lg-3.5 col-xl-4">
+                    <div class="card dash-revenue-card dash-revenue-secondary shadow-sm h-100">
+                        <div class="card-body p-6">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <span class="text-gray-500 fw-bold fs-8 text-uppercase ls-1">Today's Revenue</span>
+                                <div class="revenue-icon-wrap bg-light-warning">
                                     <i class="ki-outline ki-sun fs-3 text-warning"></i>
                                 </div>
-                                <span class="text-gray-500 fw-semibold fs-7 text-uppercase">Today Revenue</span>
                             </div>
-                            <div class="fs-2x fw-bold text-gray-900 mb-1" id="stat-today-revenue">
+                            <div class="revenue-value text-gray-900 mb-2" id="stat-today-revenue">
                                 <span class="spinner-border spinner-border-sm text-warning" role="status"></span>
                             </div>
-                            <span class="text-gray-500 fw-medium fs-8">{{ now()->format('d M Y') }} earnings</span>
+                            <div class="d-flex align-items-center">
+                                <span class="bullet bullet-dot bg-warning me-2 h-6px w-6px"></span>
+                                <span class="text-gray-500 fw-medium fs-8">{{ now()->format('d M Y') }} earnings</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!--end::Today-->
             </div>
             <!--end::Row 2-->
 
             <!--begin::Row 3 — Today's Activity-->
-            <div class="card card-bordered border-gray-300 mb-7">
-                <div class="card-header border-bottom border-gray-300 pt-5 min-h-50px">
+            <div class="card dash-today-card shadow-sm mb-7">
+                <div class="card-header border-0 pt-6 pb-0 min-h-auto">
                     <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
-                        <i class="ki-outline ki-sun fs-4 text-warning me-2"></i>Today's Activity
+                        <span class="d-inline-flex align-items-center justify-content-center w-30px h-30px bg-light-warning rounded-circle me-2">
+                            <i class="ki-outline ki-sun fs-5 text-warning"></i>
+                        </span>
+                        Today's Activity
                     </h3>
                     <div class="card-toolbar">
-                        <span class="badge badge-light border border-gray-300 text-gray-600 fw-medium px-3 py-2 fs-8">{{ now()->format('d M Y') }}</span>
+                        <span class="badge badge-light-dark fw-semibold px-3 py-2 fs-8 border border-gray-200">
+                            <i class="ki-outline ki-calendar fs-8 me-1"></i>{{ now()->format('d M Y') }}
+                        </span>
                     </div>
                 </div>
-                <div class="card-body py-4">
-                    <div class="row g-4" id="today-stats">
-                        <div class="col-6 col-md">
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 text-center">
-                                <div class="fs-4 fw-bold text-gray-900 mb-1" id="stat-today-requests">
+                <div class="card-body pt-4 pb-5">
+                    <div class="row g-3 g-xl-4" id="today-stats">
+                        <!--begin::Requests-->
+                        <div class="col col-md">
+                            <div class="dash-today-item border border-primary border-dashed" style="background: rgba(27, 132, 255, 0.06);">
+                                <div class="today-icon bg-light-primary border border-primary border-dashed mx-auto">
+                                    <i class="ki-outline ki-document fs-5 text-primary"></i>
+                                </div>
+                                <div class="today-value text-gray-900 mb-1" id="stat-today-requests">
                                     <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
                                 </div>
-                                <div class="fw-medium fs-8 text-gray-600 text-uppercase">Requests</div>
+                                <div class="fw-semibold fs-9 text-gray-500 text-uppercase ls-1">Requests</div>
                             </div>
                         </div>
-                        <div class="col-6 col-md">
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 text-center">
-                                <div class="fs-4 fw-bold text-gray-900 mb-1" id="stat-today-bookings">
+                        <!--end::Requests-->
+
+                        <!--begin::Bookings-->
+                        <div class="col col-md">
+                            <div class="dash-today-item border border-info border-dashed" style="background: rgba(114, 57, 234, 0.06);">
+                                <div class="today-icon bg-light-info border border-info border-dashed mx-auto">
+                                    <i class="ki-outline ki-calendar-tick fs-5 text-info"></i>
+                                </div>
+                                <div class="today-value text-gray-900 mb-1" id="stat-today-bookings">
                                     <span class="spinner-border spinner-border-sm text-info" role="status"></span>
                                 </div>
-                                <div class="fw-medium fs-8 text-gray-600 text-uppercase">Bookings</div>
+                                <div class="fw-semibold fs-9 text-gray-500 text-uppercase ls-1">Bookings</div>
                             </div>
                         </div>
-                        <div class="col-6 col-md">
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 text-center">
-                                <div class="fs-4 fw-bold text-gray-900 mb-1" id="stat-today-bids">
+                        <!--end::Bookings-->
+
+                        <!--begin::Bids-->
+                        <div class="col col-md">
+                            <div class="dash-today-item border border-success border-dashed" style="background: rgba(80, 205, 137, 0.06);">
+                                <div class="today-icon bg-light-success border border-success border-dashed mx-auto">
+                                    <i class="ki-outline ki-price-tag fs-5 text-success"></i>
+                                </div>
+                                <div class="today-value text-gray-900 mb-1" id="stat-today-bids">
                                     <span class="spinner-border spinner-border-sm text-success" role="status"></span>
                                 </div>
-                                <div class="fw-medium fs-8 text-gray-600 text-uppercase">Bids</div>
+                                <div class="fw-semibold fs-9 text-gray-500 text-uppercase ls-1">Bids</div>
                             </div>
                         </div>
-                        <div class="col-6 col-md">
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 text-center">
-                                <div class="fs-4 fw-bold text-gray-900 mb-1" id="stat-today-reviews">
+                        <!--end::Bids-->
+
+                        <!--begin::Reviews-->
+                        <div class="col col-md">
+                            <div class="dash-today-item border border-warning border-dashed" style="background: rgba(246, 192, 0, 0.06);">
+                                <div class="today-icon bg-light-warning border border-warning border-dashed mx-auto">
+                                    <i class="ki-outline ki-star fs-5 text-warning"></i>
+                                </div>
+                                <div class="today-value text-gray-900 mb-1" id="stat-today-reviews">
                                     <span class="spinner-border spinner-border-sm text-warning" role="status"></span>
                                 </div>
-                                <div class="fw-medium fs-8 text-gray-600 text-uppercase">Reviews</div>
+                                <div class="fw-semibold fs-9 text-gray-500 text-uppercase ls-1">Reviews</div>
                             </div>
                         </div>
-                        <div class="col-6 col-md">
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 text-center">
-                                <div class="fs-4 fw-bold text-gray-900 mb-1" id="stat-today-logins">
+                        <!--end::Reviews-->
+
+                        <!--begin::Logins-->
+                        <div class="col col-md">
+                            <div class="dash-today-item border border-danger border-dashed" style="background: rgba(241, 65, 108, 0.06);">
+                                <div class="today-icon bg-light-danger border border-danger border-dashed mx-auto">
+                                    <i class="ki-outline ki-entrance-left fs-5 text-danger"></i>
+                                </div>
+                                <div class="today-value text-gray-900 mb-1" id="stat-today-logins">
                                     <span class="spinner-border spinner-border-sm text-danger" role="status"></span>
                                 </div>
-                                <div class="fw-medium fs-8 text-gray-600 text-uppercase">Logins</div>
+                                <div class="fw-semibold fs-9 text-gray-500 text-uppercase ls-1">Logins</div>
                             </div>
                         </div>
+                        <!--end::Logins-->
                     </div>
                 </div>
             </div>
