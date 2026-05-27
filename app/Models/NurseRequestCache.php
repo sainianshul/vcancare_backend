@@ -79,6 +79,10 @@ class NurseRequestCache extends Model
         $snapshot = $this->request_snapshot ?? [];
         $expiresAt = Carbon::parse($this->expires_at);
 
+        $minimumBid = \App\Models\RequestBid::where('care_request_id', $this->care_request_id)
+            ->where('status', \App\Models\RequestBid::STATUS_PENDING)
+            ->min('nurse_amount');
+
         return [
             'id' => $this->id,
             'care_request_id' => $this->care_request_id,
@@ -93,6 +97,7 @@ class NurseRequestCache extends Model
             'end_time' => $snapshot['end_time'] ?? null,
             'care_type' => $snapshot['care_type'] ?? 'Unknown',
             'approx_distance_km' => $snapshot['distance_to_patient'] ?? null,
+            'minimum_bid' => $minimumBid,
             'expires_at' => $expiresAt->toDateTimeString(),
             'expires_in_human' => $expiresAt->diffForHumans([
                 'parts' => 2,
