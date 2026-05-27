@@ -192,7 +192,7 @@
 
                 lengthMenu: [[10, 15, 25, 50], [10, 15, 25, 50]],
 
-                // ── Metronic Bootstrap 5 DOM ────────────────────────────────
+                // ──  Bootstrap 5 DOM ────────────────────────────────
                 dom:
                     "<'row'<'col-12'tr>>" +
                     "<'row align-items-center mt-3 pt-3 flex-nowrap'" +

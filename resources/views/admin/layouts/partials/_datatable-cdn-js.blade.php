@@ -1,12 +1,12 @@
 {{--
-    Lightweight DataTables + utility CDN scripts.
-    Replaces the 2.4MB datatables.bundle.js with individual CDN modules.
+Lightweight DataTables + utility CDN scripts.
+Replaces the 2.4MB datatables.bundle.js with individual CDN modules.
 
-    Total CDN payload: ~200KB (vs 2,400KB from Metronic bundle)
-    - DataTables core:     ~90KB
-    - SweetAlert2:         ~25KB
-    - Toastr:              ~6KB
-    - Select2:             ~25KB
+Total CDN payload: ~200KB (vs 2,400KB from css bundle)
+- DataTables core: ~90KB
+- SweetAlert2: ~25KB
+- Toastr: ~6KB
+- Select2: ~25KB
 --}}
 
 {{-- DataTables Core --}}
@@ -27,13 +27,13 @@
 
 {{-- Initialize Select2 on any elements with data-control="select2" --}}
 <script>
-$(function(){
-    $('[data-control="select2"]').each(function(){
-        $(this).select2({
-            minimumResultsForSearch: $(this).data('hide-search') === true ? -1 : 10,
-            placeholder: $(this).data('placeholder') || '',
-            allowClear: $(this).data('allow-clear') === true
+    $(function () {
+        $('[data-control="select2"]').each(function () {
+            $(this).select2({
+                minimumResultsForSearch: $(this).data('hide-search') === true ? -1 : 10,
+                placeholder: $(this).data('placeholder') || '',
+                allowClear: $(this).data('allow-clear') === true
+            });
         });
     });
-});
 </script>

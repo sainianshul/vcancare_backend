@@ -5,7 +5,7 @@
     PERFORMANCE: Replaced the 2.4MB plugins.bundle.js with CDN-hosted
     jQuery (87KB) + Bootstrap (72KB) = ~160KB total (vs 2,400KB).
     CDN versions are likely already cached in the user's browser.
-    All Metronic CSS classes still work — only the heavy KT* JS plugins
+    All  CSS classes still work — only the heavy KT* JS plugins
     and unused libraries (Flatpickr, FormValidation, es6-shim) are dropped.
 -->
 

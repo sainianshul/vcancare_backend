@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap" />
     <!--end::Fonts-->
 
-    <!--begin::Global Stylesheets Bundle (CSS only — keeps the premium Metronic look)-->
+    <!--begin::Global Stylesheets Bundle (CSS only — keeps the premium css look)-->
     <link href="{{ asset('theme/dist/assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('theme/dist/assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
