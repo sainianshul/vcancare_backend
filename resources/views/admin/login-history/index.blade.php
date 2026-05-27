@@ -188,13 +188,11 @@
                     url: '{{ route('admin.login-history.data') }}',
 
                     data: function (d) {
-
                         d.status = $('#filter-status').val();
                     }
                 },
 
                 columns: [
-
                     {
                         data: null,
                         name: 'id',
@@ -244,11 +242,8 @@
                 ],
 
                 order: [[5, 'desc']],
-
                 pageLength: 15,
-
                 lengthMenu: [[10, 15, 25, 50], [10, 15, 25, 50]],
-
                 dom:
                     "<'row'<'col-12'tr>>" +
                     "<'row align-items-center mt-3 pt-3 flex-nowrap'" +
@@ -256,32 +251,21 @@
                     "<'col-sm-12 col-md-7 d-flex justify-content-md-end align-items-center gap-3'lp>>",
 
                 language: {
-
                     emptyTable: ' ',
-
                     zeroRecords: ' ',
                     loadingRecords: ' ',
-
                     info: 'Showing _START_–_END_ of _TOTAL_ login records',
-
                     infoEmpty: 'No login records to show',
-
                     infoFiltered: '(filtered from _MAX_)',
-
                     lengthMenu: 'Show _MENU_',
-
                     paginate: {
                         previous: '<i class="ki-duotone ki-arrow-left"></i>',
                         next: '<i class="ki-duotone ki-arrow-right"></i>',
                     },
                 },
 
-
-
                 initComplete: function () {
-
                     $('#login-history-skeleton').fadeOut(200, function () {
-
                         $(this).remove();
                     });
                 },
@@ -333,26 +317,17 @@
             $('#btn-empty-logs').on('click', function () {
 
                 Swal.fire({
-
                     title: 'Empty Login History?',
-
                     text: 'All login history records will be permanently removed.',
-
                     icon: 'warning',
-
                     showCancelButton: true,
-
                     confirmButtonText: 'Yes, Empty Logs',
-
                     customClass: {
                         confirmButton: 'btn btn-danger',
                         cancelButton: 'btn btn-light ms-2'
                     },
-
                     buttonsStyling: false,
-
                 }).then(function (result) {
-
                     if (!result.isConfirmed) {
                         return;
                     }
