@@ -284,125 +284,9 @@
                     </div>
                 </div>
             </div>
-            <!--end::Row 3-->w 3-->
+            <!--end::Row 3-->
 
-            <!--begin::Row 4 — Charts-->
-            <div class="row g-5 mb-7">
-                <!--begin::Bookings Chart-->
-                <div class="col-xl-8">
-                    <div class="card saas-card h-100">
-                        <div class="card-header border-bottom border-gray-200 pt-5 min-h-50px">
-                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
-                                <i class="ki-outline ki-chart-line fs-4 text-primary me-2"></i>Monthly Bookings & Revenue
-                            </h3>
-                            <div class="card-toolbar">
-                                <span class="badge badge-light border border-gray-300 text-gray-600 fw-medium px-3 py-2 fs-8">Last 6 Months</span>
-                            </div>
-                        </div>
-                        <div class="card-body pt-5 pb-4">
-                            <div id="chart-bookings-skeleton" class="placeholder-glow">
-                                <span class="placeholder bg-secondary rounded col-12 d-block" style="height:300px;"></span>
-                            </div>
-                            <div id="chart-bookings" style="height:300px;" class="d-none"></div>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Bookings Chart-->
-
-                <!--begin::Requests Chart-->
-                <div class="col-xl-4">
-                    <div class="card saas-card h-100">
-                        <div class="card-header border-bottom pt-5 min-h-50px">
-                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
-                                <i class="ki-outline ki-document fs-4 text-warning me-2"></i>Monthly Requests
-                            </h3>
-                        </div>
-                        <div class="card-body pt-5 pb-4">
-                            <div id="chart-requests-skeleton" class="placeholder-glow">
-                                <span class="placeholder bg-secondary rounded col-12 d-block" style="height:300px;"></span>
-                            </div>
-                            <div id="chart-requests" style="height:300px;" class="d-none"></div>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Requests Chart-->
-            </div>
-            <!--end::Row 4-->
-
-            <!--begin::Row 5 — Breakdowns-->
-            <div class="row g-5 mb-7">
-                <!--begin::Booking Status-->
-                <div class="col-xl-4">
-                    <div class="card saas-card h-100">
-                        <div class="card-header border-bottom pt-5 min-h-50px">
-                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
-                                <i class="ki-outline ki-calendar-tick fs-4 text-info me-2"></i>Booking Status
-                            </h3>
-                        </div>
-                        <div class="card-body py-4" id="booking-status-breakdown">
-                            <div class="placeholder-glow" id="booking-status-skeleton">
-                                @for ($i = 0; $i < 5; $i++)
-                                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-gray-200">
-                                        <span class="placeholder bg-secondary rounded col-4"></span>
-                                        <span class="placeholder bg-secondary rounded col-2"></span>
-                                    </div>
-                                @endfor
-                            </div>
-                            <div class="d-none" id="booking-status-content"></div>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Booking Status-->
-
-                <!--begin::Request Status-->
-                <div class="col-xl-4">
-                    <div class="card saas-card h-100">
-                        <div class="card-header border-bottom pt-5 min-h-50px">
-                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
-                                <i class="ki-outline ki-document fs-4 text-warning me-2"></i>Request Status
-                            </h3>
-                        </div>
-                        <div class="card-body py-4" id="request-status-breakdown">
-                            <div class="placeholder-glow" id="request-status-skeleton">
-                                @for ($i = 0; $i < 5; $i++)
-                                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
-                                        <span class="placeholder bg-secondary rounded col-4"></span>
-                                        <span class="placeholder bg-secondary rounded col-2"></span>
-                                    </div>
-                                @endfor
-                            </div>
-                            <div class="d-none" id="request-status-content"></div>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Request Status-->
-
-                <!--begin::Nurse Status-->
-                <div class="col-xl-4">
-                    <div class="card saas-card h-100">
-                        <div class="card-header border-bottom pt-5 min-h-50px">
-                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
-                                <i class="ki-outline ki-shield-tick fs-4 text-success me-2"></i>Nurse Status
-                            </h3>
-                        </div>
-                        <div class="card-body py-4" id="nurse-status-breakdown">
-                            <div class="placeholder-glow" id="nurse-status-skeleton">
-                                @for ($i = 0; $i < 4; $i++)
-                                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
-                                        <span class="placeholder bg-secondary rounded col-4"></span>
-                                        <span class="placeholder bg-secondary rounded col-2"></span>
-                                    </div>
-                                @endfor
-                            </div>
-                            <div class="d-none" id="nurse-status-content"></div>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Nurse Status-->
-            </div>
-            <!--end::Row 5-->
-
-            <!--begin::Row 6 — Recent Tables-->
+            <!--begin::Row 4 — Recent Tables-->
             <div class="row g-5 mb-7">
                 <!--begin::Recent Bookings-->
                 <div class="col-xl-6">
@@ -475,6 +359,122 @@
                     </div>
                 </div>
                 <!--end::Recent Requests-->
+            </div>
+            <!--end::Row 4-->
+
+            <!--begin::Row 5 — Charts-->
+            <div class="row g-5 mb-7">
+                <!--begin::Bookings Chart-->
+                <div class="col-xl-8">
+                    <div class="card saas-card h-100">
+                        <div class="card-header border-bottom border-gray-200 pt-5 min-h-50px">
+                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
+                                <i class="ki-outline ki-chart-line fs-4 text-primary me-2"></i>Monthly Bookings & Revenue
+                            </h3>
+                            <div class="card-toolbar">
+                                <span class="badge badge-light border border-gray-300 text-gray-600 fw-medium px-3 py-2 fs-8">Last 6 Months</span>
+                            </div>
+                        </div>
+                        <div class="card-body pt-5 pb-4">
+                            <div id="chart-bookings-skeleton" class="placeholder-glow">
+                                <span class="placeholder bg-secondary rounded col-12 d-block" style="height:300px;"></span>
+                            </div>
+                            <div id="chart-bookings" style="height:300px;" class="d-none"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Bookings Chart-->
+
+                <!--begin::Requests Chart-->
+                <div class="col-xl-4">
+                    <div class="card saas-card h-100">
+                        <div class="card-header border-bottom pt-5 min-h-50px">
+                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
+                                <i class="ki-outline ki-document fs-4 text-warning me-2"></i>Monthly Requests
+                            </h3>
+                        </div>
+                        <div class="card-body pt-5 pb-4">
+                            <div id="chart-requests-skeleton" class="placeholder-glow">
+                                <span class="placeholder bg-secondary rounded col-12 d-block" style="height:300px;"></span>
+                            </div>
+                            <div id="chart-requests" style="height:300px;" class="d-none"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Requests Chart-->
+            </div>
+            <!--end::Row 5-->
+
+            <!--begin::Row 6 — Breakdowns-->
+            <div class="row g-5 mb-7">
+                <!--begin::Booking Status-->
+                <div class="col-xl-4">
+                    <div class="card saas-card h-100">
+                        <div class="card-header border-bottom pt-5 min-h-50px">
+                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
+                                <i class="ki-outline ki-calendar-tick fs-4 text-info me-2"></i>Booking Status
+                            </h3>
+                        </div>
+                        <div class="card-body py-4" id="booking-status-breakdown">
+                            <div class="placeholder-glow" id="booking-status-skeleton">
+                                @for ($i = 0; $i < 5; $i++)
+                                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-gray-200">
+                                        <span class="placeholder bg-secondary rounded col-4"></span>
+                                        <span class="placeholder bg-secondary rounded col-2"></span>
+                                    </div>
+                                @endfor
+                            </div>
+                            <div class="d-none" id="booking-status-content"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Booking Status-->
+
+                <!--begin::Request Status-->
+                <div class="col-xl-4">
+                    <div class="card saas-card h-100">
+                        <div class="card-header border-bottom pt-5 min-h-50px">
+                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
+                                <i class="ki-outline ki-document fs-4 text-warning me-2"></i>Request Status
+                            </h3>
+                        </div>
+                        <div class="card-body py-4" id="request-status-breakdown">
+                            <div class="placeholder-glow" id="request-status-skeleton">
+                                @for ($i = 0; $i < 5; $i++)
+                                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                        <span class="placeholder bg-secondary rounded col-4"></span>
+                                        <span class="placeholder bg-secondary rounded col-2"></span>
+                                    </div>
+                                @endfor
+                            </div>
+                            <div class="d-none" id="request-status-content"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Request Status-->
+
+                <!--begin::Nurse Status-->
+                <div class="col-xl-4">
+                    <div class="card saas-card h-100">
+                        <div class="card-header border-bottom pt-5 min-h-50px">
+                            <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">
+                                <i class="ki-outline ki-shield-tick fs-4 text-success me-2"></i>Nurse Status
+                            </h3>
+                        </div>
+                        <div class="card-body py-4" id="nurse-status-breakdown">
+                            <div class="placeholder-glow" id="nurse-status-skeleton">
+                                @for ($i = 0; $i < 4; $i++)
+                                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                        <span class="placeholder bg-secondary rounded col-4"></span>
+                                        <span class="placeholder bg-secondary rounded col-2"></span>
+                                    </div>
+                                @endfor
+                            </div>
+                            <div class="d-none" id="nurse-status-content"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Nurse Status-->
             </div>
             <!--end::Row 6-->
 
