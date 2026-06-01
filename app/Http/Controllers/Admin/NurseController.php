@@ -19,9 +19,12 @@ use App\Models\NurseProfileVerification;
 use App\Models\NurseRequestCache;
 use App\Models\NurseReview;
 use App\Models\User;
+use App\Models\RequestBid;
 use App\Services\Admin\NurseService;
 use App\Services\OnboardingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class NurseController extends Controller
 {
@@ -76,7 +79,7 @@ class NurseController extends Controller
 
     public function pendingCount()
     {
-        $count = NurseProfile::where('status', \App\Models\NurseProfile::STATUS_UNDER_REVIEW)->count();
+        $count = NurseProfile::where('status', NurseProfile::STATUS_UNDER_REVIEW)->count();
         return response()->json(['count' => $count]);
     }
 
@@ -228,7 +231,7 @@ class NurseController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $bids = \App\Models\RequestBid::with('careRequest')->where('nurse_id', $user->id)->latest();
+        $bids = RequestBid::with('careRequest')->where('nurse_id', $user->id)->latest();
 
         return datatables()->of($bids)
             ->addColumn('request', function ($bid) {
@@ -293,7 +296,7 @@ class NurseController extends Controller
                 return '<span class="text-muted">N/A</span>';
             })
             ->editColumn('expires_at', function ($cache) {
-                return '<span class="text-gray-600 fs-7">' . \Carbon\Carbon::parse($cache->expires_at)->format('d M Y') . '<br><span class="fs-8 text-gray-500">' . \Carbon\Carbon::parse($cache->expires_at)->format('h:i A') . '</span></span>';
+                return '<span class="text-gray-600 fs-7">' . Carbon::parse($cache->expires_at)->format('d M Y') . '<br><span class="fs-8 text-gray-500">' . Carbon::parse($cache->expires_at)->format('h:i A') . '</span></span>';
             })
             ->editColumn('created_at', function ($cache) {
                 return '<span class="text-gray-600 fs-7">' . $cache->created_at->format('d M Y') . '<br><span class="fs-8 text-gray-500">' . $cache->created_at->format('h:i A') . '</span></span>';
@@ -495,7 +498,7 @@ class NurseController extends Controller
                 if (stripos($login->user_agent, 'mobile') !== false || stripos($login->user_agent, 'android') !== false || stripos($login->user_agent, 'iphone') !== false) {
                     $icon = 'ki-phone';
                 }
-                return '<div class="d-flex align-items-center"><i class="ki-outline ' . $icon . ' fs-3 me-2 text-primary"></i><span class="text-truncate d-inline-block" style="max-width:250px;" title="' . htmlspecialchars($login->user_agent) . '">' . \Str::limit($login->user_agent, 40) . '</span></div>';
+                return '<div class="d-flex align-items-center"><i class="ki-outline ' . $icon . ' fs-3 me-2 text-primary"></i><span class="text-truncate d-inline-block" style="max-width:250px;" title="' . htmlspecialchars($login->user_agent) . '">' . Str::limit($login->user_agent, 40) . '</span></div>';
             })
             ->editColumn('created_at', function ($login) {
                 return '<span class="text-gray-600 fs-7">' . $login->created_at->format('d M Y, h:i A') . '</span>';

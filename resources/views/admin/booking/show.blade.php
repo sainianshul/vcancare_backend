@@ -9,24 +9,6 @@
         ['label' => 'View Booking: ' . $booking->reference_id],
     ]" />
 
-    @php
-        $statusColors = [
-            \App\Models\Booking::STATUS_PENDING_PAYMENT => 'warning',
-            \App\Models\Booking::STATUS_CONFIRMED => 'primary',
-            \App\Models\Booking::STATUS_ACTIVE => 'info',
-            \App\Models\Booking::STATUS_COMPLETED => 'success',
-            \App\Models\Booking::STATUS_CANCELLED => 'danger',
-        ];
-        $payColors = [
-            \App\Models\Booking::PAYMENT_UNPAID => 'danger',
-            \App\Models\Booking::PAYMENT_PAID => 'success',
-            \App\Models\Booking::PAYMENT_REFUND_INITIATED => 'warning',
-            \App\Models\Booking::PAYMENT_REFUNDED => 'info',
-            \App\Models\Booking::PAYMENT_PARTIALLY_REFUNDED => 'primary',
-        ];
-        $statusColor = $statusColors[$booking->status] ?? 'dark';
-        $payColor = $payColors[$booking->payment_status] ?? 'dark';
-    @endphp
 
     <div class="d-flex flex-column gap-7 gap-lg-10">
 
@@ -39,10 +21,10 @@
                 <h1 class="fw-bold text-gray-900 fs-4 mb-0">
                     Booking <span class="text-primary">#{{ $booking->reference_id }}</span>
                 </h1>
-                <span class="badge badge-light-{{ $statusColor }} fs-8 px-3 py-1 border border-{{ $statusColor }}">
+                <span class="badge badge-light-{{ $booking->status_color }} fs-8 px-3 py-1 border border-{{ $booking->status_color }}">
                     {{ $booking->status_text }}
                 </span>
-                <span class="badge badge-light-{{ $payColor }} fs-8 px-3 py-1 border border-{{ $payColor }}">
+                <span class="badge badge-light-{{ $booking->payment_status_color }} fs-8 px-3 py-1 border border-{{ $booking->payment_status_color }}">
                     {{ $booking->payment_status_text }}
                 </span>
             </div>
@@ -188,37 +170,7 @@
                     </div>
                 </div>
 
-                {{-- Sessions Table (AJAX) --}}
-                <div class="card shadow-sm mb-7 border border-gray-300">
-                    <div class="card-header border-0 pt-4 min-h-50px">
-                        <h3 class="card-title align-items-start flex-column">
-                            <span class="card-label fw-bold text-gray-900 fs-5 mb-0">Sessions</span>
-                            <span class="text-muted mt-1 fw-semibold fs-7">{{ $booking->completed_sessions }} of {{ $booking->total_sessions }} completed</span>
-                        </h3>
-                    </div>
-                    <div class="card-body pt-2 pb-5">
-                            @include('admin.layouts.partials._table-skeleton', ['id' => 'sessions-skeleton'])
-                            <div id="sessions-table-wrapper" class="d-none">
-                                <table id="sessions-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3 w-100">
-                                    <thead>
-                                        <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
-                                            <th class="ps-3 rounded-start">#</th>
-                                            <th class="min-w-100px">Date</th>
-                                            <th>Start</th>
-                                            <th>End</th>
-                                            <th>Started At</th>
-                                            <th>Ended At</th>
-                                            <th>Status</th>
-                                            <th>OTP</th>
-                                            <th class="rounded-end">Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                    </div>
-                </div>
+                @include('admin.booking._session')
 
                 {{-- Bid Details --}}
                 @if($booking->bid)
@@ -229,12 +181,7 @@
                             </h3>
                         </div>
                         <div class="card-body pt-2 pb-5">
-                            @php
-                                $bid = $booking->bid;
-                                $bidStatusColors = [0 => 'warning', 1 => 'success', 2 => 'danger', 3 => 'secondary', 4 => 'dark'];
-                                $bidColor = $bidStatusColors[$bid->status] ?? 'dark';
-                            @endphp
-                            <div class="d-flex flex-wrap gap-4 mb-4">
+                            @php $bid = $booking->bid; @endphp                            <div class="d-flex flex-wrap gap-4 mb-4">
                                 <div class="border border-gray-300 border-dashed rounded py-3 px-4">
                                     <div class="fs-4 fw-bold text-gray-900">₹{{ number_format($bid->nurse_amount, 2) }}</div>
                                     <div class="fw-semibold fs-8 text-gray-600">Nurse Amount</div>
@@ -248,7 +195,7 @@
                                     <div class="fw-semibold fs-8 text-gray-600">Total Amount</div>
                                 </div>
                                 <div class="border border-gray-300 border-dashed rounded py-3 px-4">
-                                    <span class="badge badge-light-{{ $bidColor }} border border-{{ $bidColor }} fw-bold px-3 py-2">{{ $bid->status_text }}</span>
+                                    <span class="badge badge-light-{{ $bid->status_color }} border border-{{ $bid->status_color }} fw-bold px-3 py-2">{{ $bid->status_text }}</span>
                                     <div class="fw-semibold fs-8 text-gray-600 mt-1">Bid Status</div>
                                 </div>
                             </div>
@@ -265,284 +212,15 @@
                     </div>
                 @endif
 
-                {{-- All Bids List --}}
-                @if($booking->careRequest && $booking->careRequest->bids->count() > 0)
-                    <div class="card shadow-sm mb-7 border border-gray-300">
-                        <div class="card-header border-0 pt-4 min-h-50px">
-                            <h3 class="card-title align-items-start flex-column">
-                                <span class="card-label fw-bold fs-5 mb-0 text-gray-900">All Bids for this Request</span>
-                                <span class="text-muted mt-1 fw-semibold fs-7">{{ $booking->careRequest->bids->count() }} bids total</span>
-                            </h3>
-                        </div>
-                        <div class="card-body pt-2 pb-5">
-                            @include('admin.layouts.partials._table-skeleton', ['id' => 'bids-skeleton'])
-                            <div id="bids-table-wrapper" class="table-responsive d-none">
-                                <table id="bids-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3 w-100" data-server-side="true">
-                                    <thead>
-                                        <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
-                                            <th class="ps-3 rounded-start min-w-150px">Nurse</th>
-                                            <th>Nurse Amount</th>
-                                            <th>Commission</th>
-                                            <th>Total</th>
-                                            <th>Status</th>
-                                            <th class="rounded-end min-w-150px">Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                @include('admin.booking._allbids')
 
-                {{-- Ratings & Reviews Table (AJAX) --}}
-                <div class="card shadow-sm mb-7 border border-gray-300">
-                    <div class="card-header border-0 pt-4 min-h-50px">
-                        <h3 class="card-title align-items-start flex-column">
-                            <span class="card-label fw-bold fs-5 mb-0 text-gray-900">Ratings & Reviews</span>
-                        </h3>
-                    </div>
-                    <div class="card-body pt-2 pb-5">
-                        @include('admin.layouts.partials._table-skeleton', ['id' => 'ratings-skeleton'])
-                        <div id="ratings-table-wrapper" class="table-responsive d-none">
-                            <table id="ratings-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3 w-100" data-server-side="true">
-                                <thead>
-                                    <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
-                                        <th class="ps-3 rounded-start min-w-200px">User</th>
-                                        <th class="min-w-100px">Rating</th>
-                                        <th class="min-w-200px">Review</th>
-                                        <th class="rounded-end min-w-100px">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                @include('admin.booking._rating')
 
-                {{-- Payment Logs Table (AJAX) --}}
-                <div class="card shadow-sm mb-7 border border-gray-300">
-                    <div class="card-header border-0 pt-4 min-h-50px">
-                        <h3 class="card-title align-items-start flex-column">
-                            <span class="card-label fw-bold text-gray-900 fs-5 mb-0">Payment Logs</span>
-                        </h3>
-                    </div>
-                    <div class="card-body pt-2 pb-5">
-                        <div class="table-responsive">
-                            <table id="payment-logs-table" class="table align-middle table-row-dashed table-row-gray-200 gs-0 gy-3">
-                                <thead>
-                                    <tr class="fw-bold text-gray-700 bg-light fs-8 text-uppercase gs-0">
-                                        <th class="ps-3 rounded-start">Event</th>
-                                        <th>Amount</th>
-                                        <th>Gateway</th>
-                                        <th>Order ID</th>
-                                        <th>Payment ID</th>
-                                        <th>Status</th>
-                                        <th class="rounded-end">Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                @include('admin.booking._paymentlogs')
 
-                {{-- Cancellation Info --}}
-                @if($booking->isCancelled())
-                    <div class="card shadow-sm mb-7 bg-light-danger border border-danger border-dashed">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="ki-outline ki-cross-circle fs-2 text-danger me-2"></i>
-                                <span class="fw-bold text-gray-900 fs-5">Cancellation Details</span>
-                            </div>
-                            <div class="d-flex flex-column gap-3">
-                                <div class="d-flex flex-stack">
-                                    <span class="text-gray-600 fw-semibold fs-7">Cancelled By</span>
-                                    <span class="fw-bold fs-7 text-gray-900">
-                                        @switch($booking->cancelled_by)
-                                            @case(1) <span class="badge badge-light-warning border border-warning">User</span> @break
-                                            @case(2) <span class="badge badge-light-info border border-info">Nurse</span> @break
-                                            @case(3) <span class="badge badge-light-danger border border-danger">Admin</span> @break
-                                            @case(4) <span class="badge badge-light-secondary border border-secondary">System</span> @break
-                                            @default <span class="text-muted">Unknown</span>
-                                        @endswitch
-                                    </span>
-                                </div>
-                                <div class="separator separator-dashed border-gray-300"></div>
-                                <div class="d-flex flex-stack">
-                                    <span class="text-gray-600 fw-semibold fs-7">Cancelled At</span>
-                                    <span class="fw-bold fs-7 text-gray-900">{{ $booking->cancelled_at ? $booking->cancelled_at->format('d M Y, h:i A') : 'N/A' }}</span>
-                                </div>
-                                @if($booking->cancellation_reason)
-                                    <div class="separator separator-dashed border-gray-300"></div>
-                                    <div>
-                                        <span class="text-gray-600 fw-semibold fs-7 d-block mb-1">Reason</span>
-                                        <span class="fw-semibold fs-7 text-gray-900">{{ $booking->cancellation_reason }}</span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                @include('admin.booking._cancellationinfo')
 
-                {{-- Booking Timeline --}}
-                <div class="card shadow-sm mb-7 border border-gray-300">
-                    <div class="card-header border-0 pt-4 min-h-50px">
-                        <h3 class="card-title align-items-start flex-column">
-                            <span class="card-label fw-bold fs-5 mb-0 text-gray-900">Booking Timeline</span>
-                        </h3>
-                    </div>
-                    <div class="card-body pt-2 pb-5">
-                        <div class="timeline">
-                            {{-- Created --}}
-                            <div class="timeline-item">
-                                <div class="timeline-line w-40px"></div>
-                                <div class="timeline-icon symbol symbol-circle symbol-40px">
-                                    <div class="symbol-label bg-light-primary">
-                                        <i class="ki-outline ki-plus-square fs-3 text-primary"></i>
-                                    </div>
-                                </div>
-                                <div class="timeline-content mb-10 mt-n1">
-                                    <div class="pe-3 mb-2">
-                                        <div class="fs-6 fw-bold text-gray-900 mb-1">Booking Created</div>
-                                        <div class="d-flex align-items-center fs-8 fw-semibold text-gray-600">
-                                            <i class="ki-outline ki-time fs-7 me-1"></i>
-                                            {{ $booking->created_at->format('d M Y, h:i A') }}
-                                            <span class="text-muted ms-2">({{ $booking->created_at->diffForHumans() }})</span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="badge badge-light-primary border border-primary px-2 py-1 fs-9">Ref: {{ $booking->reference_id }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Payment --}}
-                            @if($booking->payment_status >= 1)
-                                <div class="timeline-item">
-                                    <div class="timeline-line w-40px"></div>
-                                    <div class="timeline-icon symbol symbol-circle symbol-40px">
-                                        <div class="symbol-label bg-light-success">
-                                            <i class="ki-outline ki-dollar fs-3 text-success"></i>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-content mb-10 mt-n1">
-                                        <div class="pe-3 mb-2">
-                                            <div class="fs-6 fw-bold text-gray-900 mb-1">Payment Received</div>
-                                            <div class="d-flex align-items-center fs-8 fw-semibold text-gray-600">
-                                                <i class="ki-outline ki-time fs-7 me-1"></i>
-                                                <span>₹{{ number_format($booking->total_amount, 2) }}</span>
-                                                @if($booking->payment_method)
-                                                    <span class="badge badge-light-info px-2 py-1 ms-2 fs-9">{{ $booking->payment_method_text }}</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="d-flex flex-wrap gap-2">
-                                            @if($booking->wallet_amount_used > 0)
-                                                <span class="badge badge-light-warning border border-warning px-2 py-1 fs-9">Wallet: ₹{{ number_format($booking->wallet_amount_used, 2) }}</span>
-                                            @endif
-                                            @if($booking->gateway_amount > 0)
-                                                <span class="badge badge-light-primary border border-primary px-2 py-1 fs-9">Gateway: ₹{{ number_format($booking->gateway_amount, 2) }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Active --}}
-                            @if($booking->status >= 2)
-                                <div class="timeline-item">
-                                    <div class="timeline-line w-40px"></div>
-                                    <div class="timeline-icon symbol symbol-circle symbol-40px">
-                                        <div class="symbol-label bg-light-info">
-                                            <i class="ki-outline ki-rocket fs-3 text-info"></i>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-content mb-10 mt-n1">
-                                        <div class="pe-3 mb-2">
-                                            <div class="fs-6 fw-bold text-gray-900 mb-1">Booking Activated</div>
-                                            <div class="fs-8 fw-semibold text-gray-600">Sessions started being tracked</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Completed --}}
-                            @if($booking->status === \App\Models\Booking::STATUS_COMPLETED)
-                                <div class="timeline-item">
-                                    <div class="timeline-line w-40px"></div>
-                                    <div class="timeline-icon symbol symbol-circle symbol-40px">
-                                        <div class="symbol-label bg-light-success">
-                                            <i class="ki-outline ki-check-circle fs-3 text-success"></i>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-content mb-10 mt-n1">
-                                        <div class="pe-3 mb-2">
-                                            <div class="fs-6 fw-bold text-gray-900 mb-1">Booking Completed</div>
-                                            <div class="fs-8 fw-semibold text-gray-600">All {{ $booking->total_sessions }} sessions completed</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Cancelled --}}
-                            @if($booking->status === \App\Models\Booking::STATUS_CANCELLED)
-                                <div class="timeline-item">
-                                    <div class="timeline-line w-40px"></div>
-                                    <div class="timeline-icon symbol symbol-circle symbol-40px">
-                                        <div class="symbol-label bg-light-danger">
-                                            <i class="ki-outline ki-cross-circle fs-3 text-danger"></i>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-content mb-10 mt-n1">
-                                        <div class="pe-3 mb-2">
-                                            <div class="fs-6 fw-bold text-gray-900 mb-1">Booking Cancelled</div>
-                                            <div class="d-flex align-items-center fs-8 fw-semibold text-gray-600">
-                                                <i class="ki-outline ki-time fs-7 me-1"></i>
-                                                {{ $booking->cancelled_at ? $booking->cancelled_at->format('d M Y, h:i A') : 'N/A' }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Refund --}}
-                            @if($booking->refund_amount > 0)
-                                <div class="timeline-item">
-                                    <div class="timeline-line w-40px"></div>
-                                    <div class="timeline-icon symbol symbol-circle symbol-40px">
-                                        <div class="symbol-label bg-light-warning">
-                                            <i class="ki-outline ki-arrow-circle-left fs-3 text-warning"></i>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-content mb-10 mt-n1">
-                                        <div class="pe-3 mb-2">
-                                            <div class="fs-6 fw-bold text-gray-900 mb-1">Refund Processed</div>
-                                            <div class="fs-8 fw-semibold text-gray-600">₹{{ number_format($booking->refund_amount, 2) }} refunded</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Updated --}}
-                            <div class="timeline-item">
-                                <div class="timeline-icon symbol symbol-circle symbol-40px">
-                                    <div class="symbol-label bg-light">
-                                        <i class="ki-outline ki-time fs-3 text-gray-600"></i>
-                                    </div>
-                                </div>
-                                <div class="timeline-content mt-n1">
-                                    <div class="pe-3">
-                                        <div class="fs-7 fw-semibold text-gray-600">Last Updated: {{ $booking->updated_at->format('d M Y, h:i A') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('admin.booking._timeline')
 
                 {{-- Comments Component --}}
                 <x-comments type="{{ \App\Models\Booking::class }}" :model-id="$booking->id" />
@@ -953,3 +631,6 @@
         });
     </script>
 @endpush
+
+
+

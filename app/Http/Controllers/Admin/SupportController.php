@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTables\Support\TicketDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\SupportTicket;
 use App\Services\SupportService;
@@ -20,7 +21,7 @@ class SupportController extends Controller
     /**
      * Display a listing of tickets.
      */
-    public function index(\App\DataTables\Support\TicketDataTable $dataTable)
+    public function index(TicketDataTable $dataTable)
     {
         return $dataTable->render('admin.support.index');
     }
@@ -40,7 +41,7 @@ class SupportController extends Controller
     public function show($id)
     {
         $ticket = SupportTicket::with(['user', 'messages.user'])->findOrFail($id);
-        
+
         // Auto assign to me if it is pending
         if ($ticket->status === SupportTicket::STATUS_PENDING) {
             $this->supportService->updateStatus($ticket, SupportTicket::STATUS_OPEN, Auth::user());
@@ -91,7 +92,7 @@ class SupportController extends Controller
         $ticket = SupportTicket::findOrFail($id);
 
         try {
-            $this->supportService->updateStatus($ticket, (int)$request->status, Auth::user());
+            $this->supportService->updateStatus($ticket, (int) $request->status, Auth::user());
             return redirect()->back()->with('success', 'Ticket status updated.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());

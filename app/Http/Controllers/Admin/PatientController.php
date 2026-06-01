@@ -11,6 +11,8 @@ use App\Models\CareRequest;
 use App\Models\LoginHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class PatientController extends Controller
 {
@@ -51,7 +53,7 @@ class PatientController extends Controller
             'email' => $request->email,
             'status' => $request->status,
             'role' => User::ROLE_USER,
-            'password' => \Hash::make(\Str::random(16)),
+            'password' => Hash::make(Str::random(16)),
         ]);
 
         return redirect()->route('admin.patients.index')->with('success', 'Patient added successfully.');
@@ -165,7 +167,7 @@ class PatientController extends Controller
                 if (stripos($login->user_agent, 'mobile') !== false || stripos($login->user_agent, 'android') !== false || stripos($login->user_agent, 'iphone') !== false) {
                     $icon = 'ki-phone';
                 }
-                return '<div class="d-flex align-items-center"><i class="ki-outline ' . $icon . ' fs-3 me-2 text-primary"></i><span class="text-truncate d-inline-block" style="max-width:250px;" title="' . htmlspecialchars($login->user_agent) . '">' . \Str::limit($login->user_agent, 40) . '</span></div>';
+                return '<div class="d-flex align-items-center"><i class="ki-outline ' . $icon . ' fs-3 me-2 text-primary"></i><span class="text-truncate d-inline-block" style="max-width:250px;" title="' . htmlspecialchars($login->user_agent) . '">' . Str::limit($login->user_agent, 40) . '</span></div>';
             })
             ->editColumn('created_at', function ($login) {
                 return '<span class="text-gray-600 fs-7">' . $login->created_at->format('d M Y, h:i A') . '</span>';

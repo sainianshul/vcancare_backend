@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\DataTables\Booking\BookingDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\NurseReview;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -84,10 +86,10 @@ class BookingController extends Controller
                 return $session->session_date ? $session->session_date->format('d M Y') : '—';
             })
             ->addColumn('start_time', function ($session) {
-                return $session->start_time ? \Carbon\Carbon::parse($session->start_time)->format('h:i A') : '—';
+                return $session->start_time ? Carbon::parse($session->start_time)->format('h:i A') : '—';
             })
             ->addColumn('end_time', function ($session) {
-                return $session->end_time ? \Carbon\Carbon::parse($session->end_time)->format('h:i A') : '—';
+                return $session->end_time ? Carbon::parse($session->end_time)->format('h:i A') : '—';
             })
             ->addColumn('started_at', function ($session) {
                 return $session->started_at ? $session->started_at->format('d M Y h:i A') : '—';
@@ -179,7 +181,7 @@ class BookingController extends Controller
     {
         $booking = Booking::findOrFail($id);
 
-        $reviews = \App\Models\NurseReview::with(['user'])
+        $reviews = NurseReview::with(['user'])
             ->where('booking_id', $booking->id)
             ->latest()
             ->select(['id', 'user_id', 'rating', 'review', 'created_at']);

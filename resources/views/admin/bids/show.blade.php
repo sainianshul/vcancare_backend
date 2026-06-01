@@ -25,16 +25,7 @@
                     Bid Details 
                 </h1>
                 
-                @php
-                    $bidColors = [
-                        \App\Models\RequestBid::STATUS_PENDING => 'warning',
-                        \App\Models\RequestBid::STATUS_SELECTED => 'success',
-                        \App\Models\RequestBid::STATUS_REJECTED => 'danger',
-                        \App\Models\RequestBid::STATUS_CANCELLED => 'dark',
-                    ];
-                    $bColor = $bidColors[$bid->status ?? 0] ?? 'dark';
-                @endphp
-                <span class="badge badge-light-{{ $bColor }} text-{{ $bColor }} fs-8 px-3 py-2 border border-{{ $bColor }}">
+                <span class="badge badge-light-{{ $bid->status_color }} text-{{ $bid->status_color }} fs-8 px-3 py-2 border border-{{ $bid->status_color }}">
                     {{ $bid->status_text ?? 'Unknown' }}
                 </span>
             </div>
@@ -250,3 +241,4 @@
     </div>
 
 @endsection
+
