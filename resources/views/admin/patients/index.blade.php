@@ -71,8 +71,8 @@
 
 
                     {{-- Add Patient --}}
-                    {{-- <a
-                        href="{{ route('admin.patients.index') }}"
+                    <a
+                        href="{{ route('admin.patients.create') }}"
                         class="btn btn-sm btn-primary fw-semibold btn-flex btn-center"
                     >
                         <i class="ki-duotone ki-plus-square fs-5 me-1">
@@ -80,9 +80,8 @@
                             <span class="path2"></span>
                             <span class="path3"></span>
                         </i>
-
                         Add Patient
-                    </a> --}}
+                    </a>
 
                 </div>
             </div>

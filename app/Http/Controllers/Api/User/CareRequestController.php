@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\CreateCareRequest;
 use App\Http\Requests\Api\User\UpdateCareRequest;
+use App\Models\CareRequest;
 use App\Services\BiddingService;
 use App\Services\CareRequestService;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class CareRequestController extends Controller
         }
 
         $careRequests = $this->careRequestService->listForUser($user->id);
-        
+
         $careRequests->getCollection()->transform(function ($careRequest) {
             return $careRequest->toUserApiArray();
         });
@@ -120,7 +121,7 @@ class CareRequestController extends Controller
         }
 
         $result = $this->careRequestService->createAndMatch($request->validated(), $user->id);
-        
+
         if (isset($result['care_request']) && $result['care_request'] instanceof \App\Models\CareRequest) {
             $result['care_request'] = $result['care_request']->toUserApiArray();
         }
@@ -157,7 +158,7 @@ class CareRequestController extends Controller
             return ApiResponse::error('Only patients can view care requests.', 403);
         }
 
-        $careRequest = \App\Models\CareRequest::where('id', $id)
+        $careRequest = CareRequest::where('id', $id)
             ->where('user_id', $user->id)
             ->first();
 

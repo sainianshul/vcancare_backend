@@ -39,7 +39,7 @@ class CancellationService
      *
      * @throws \\Exception
      */
-    public function cancelByUser(int $bookingId, int $userId, ?string $reason = null): array
+    public function cancelByUser(int $bookingId, int $userId, ?string $reason = null, int $refundMode = Booking::REFUND_TO_WALLET): array
     {
         $booking = Booking::where('id', $bookingId)
             ->where('user_id', $userId)
@@ -53,13 +53,13 @@ class CancellationService
             throw new InvalidBookingStateException('This booking cannot be cancelled.', 409);
         }
 
-        return DB::transaction(function () use ($booking, $reason) {
+        return DB::transaction(function () use ($booking, $reason, $refundMode) {
             $refundAmount = 0.0;
             $nursePayoutAmount = 0.0;
 
             // Case 1: Not yet paid — free cancel
             if ($booking->status === Booking::STATUS_PENDING_PAYMENT) {
-                return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount);
+                return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount, $refundMode);
             }
 
             // Case 2: Paid — calculate slab-based refund on remaining
@@ -76,15 +76,18 @@ class CancellationService
                 $nursePayoutAmount = round((float) $booking->nurse_per_session_rate * $booking->completed_sessions, 2);
             }
 
-            // Process refund to user wallet
+            // Process refund based on user's chosen mode
             if ($refundAmount > 0) {
-                $this->walletService->credit(
-                    $booking->user_id,
-                    $refundAmount,
-                    WalletTransaction::REASON_CANCELLATION_REFUND,
-                    "Refund for cancelled booking {$booking->reference_id} ({$refundPercent}% of remaining)",
-                    $booking->id
-                );
+                if ($refundMode === Booking::REFUND_TO_WALLET) {
+                    $this->walletService->credit(
+                        $booking->user_id,
+                        $refundAmount,
+                        WalletTransaction::REASON_CANCELLATION_REFUND,
+                        "Refund for cancelled booking {$booking->reference_id} ({$refundPercent}% of remaining)",
+                        $booking->id
+                    );
+                }
+                // For REFUND_TO_BANK: amount is recorded, admin processes the bank transfer manually
             }
 
             // Process nurse payout for completed sessions
@@ -101,7 +104,7 @@ class CancellationService
                 }
             }
 
-            return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount);
+            return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount, $refundMode);
         });
     }
 
@@ -223,7 +226,8 @@ class CancellationService
         int $cancelledBy,
         ?string $reason,
         float $refundAmount,
-        float $nursePayoutAmount
+        float $nursePayoutAmount,
+        int $refundMode = Booking::REFUND_TO_WALLET
     ): array {
         // Cancel all upcoming sessions
         BookingSession::where('booking_id', $booking->id)
@@ -259,6 +263,8 @@ class CancellationService
         return [
             'booking' => $booking->fresh(),
             'refund_amount' => $refundAmount,
+            'refund_mode' => $refundMode,
+            'refund_mode_name' => Booking::getRefundModeList()[$refundMode] ?? 'Unknown',
             'nurse_payout_amount' => $nursePayoutAmount,
             'cancelled_by' => $cancelledBy,
         ];

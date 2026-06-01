@@ -42,14 +42,36 @@
                         </div>
                         <div class="d-flex flex-column">
                             <span class="text-gray-900 fw-bold fs-6">{{ $doc['document_type_name'] ?? 'Document' }}</span>
-                            @if(isset($doc['status_name']))
-                                <span class="text-gray-500 fw-semibold fs-8">{{ $doc['status_name'] }}</span>
+                            @if(isset($doc['status']))
+                                @php
+                                    $docStatusClass = 'badge-light-warning text-warning border-warning';
+                                    if ($doc['status'] == \App\Models\NurseDocument::STATUS_APPROVED) {
+                                        $docStatusClass = 'badge-light-success text-success border-success';
+                                    } elseif ($doc['status'] == \App\Models\NurseDocument::STATUS_REJECTED) {
+                                        $docStatusClass = 'badge-light-danger text-danger border-danger';
+                                    }
+                                @endphp
+                                <div class="d-flex align-items-center gap-2 mt-1">
+                                    <span class="badge {{ $docStatusClass }} badge-sm px-2 py-1 fs-9">{{ $doc['status_name'] ?? 'Pending' }}</span>
+                                </div>
                             @endif
                         </div>
                     </div>
                     
                     <div class="mt-auto d-flex justify-content-between align-items-center pt-4 border-top border-gray-200 border-dashed">
-                        <span class="badge badge-light fw-medium text-gray-600 border border-gray-300 fs-8 px-3 py-1">PDF / Image</span>
+                        @if(!$isReadOnly)
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-icon btn-light-danger border border-danger" onclick="processDocumentReview({{ $doc['id'] }}, {{ \App\Models\NurseDocument::STATUS_REJECTED }})" data-bs-toggle="tooltip" title="Reject Document">
+                                    <i class="ki-outline ki-cross fs-4"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-icon btn-light-success border border-success" onclick="processDocumentReview({{ $doc['id'] }}, {{ \App\Models\NurseDocument::STATUS_APPROVED }})" data-bs-toggle="tooltip" title="Approve Document">
+                                    <i class="ki-outline ki-check fs-4"></i>
+                                </button>
+                            </div>
+                        @else
+                            <span class="badge badge-light fw-medium text-gray-600 border border-gray-300 fs-8 px-3 py-1">PDF / Image</span>
+                        @endif
+
                         <a href="{{ Storage::url($doc['file_path']) }}" target="_blank" class="btn btn-sm btn-light-primary fw-bold px-4">
                             View File
                         </a>

@@ -34,6 +34,11 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+            
+            if ($user = User::where('email', $request->email)->first()) {
+                $this->logLoginAttempt($user->id, $request, LoginHistory::STATUS_INACTIVE);
+            }
+
             return back()
                 ->withInput($request->only('email', 'remember'))
                 ->withErrors(['email' => 'These credentials do not match our records.']);
@@ -44,6 +49,8 @@ class AuthController extends Controller
         // Role check
         if (!$user->isAdmin()) {
             Auth::logout();
+            $this->logLoginAttempt($user->id, $request, LoginHistory::STATUS_INACTIVE);
+
             return back()
                 ->withInput($request->only('email', 'remember'))
                 ->withErrors(['email' => 'You do not have admin access.']);
@@ -52,6 +59,8 @@ class AuthController extends Controller
         // Status check
         if (!$user->isActive()) {
             Auth::logout();
+            $this->logLoginAttempt($user->id, $request, LoginHistory::STATUS_INACTIVE);
+
             return back()
                 ->withInput($request->only('email', 'remember'))
                 ->withErrors(['email' => 'Your account is inactive or blocked.']);
@@ -59,13 +68,7 @@ class AuthController extends Controller
 
         $user->update(['last_login_at' => now()]);
 
-        LoginHistory::create([
-            'user_id' => $user->id,
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'logged_in_at' => now(),
-            'status' => LoginHistory::STATUS_ACTIVE,
-        ]);
+        $this->logLoginAttempt($user->id, $request, LoginHistory::STATUS_ACTIVE);
 
         ActivityLogger::log(
             Activity::ACTION_LOGIN,
@@ -78,6 +81,18 @@ class AuthController extends Controller
 
         return redirect()->intended(route('admin.dashboard'));
     }
+
+    private function logLoginAttempt($userId, Request $request, $status)
+    {
+        LoginHistory::create([
+            'user_id' => $userId,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'logged_in_at' => now(),
+            'status' => $status,
+        ]);
+    }
+
 
     public function logout(Request $request)
     {

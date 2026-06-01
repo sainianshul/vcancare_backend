@@ -418,5 +418,10 @@ class NurseProfile extends Model
     {
         return $this->hasMany(NurseProfileVerification::class);
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'nurse_id');
+    }
 }
 

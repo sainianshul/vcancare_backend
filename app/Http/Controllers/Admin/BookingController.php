@@ -79,7 +79,7 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($id);
         $sessions = $booking->sessions()->orderBy('session_number');
 
-                return \Yajra\DataTables\Facades\DataTables::of($sessions)
+        return datatables()->of($sessions)
             ->addColumn('session_date', function ($session) {
                 return $session->session_date ? $session->session_date->format('d M Y') : '—';
             })
@@ -143,7 +143,7 @@ class BookingController extends Controller
             9 => 'ki-outline ki-notification',
         ];
 
-        return \Yajra\DataTables\Facades\DataTables::of($logs)
+        return datatables()->of($logs)
             ->addColumn('event', function ($log) use ($eventColors, $eventIcons) {
                 $color = $eventColors[$log->event_type] ?? 'dark';
                 $icon = $eventIcons[$log->event_type] ?? 'ki-outline ki-information';
@@ -178,7 +178,7 @@ class BookingController extends Controller
     public function reviewsData($id)
     {
         $booking = Booking::findOrFail($id);
-        
+
         $reviews = \App\Models\NurseReview::with(['user'])
             ->where('booking_id', $booking->id)
             ->latest()
@@ -216,14 +216,14 @@ class BookingController extends Controller
     public function bidsData($id)
     {
         $booking = Booking::with('careRequest')->findOrFail($id);
-        
+
         if (!$booking->careRequest) {
-            return \Yajra\DataTables\Facades\DataTables::of(collect([]))->make(true);
+            return datatables()->of(collect([]))->make(true);
         }
 
         $bids = $booking->careRequest->bids()->with('nurse.user');
 
-                return \Yajra\DataTables\Facades\DataTables::of($bids)
+        return datatables()->of($bids)
             ->addColumn('nurse', function ($bid) {
                 $nurseInfo = '<span class="text-gray-500 fs-7">Unknown</span>';
                 if ($bid->nurse && $bid->nurse->user) {

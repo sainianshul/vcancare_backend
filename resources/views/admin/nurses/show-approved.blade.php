@@ -29,7 +29,7 @@
                             <div class="d-flex align-items-center mb-2">
                                 <span class="text-gray-900 fs-2 fw-bold me-2">{{ $user->name }}</span>
                                 <i class="ki-outline ki-verify fs-1 text-primary me-2" title="Verified Professional"></i>
-                                <x-api-token-badge :token="$apiToken" :user-id="$user->id" />
+
                             </div>
                             <div class="d-flex flex-wrap fw-medium fs-7 mb-4 pe-2">
                                 <span class="d-flex align-items-center text-gray-800 me-5 mb-2">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\BookingSession;
 use App\Services\BookingService;
 use App\Services\CancellationService;
 use App\Services\PaymentService;
@@ -46,6 +47,10 @@ class BookingController extends Controller
     {
         $bookings = $this->bookingService->listForUser($request->user()->id);
 
+        $bookings->getCollection()->transform(function ($booking) {
+            return $booking->getUserBookingArray();
+        });
+
         return ApiResponse::success('Bookings retrieved successfully.', [
             'bookings' => $bookings,
         ]);
@@ -71,7 +76,7 @@ class BookingController extends Controller
         $booking = $this->bookingService->getBookingForUser($bookingId, $request->user()->id);
 
         return ApiResponse::success('Booking retrieved successfully.', [
-            'booking' => $booking,
+            'booking' => $booking->getUserBookingDetailArray(),
         ]);
     }
 
@@ -210,7 +215,7 @@ class BookingController extends Controller
         path: '/api/v1/user/bookings/{booking_id}/cancel',
         operationId: 'cancelUserBooking',
         summary: 'Cancel a booking',
-        description: 'Cancels booking with slab-based refund to wallet.',
+        description: 'Cancels booking with slab-based refund. User chooses refund mode: 1 = Wallet, 2 = Bank Account.',
         security: [['bearerAuth' => []]],
         tags: ['User Bookings'],
         parameters: [
@@ -221,6 +226,7 @@ class BookingController extends Controller
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: 'reason', type: 'string', example: 'Change of plans'),
+                    new OA\Property(property: 'refund_mode', type: 'integer', example: 1, description: '1 = Wallet, 2 = Bank Account'),
                 ]
             )
         ),
@@ -233,12 +239,16 @@ class BookingController extends Controller
     {
         $request->validate([
             'reason' => 'nullable|string|max:500',
+            'refund_mode' => 'nullable|integer|in:1,2',
         ]);
+
+        $refundMode = (int) ($request->refund_mode ?? Booking::REFUND_TO_WALLET);
 
         $result = $this->cancellationService->cancelByUser(
             $bookingId,
             $request->user()->id,
-            $request->reason
+            $request->reason,
+            $refundMode
         );
 
         return ApiResponse::success('Booking cancelled successfully.', $result);
@@ -246,25 +256,100 @@ class BookingController extends Controller
 
 
     #[OA\Get(
-        path: '/api/v1/user/bookings/{booking_id}/otp',
-        operationId: 'getUserBookingOtp',
-        summary: 'Get daily session OTP',
-        description: 'Generates a 6-digit OTP for today\'s session to share with the nurse.',
+        path: '/api/v1/user/sessions/today',
+        operationId: 'todayUserSessions',
+        summary: 'Get today\'s sessions',
+        description: 'Returns a list of today\'s sessions for the user with OTPs.',
+        security: [['bearerAuth' => []]],
+        tags: ['User Bookings'],
+        responses: [
+            new OA\Response(response: 200, description: 'Today\'s sessions retrieved')
+        ]
+    )]
+    public function todaySessions(Request $request)
+    {
+        $sessions = BookingSession::whereHas('booking', function ($query) use ($request) {
+            $query->where('user_id', $request->user()->id)
+                ->whereIn('status', [Booking::STATUS_CONFIRMED, Booking::STATUS_ACTIVE]);
+        })
+            ->where('session_date', now()->format('Y-m-d'))
+            ->with(['booking.careRequest.careType', 'booking.nurse.user'])
+            ->get();
+
+        // Make OTPs visible
+        $sessions->makeVisible(['start_otp', 'end_otp']);
+
+        $formattedSessions = $sessions->map(function ($session) {
+            return $session->getUserSessionArray();
+        });
+
+        return ApiResponse::success('Today\'s sessions retrieved successfully.', [
+            'sessions' => $formattedSessions
+        ]);
+    }
+
+    #[OA\Get(
+        path: '/api/v1/user/bookings/{booking_id}/sessions',
+        operationId: 'listUserBookingSessions',
+        summary: 'List sessions for a booking',
+        description: 'Returns all sessions for a specific booking.',
         security: [['bearerAuth' => []]],
         tags: ['User Bookings'],
         parameters: [
             new OA\Parameter(name: 'booking_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'OTP generated'),
-            new OA\Response(response: 404, description: 'No session today')
+            new OA\Response(response: 200, description: 'Sessions retrieved')
         ]
     )]
-    public function getSessionOtp(Request $request, int $bookingId)
+    public function listSessions(Request $request, int $bookingId)
     {
-        $result = $this->bookingService->getSessionOtp($bookingId, $request->user()->id);
+        $booking = Booking::where('id', $bookingId)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
 
-        return ApiResponse::success('OTP generated for today\'s session.', $result);
+        $sessions = $booking->sessions()->orderBy('session_date')->get();
+
+        $formattedSessions = $sessions->map(function ($session) {
+            return $session->getUserSessionArray();
+        });
+
+        return ApiResponse::success('Sessions retrieved successfully.', [
+            'sessions' => $formattedSessions
+        ]);
+    }
+
+    #[OA\Get(
+        path: '/api/v1/user/bookings/{booking_id}/sessions/{session_id}',
+        operationId: 'showUserBookingSession',
+        summary: 'Show particular session details',
+        description: 'Returns details of a specific session. Includes OTPs if the session is today.',
+        security: [['bearerAuth' => []]],
+        tags: ['User Bookings'],
+        parameters: [
+            new OA\Parameter(name: 'booking_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'session_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Session details retrieved')
+        ]
+    )]
+    public function showSession(Request $request, int $bookingId, int $sessionId)
+    {
+        $session = BookingSession::where('booking_id', $bookingId)
+            ->where('id', $sessionId)
+            ->whereHas('booking', function ($q) use ($request) {
+                $q->where('user_id', $request->user()->id);
+            })
+            ->firstOrFail();
+
+        if ($session->session_date->isToday()) {
+            $session->makeVisible(['start_otp', 'end_otp']);
+        }
+
+        return ApiResponse::success('Session details retrieved successfully.', [
+            'session' => $session->getUserSessionArray()
+        ]);
     }
 
     #[OA\Get(

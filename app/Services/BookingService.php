@@ -45,7 +45,7 @@ class BookingService
     /**
      * Create a booking from a selected bid.
      *
-     * @throws \\Exception
+     * @throws \Exception
      */
     public function createFromBid(int $careRequestId, int $bidId, int $userId): Booking
     {
@@ -103,6 +103,18 @@ class BookingService
                 'completed_sessions' => 0,
                 'status' => Booking::STATUS_PENDING_PAYMENT,
                 'payment_status' => Booking::PAYMENT_UNPAID,
+                'patient_name' => $careRequest->patient_name,
+                'patient_age' => $careRequest->patient_age,
+                'contact_phone' => $careRequest->contact_phone,
+                'secondary_phone' => $careRequest->secondary_phone,
+                'care_type_name' => $careRequest->careType ? $careRequest->careType->name : null,
+                'address' => $careRequest->address,
+                'city' => $careRequest->city,
+                'state' => $careRequest->state,
+                'country' => $careRequest->country,
+                'pincode' => $careRequest->pincode,
+                'latitude' => $careRequest->latitude,
+                'longitude' => $careRequest->longitude,
             ]);
 
             // 2. Mark bid as selected, reject all others
@@ -137,12 +149,17 @@ class BookingService
         $now = now();
 
         foreach ($period as $date) {
+            $startOtp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $endOtp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
             $records[] = [
                 'booking_id' => $booking->id,
                 'session_date' => $date->format('Y-m-d'),
                 'session_number' => $sessionNumber++,
                 'start_time' => $booking->start_time,
                 'end_time' => $booking->end_time,
+                'start_otp' => $startOtp,
+                'end_otp' => $endOtp,
                 'status' => BookingSession::STATUS_UPCOMING,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -157,7 +174,7 @@ class BookingService
     /**
      * Get booking details for a user.
      *
-     * @throws \\Exception
+     * @throws \Exception
      */
     public function getBookingForUser(int $bookingId, int $userId): Booking
     {
@@ -190,12 +207,12 @@ class BookingService
     public function getNurseSchedule(int $nurseId, string $date)
     {
         return BookingSession::whereHas('booking', function ($query) use ($nurseId) {
-                $query->where('nurse_id', $nurseId)
-                    ->whereIn('status', [
-                        Booking::STATUS_CONFIRMED,
-                        Booking::STATUS_ACTIVE,
-                    ]);
-            })
+            $query->where('nurse_id', $nurseId)
+                ->whereIn('status', [
+                    Booking::STATUS_CONFIRMED,
+                    Booking::STATUS_ACTIVE,
+                ]);
+        })
             ->where('session_date', $date)
             ->whereIn('status', [
                 BookingSession::STATUS_UPCOMING,
@@ -223,9 +240,9 @@ class BookingService
     }
 
     /**
-     * Start a session — nurse verifies OTP from patient.
+     * Start a session — nurse verifies start OTP from patient.
      *
-     * @throws \\Exception
+     * @throws \Exception
      */
     public function startSession(int $sessionId, string $otp, int $nurseId): BookingSession
     {
@@ -243,8 +260,8 @@ class BookingService
             throw new InvalidSessionStateException('This session cannot be started.', 409);
         }
 
-        if (!$session->verifyOtp($otp)) {
-            throw new InvalidSessionOtpException('Invalid OTP.', 422);
+        if (!$session->verifyStartOtp($otp)) {
+            throw new InvalidSessionOtpException('Invalid Start OTP.', 422);
         }
 
         $session->update([
@@ -266,9 +283,9 @@ class BookingService
      * End a session — nurse marks it complete.
      * If all sessions done → booking completes and nurse gets paid.
      *
-     * @throws \\Exception
+     * @throws \Exception
      */
-    public function endSession(int $sessionId, int $nurseId, ?string $notes = null): BookingSession
+    public function endSession(int $sessionId, int $nurseId, string $otp, ?string $notes = null): BookingSession
     {
         $session = BookingSession::whereHas('booking', function ($query) use ($nurseId) {
                 $query->where('nurse_id', $nurseId);
@@ -282,6 +299,10 @@ class BookingService
 
         if ($session->status !== BookingSession::STATUS_STARTED) {
             throw new InvalidSessionStateException('This session has not been started yet.', 409);
+        }
+
+        if (!$session->verifyEndOtp($otp)) {
+            throw new InvalidSessionOtpException('Invalid End OTP.', 422);
         }
 
         return DB::transaction(function () use ($session, $notes) {
@@ -306,6 +327,78 @@ class BookingService
     }
 
     /**
+     * Force end a session without OTP.
+     * Nurse must be within the configured distance of the patient's location.
+     *
+     * @throws \Exception
+     */
+    public function forceEndSession(int $sessionId, int $nurseId, string $reason, float $lat, float $lng): BookingSession
+    {
+        $session = BookingSession::whereHas('booking', function ($query) use ($nurseId) {
+                $query->where('nurse_id', $nurseId);
+            })
+            ->with('booking')
+            ->where('id', $sessionId)
+            ->first();
+
+        if (!$session) {
+            throw new SessionNotFoundException('Session not found.', 404);
+        }
+
+        if ($session->status !== BookingSession::STATUS_STARTED) {
+            throw new InvalidSessionStateException('This session has not been started yet.', 409);
+        }
+
+        $booking = $session->booking;
+
+        // Calculate distance
+        $bookingLat = (float) $booking->latitude;
+        $bookingLng = (float) $booking->longitude;
+
+        if ($bookingLat && $bookingLng) {
+            $distance = $this->calculateDistance($lat, $lng, $bookingLat, $bookingLng);
+            $maxDistance = (float) config('care.maximum_diameter_for_force_end', 100);
+
+            if ($distance > $maxDistance) {
+                throw new InvalidSessionStateException('You are too far from the patient location to force end this session. Max allowed: ' . $maxDistance . 'm. Your distance: ' . round($distance) . 'm.', 409);
+            }
+        }
+
+        return DB::transaction(function () use ($session, $reason, $booking) {
+            $session->update([
+                'status' => BookingSession::STATUS_COMPLETED,
+                'ended_at' => now(),
+                'is_forced_end' => true,
+                'force_end_reason' => $reason,
+            ]);
+
+            // Increment completed sessions on booking
+            $booking->increment('completed_sessions');
+            $booking->refresh();
+
+            // If all sessions completed → complete booking and payout nurse
+            if ($booking->completed_sessions >= $booking->total_sessions) {
+                $this->completeBooking($booking);
+            }
+
+            return $session->fresh();
+        });
+    }
+
+    /**
+     * Calculate distance between two points in meters using Haversine formula.
+     */
+    private function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        $earthRadius = 6371000; // in meters
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        return $earthRadius * $c;
+    }
+
+    /**
      * Complete a booking — nurse gets full nurse_amount.
      */
     private function completeBooking(Booking $booking): void
@@ -327,40 +420,4 @@ class BookingService
         );
     }
 
-    /**
-     * Get today's OTP for a session (user-facing — shows to patient).
-     *
-     * @throws \\Exception
-     */
-    public function getSessionOtp(int $bookingId, int $userId): array
-    {
-        $booking = Booking::where('id', $bookingId)
-            ->where('user_id', $userId)
-            ->whereIn('status', [Booking::STATUS_CONFIRMED, Booking::STATUS_ACTIVE])
-            ->first();
-
-        if (!$booking) {
-            throw new BookingNotFoundException('Booking not found or not active.', 404);
-        }
-
-        $today = now()->format('Y-m-d');
-        $session = BookingSession::where('booking_id', $booking->id)
-            ->where('session_date', $today)
-            ->where('status', BookingSession::STATUS_UPCOMING)
-            ->first();
-
-        if (!$session) {
-            throw new SessionNotFoundException('No upcoming session found for today.', 404);
-        }
-
-        // Generate fresh OTP
-        $otp = $session->generateOtp();
-
-        return [
-            'session_id' => $session->id,
-            'session_date' => $session->session_date->format('Y-m-d'),
-            'session_number' => $session->session_number,
-            'otp' => $otp,
-        ];
-    }
 }

@@ -178,15 +178,10 @@
         $(function () {
 
             var table = $('#login-history-table').DataTable({
-
                 serverSide: true,
-
                 processing: false,
-
                 ajax: {
-
                     url: '{{ route('admin.login-history.data') }}',
-
                     data: function (d) {
                         d.status = $('#filter-status').val();
                     }

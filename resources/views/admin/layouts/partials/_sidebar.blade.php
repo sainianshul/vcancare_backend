@@ -254,20 +254,7 @@
                                 <span class="menu-title">Active Bids</span>
                             </a>
                         </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.bids.accepted') ? 'active' : '' }}"
-                                href="{{ route('admin.bids.accepted') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Accepted Bids</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.bids.rejected') ? 'active' : '' }}"
-                                href="{{ route('admin.bids.rejected') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Rejected Bids</span>
-                            </a>
-                        </div>
+
                     </div>
                 </div>
 

@@ -8,21 +8,29 @@ use App\DataTables\Nurses\AllNursesDataTable;
 use App\DataTables\Nurses\UnderReviewNurseDataTable;
 use App\DataTables\Nurses\ApprovedNursesDataTable;
 use App\DataTables\Nurses\RejectedNursesDataTable;
+use App\Http\Requests\Admin\UpdateNurseRequest;
 use App\Models\Activity;
+use App\Models\Booking;
+use App\Models\CareType;
+use App\Models\LoginHistory;
+use App\Models\NurseDocument;
 use App\Models\NurseProfile;
 use App\Models\NurseProfileVerification;
+use App\Models\NurseRequestCache;
+use App\Models\NurseReview;
 use App\Models\User;
+use App\Services\Admin\NurseService;
 use App\Services\OnboardingService;
 use Illuminate\Http\Request;
 
 class NurseController extends Controller
 {
     public function __construct(
-        private readonly OnboardingService $onboardingService,
-        private readonly \App\Services\Admin\NurseService $nurseService
+        private OnboardingService $onboardingService,
+        private NurseService $nurseService
     ) {
     }
-    // ── All ────────────────────────────────────────────────
+    // ── All ───────────────────────────────────────────────
     public function index(AllNursesDataTable $dt)
     {
         return $dt->render('admin.nurses.index');
@@ -68,7 +76,7 @@ class NurseController extends Controller
 
     public function pendingCount()
     {
-        $count = \App\Models\NurseProfile::where('status', \App\Models\NurseProfile::STATUS_UNDER_REVIEW)->count();
+        $count = NurseProfile::where('status', \App\Models\NurseProfile::STATUS_UNDER_REVIEW)->count();
         return response()->json(['count' => $count]);
     }
 
@@ -80,18 +88,17 @@ class NurseController extends Controller
         abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
 
         $profile = $user->nurseProfile;
-        $apiToken = $user->tokens()->latest()->first();
 
         // Route based on status
         if ($profile->status === NurseProfile::STATUS_APPROVED) {
-            return view('admin.nurses.show-approved', compact('user', 'profile', 'apiToken'));
+            return view('admin.nurses.show-approved', compact('user', 'profile'));
         } elseif ($profile->status === NurseProfile::STATUS_UNDER_REVIEW) {
-            return view('admin.nurses.show-review', compact('user', 'profile', 'apiToken'));
+            return view('admin.nurses.show-review', compact('user', 'profile'));
         } elseif ($profile->status === NurseProfile::STATUS_REJECTED) {
-            return view('admin.nurses.show-review', compact('user', 'profile', 'apiToken'));
+            return view('admin.nurses.show-review', compact('user', 'profile'));
         } else {
             // PENDING or SUSPENDED
-            return view('admin.nurses.show-pending', compact('user', 'profile', 'apiToken'));
+            return view('admin.nurses.show-pending', compact('user', 'profile'));
         }
     }
 
@@ -101,13 +108,13 @@ class NurseController extends Controller
         $user = User::with(['nurseProfile', 'nurseProfile.careTypes'])->findOrFail($id);
         abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
 
-        $careTypes = \App\Models\CareType::where('status', 1)->get();
+        $careTypes = CareType::where('status', 1)->get();
 
         return view('admin.nurses.edit', compact('user', 'careTypes'));
     }
 
     // ── Update Profile ────────────────────────────────────
-    public function update(\App\Http\Requests\Admin\UpdateNurseRequest $request, $id)
+    public function update(UpdateNurseRequest $request, $id)
     {
         $user = User::findOrFail($id);
         abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
@@ -138,15 +145,15 @@ class NurseController extends Controller
     {
         $user = User::findOrFail($id);
         abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
-        
+
         $profileId = $user->nurseProfile->id;
 
-        $totalReviews = \App\Models\NurseReview::where('nurse_id', $profileId)->count();
-        $avgRating = \App\Models\NurseReview::where('nurse_id', $profileId)->avg('rating') ?? 0;
-        
-        $totalBookings = \App\Models\Booking::where('nurse_id', $profileId)->count();
-        $completedBookings = \App\Models\Booking::where('nurse_id', $profileId)->where('status', \App\Models\Booking::STATUS_COMPLETED)->count();
-        
+        $totalReviews = NurseReview::where('nurse_id', $profileId)->count();
+        $avgRating = NurseReview::where('nurse_id', $profileId)->avg('rating') ?? 0;
+
+        $totalBookings = Booking::where('nurse_id', $profileId)->count();
+        $completedBookings = Booking::where('nurse_id', $profileId)->where('status', Booking::STATUS_COMPLETED)->count();
+
         $trustScore = $user->nurseProfile->trust_score ?? 100;
         if ($totalBookings > 0) {
             $trustScore = round(($completedBookings / $totalBookings) * 100);
@@ -160,7 +167,7 @@ class NurseController extends Controller
         ]);
     }
 
-    public function reviews(\Illuminate\Http\Request $request, $id)
+    public function reviews(Request $request, $id)
     {
         $user = User::findOrFail($id);
         abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
@@ -171,8 +178,8 @@ class NurseController extends Controller
     public function reviewsData($id)
     {
         $user = User::findOrFail($id);
-        
-        $reviews = \App\Models\NurseReview::with(['user', 'booking'])
+
+        $reviews = NurseReview::with(['user', 'booking'])
             ->where('nurse_id', $user->nurseProfile->id)
             ->latest();
 
@@ -220,7 +227,7 @@ class NurseController extends Controller
     public function bidsData($id)
     {
         $user = User::findOrFail($id);
-        
+
         $bids = \App\Models\RequestBid::with('careRequest')->where('nurse_id', $user->id)->latest();
 
         return datatables()->of($bids)
@@ -231,8 +238,9 @@ class NurseController extends Controller
                 return '<span class="fw-bold text-success fs-6">$' . number_format($bid->total_amount, 2) . '</span>';
             })
             ->editColumn('status', function ($bid) {
-                $statusColor = $bid->status_color; $statusText = $bid->status_text;
-                
+                $statusColor = $bid->status_color;
+                $statusText = $bid->status_text;
+
                 return '<span class="badge badge-light-' . $statusColor . '">' . $statusText . '</span>';
             })
             ->editColumn('created_at', function ($bid) {
@@ -254,12 +262,12 @@ class NurseController extends Controller
     {
         $user = User::findOrFail($id);
         $profileId = $user->nurseProfile->id;
-        
-        $requests = \App\Models\NurseRequestCache::with(['careRequest', 'careRequest.user'])
+
+        $requests = NurseRequestCache::with(['careRequest', 'careRequest.user'])
             ->where('nurse_id', $profileId)
             ->whereIn('status', [
-                \App\Models\NurseRequestCache::STATUS_NOTIFIED,
-                \App\Models\NurseRequestCache::STATUS_VIEWED
+                NurseRequestCache::STATUS_NOTIFIED,
+                NurseRequestCache::STATUS_VIEWED
             ])
             ->where('expires_at', '>', now())
             ->latest();
@@ -315,9 +323,42 @@ class NurseController extends Controller
             'reason' => 'nullable|string',
         ]);
 
+        if ($request->step_id == NurseProfile::STEP_DOCUMENTS && $request->status == NurseProfileVerification::STATUS_APPROVED) {
+            $unapprovedDocumentsCount = NurseDocument::where('nurse_id', $user->nurseProfile->id)
+                ->where('status', '!=', NurseDocument::STATUS_APPROVED)
+                ->count();
+
+            if ($unapprovedDocumentsCount > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You must approve all individual documents before approving the entire documents section.'
+                ]);
+            }
+        }
+
         $this->onboardingService->reviewStep($user, $request->step_id, $request->status, $request->reason);
 
         return response()->json(['success' => true, 'message' => 'Step verification updated.']);
+    }
+
+    public function reviewDocument(Request $request, $id, $documentId)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+
+        $request->validate([
+            'status' => 'required|integer|in:1,2', // 1=Approved, 2=Rejected
+        ]);
+
+        $document = NurseDocument::where('nurse_id', $user->nurseProfile->id)->findOrFail($documentId);
+
+        $document->update([
+            'status' => $request->status,
+            'reviewed_by' => auth()->id(),
+            'reviewed_at' => now(),
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Document status updated.']);
     }
 
     public function getReviewStepView(Request $request, $id, $step)
@@ -351,7 +392,7 @@ class NurseController extends Controller
         return view('admin.nurses.review-steps.' . $viewName, compact('user', 'profile', 'stepId', 'sectionData', 'status', 'verification', 'isReadOnly'));
     }
 
-    public function finalizeReview(\Illuminate\Http\Request $request, $id)
+    public function finalizeReview(Request $request, $id)
     {
         $user = User::findOrFail($id);
         abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
@@ -394,7 +435,7 @@ class NurseController extends Controller
         $user = User::findOrFail($id);
         $profile = $user->nurseProfile;
 
-        $bookings = \App\Models\Booking::with(['user'])
+        $bookings = Booking::with(['user'])
             ->where('nurse_id', $profile->id)
             ->latest();
 
@@ -403,7 +444,8 @@ class NurseController extends Controller
                 return '<a href="' . route('admin.bookings.show', $booking->id) . '" class="text-primary fw-bold text-hover-primary mb-1 fs-6">#' . $booking->reference_id . '</a>';
             })
             ->editColumn('user', function ($booking) {
-                if (!$booking->user) return '<span class="text-muted">Unassigned</span>';
+                if (!$booking->user)
+                    return '<span class="text-muted">Unassigned</span>';
                 $patientUser = $booking->user;
                 $img = $patientUser->avatar_html;
                 return '
@@ -441,8 +483,8 @@ class NurseController extends Controller
     public function loginHistoryData($id)
     {
         $user = User::findOrFail($id);
-        
-        $logins = \App\Models\LoginHistory::where('user_id', $user->id)->latest();
+
+        $logins = LoginHistory::where('user_id', $user->id)->latest();
 
         return datatables()->of($logins)
             ->editColumn('ip_address', function ($login) {

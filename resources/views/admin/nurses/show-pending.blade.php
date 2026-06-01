@@ -59,7 +59,7 @@
                                             <span class="badge badge-light-warning border border-warning fw-semibold px-3 py-1 me-2">
                                                 <i class="ki-outline ki-time fs-7 text-warning me-1"></i> Pending Onboarding
                                             </span>
-                                            <x-api-token-badge :token="$apiToken" :user-id="$user->id" />
+
                                         </div>
 
                                         <div class="d-flex gap-2">

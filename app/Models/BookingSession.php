@@ -24,12 +24,16 @@ class BookingSession extends Model
         'session_number',
         'start_time',
         'end_time',
-        'otp_code',
+        'start_otp',
+        'end_otp',
         'otp_verified_at',
         'started_at',
         'ended_at',
         'status',
         'nurse_notes',
+        'user_notes',
+        'is_forced_end',
+        'force_end_reason',
     ];
 
     protected $casts = [
@@ -40,10 +44,12 @@ class BookingSession extends Model
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
         'status' => 'integer',
+        'is_forced_end' => 'boolean',
     ];
 
     protected $hidden = [
-        'otp_code',
+        'start_otp',
+        'end_otp',
     ];
 
     /*
@@ -91,26 +97,39 @@ class BookingSession extends Model
     */
 
     /**
-     * Generate a fresh 6-digit OTP for this session.
+     * Generate fresh 6-digit OTPs for this session.
      */
-    public function generateOtp(): string
+    public function generateOtps(): array
     {
-        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $startOtp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $endOtp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $this->update([
-            'otp_code' => $otp,
+            'start_otp' => $startOtp,
+            'end_otp' => $endOtp,
             'otp_verified_at' => null,
         ]);
 
-        return $otp;
+        return [
+            'start_otp' => $startOtp,
+            'end_otp' => $endOtp,
+        ];
     }
 
     /**
-     * Verify a given OTP against the stored OTP.
+     * Verify start OTP.
      */
-    public function verifyOtp(string $otp): bool
+    public function verifyStartOtp(string $otp): bool
     {
-        return $this->otp_code === $otp;
+        return $this->start_otp === $otp;
+    }
+
+    /**
+     * Verify end OTP.
+     */
+    public function verifyEndOtp(string $otp): bool
+    {
+        return $this->end_otp === $otp;
     }
 
     /*
@@ -159,6 +178,88 @@ class BookingSession extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    public function getUserSessionArray(): array
+    {
+        $data = [
+            'id' => $this->id,
+            'booking_id' => $this->booking_id,
+            'session_date' => $this->session_date ? $this->session_date->format('Y-m-d') : null,
+            'session_number' => $this->session_number,
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
+            'status' => $this->status,
+            'status_name' => $this->status_text,
+            'otp_verified_at' => $this->otp_verified_at ? $this->otp_verified_at->toIso8601String() : null,
+            'started_at' => $this->started_at ? $this->started_at->toIso8601String() : null,
+            'ended_at' => $this->ended_at ? $this->ended_at->toIso8601String() : null,
+            'nurse_notes' => $this->nurse_notes,
+            'user_notes' => $this->user_notes,
+            'is_forced_end' => $this->is_forced_end,
+            'force_end_reason' => $this->force_end_reason,
+        ];
+
+        // Only include OTPs if they are visible (respects $hidden / makeVisible)
+        $array = $this->toArray();
+        if (array_key_exists('start_otp', $array)) {
+            $data['start_otp'] = $this->start_otp;
+        }
+        if (array_key_exists('end_otp', $array)) {
+            $data['end_otp'] = $this->end_otp;
+        }
+
+        if ($this->relationLoaded('booking') && $this->booking) {
+            // Include care request and nurse details if loaded
+            $data['booking'] = [
+                'id' => $this->booking->id,
+                'reference_id' => $this->booking->reference_id,
+                'care_type_name' => $this->booking->careRequest && $this->booking->careRequest->careType ? $this->booking->careRequest->careType->name : null,
+                'nurse' => $this->booking->nurse && $this->booking->nurse->user ? [
+                    'id' => $this->booking->nurse->id,
+                    'name' => $this->booking->nurse->user->name,
+                    'profile_photo' => $this->booking->nurse->user->profile_photo,
+                ] : null,
+            ];
+        }
+
+        return $data;
+    }
+
+    public function getNurseSessionArray(): array
+    {
+        $data = [
+            'id' => $this->id,
+            'booking_id' => $this->booking_id,
+            'session_date' => $this->session_date ? $this->session_date->format('Y-m-d') : null,
+            'session_number' => $this->session_number,
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
+            'status' => $this->status,
+            'status_name' => $this->status_text,
+            'started_at' => $this->started_at ? $this->started_at->toIso8601String() : null,
+            'ended_at' => $this->ended_at ? $this->ended_at->toIso8601String() : null,
+            'nurse_notes' => $this->nurse_notes,
+            'user_notes' => $this->user_notes,
+            'is_forced_end' => $this->is_forced_end,
+            'force_end_reason' => $this->force_end_reason,
+        ];
+
+        if ($this->relationLoaded('booking') && $this->booking) {
+            $data['booking'] = [
+                'id' => $this->booking->id,
+                'reference_id' => $this->booking->reference_id,
+                'patient_name' => $this->booking->patient_name,
+                'address' => $this->booking->address,
+                'city' => $this->booking->city,
+                'state' => $this->booking->state,
+                'pincode' => $this->booking->pincode,
+                'latitude' => $this->booking->latitude,
+                'longitude' => $this->booking->longitude,
+            ];
+        }
+
+        return $data;
     }
 }
 
