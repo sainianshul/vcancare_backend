@@ -220,7 +220,7 @@
 
                 @include('admin.booking._cancellationinfo')
 
-                @include('admin.booking._timeline')
+                {{-- @include('admin.booking._timeline') --}}
 
                 {{-- Comments Component --}}
                 <x-comments type="{{ \App\Models\Booking::class }}" :model-id="$booking->id" />

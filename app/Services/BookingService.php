@@ -127,6 +127,9 @@ class BookingService
 
             // 3. Update care request status
             $careRequest->update(['status' => CareRequest::STATUS_ACCEPTED]);
+            
+            // Notify winning nurse
+            $bid->nurseProfile->user->notify(new \App\Notifications\BidSelectedNotification($bid));
 
             return $booking;
         });
@@ -275,6 +278,10 @@ class BookingService
         if ($booking->status === Booking::STATUS_CONFIRMED) {
             $booking->update(['status' => Booking::STATUS_ACTIVE]);
         }
+        
+        if (isset($booking->user)) {
+            $booking->user->notify(new \App\Notifications\SessionStartedNotification($session));
+        }
 
         return $session->fresh();
     }
@@ -320,6 +327,10 @@ class BookingService
             // If all sessions completed → complete booking and payout nurse
             if ($booking->completed_sessions >= $booking->total_sessions) {
                 $this->completeBooking($booking);
+            }
+            
+            if (isset($booking->user)) {
+                $booking->user->notify(new \App\Notifications\SessionEndedNotification($session));
             }
 
             return $session->fresh();
@@ -379,6 +390,10 @@ class BookingService
             // If all sessions completed → complete booking and payout nurse
             if ($booking->completed_sessions >= $booking->total_sessions) {
                 $this->completeBooking($booking);
+            }
+            
+            if (isset($booking->user)) {
+                $booking->user->notify(new \App\Notifications\SessionEndedNotification($session));
             }
 
             return $session->fresh();

@@ -228,6 +228,10 @@ class CareRequestService
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
+
+            if (isset($nurse->user)) {
+                $nurse->user->notify(new \App\Notifications\NewCareRequestNotification($careRequest));
+            }
         }
 
         if (!empty($records)) {

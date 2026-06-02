@@ -181,6 +181,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('error-logs/pending-count', [ErrroLogsController::class, 'pendingCount'])->name('errors.pending-count');
         Route::post('error-logs/{id}/status', [ErrroLogsController::class, 'status'])->name('errors.status');
         Route::get('error-logs/{id}', [ErrroLogsController::class, 'show'])->name('errors.show');
+        
+        Route::prefix('communication-logs')->name('communication-logs.')->group(function() {
+            Route::get('/', [\App\Http\Controllers\Admin\System\CommunicationLogController::class, 'index'])->name('index');
+            Route::get('data', [\App\Http\Controllers\Admin\System\CommunicationLogController::class, 'data'])->name('data');
+            Route::post('empty', [\App\Http\Controllers\Admin\System\CommunicationLogController::class, 'empty'])->name('empty');
+        });
 
 
         Route::get('failed-jobs', function () {

@@ -434,6 +434,13 @@
                             </a>
                         </div>
                         <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.system.communication-logs.*') ? 'active' : '' }}"
+                                href="{{ route('admin.system.communication-logs.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Communication Logs</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.system.failed-jobs') ? 'active' : '' }}"
                                 href="{{ route('admin.system.failed-jobs') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>

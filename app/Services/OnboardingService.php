@@ -262,6 +262,8 @@ class OnboardingService
                 'onboarding_step' => NurseProfile::STEP_SUBMIT_FOR_REVIEW,
                 'is_onboarding_completed' => true,
             ]);
+
+            $user->notify(new \App\Notifications\NurseProfileSubmitted());
         });
     }
 
@@ -426,6 +428,9 @@ class OnboardingService
             }
 
             $nurseProfile->update($updateData);
+
+            $statusName = $status == NurseProfile::STATUS_APPROVED ? 'approved' : 'rejected';
+            $user->notify(new \App\Notifications\NurseProfileStatusChanged($statusName, $reason));
         });
     }
 

@@ -52,7 +52,10 @@ class AuthService
 
         $isRegistered = User::where('phone', $phone)->exists();
 
-        // Dispatch SMS Job Here
+        // Dispatch SMS
+        $smsService = app(\App\Contracts\SmsServiceInterface::class);
+        $message = "Welcome to VcanCares! Your OTP for verification is {$otp}. Do not share this with anyone.";
+        $smsService->send($phone, $message);
 
         return [
             'otp' => $otp,

@@ -259,6 +259,15 @@ class CancellationService
                 'status' => CareRequest::STATUS_MATCHING,
             ]);
         }
+        
+        $booking = $booking->fresh();
+        
+        if (isset($booking->user)) {
+            $booking->user->notify(new \App\Notifications\BookingCancelledNotification($booking, 'patient'));
+        }
+        if (isset($booking->nurse->user)) {
+            $booking->nurse->user->notify(new \App\Notifications\BookingCancelledNotification($booking, 'nurse'));
+        }
 
         return [
             'booking' => $booking->fresh(),

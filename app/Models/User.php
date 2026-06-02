@@ -140,6 +140,11 @@ class User extends Authenticatable
         return $this->status === self::STATUS_ACTIVE;
     }
 
+    public function routeNotificationForFcm($notification)
+    {
+        return $this->fcm_token;
+    }
+
     // ─── Scopes ───────────────────────────────
 
     public function scopeActive(Builder $query): Builder
