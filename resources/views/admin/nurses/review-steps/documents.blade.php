@@ -72,7 +72,7 @@
                             <span class="badge badge-light fw-medium text-gray-600 border border-gray-300 fs-8 px-3 py-1">PDF / Image</span>
                         @endif
 
-                        <a href="{{ Storage::url($doc['file_path']) }}" target="_blank" class="btn btn-sm btn-light-primary fw-bold px-4">
+                        <a href="{{ route('nurses.document', $doc['id']) }}" target="_blank" class="btn btn-sm btn-light-primary fw-bold px-4">
                             View File
                         </a>
                     </div>

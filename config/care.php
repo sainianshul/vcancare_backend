@@ -26,6 +26,8 @@ return [
     'matching_attempts' => [
         ['radius_km' => 5,  'time_flex_hours' => 0],
         ['radius_km' => 5,  'time_flex_hours' => 1],
+        ['radius_km' => 7,  'time_flex_hours' => 0],
+        ['radius_km' => 7,  'time_flex_hours' => 1],
         ['radius_km' => 10, 'time_flex_hours' => 0],
         ['radius_km' => 10, 'time_flex_hours' => 1],
     ],

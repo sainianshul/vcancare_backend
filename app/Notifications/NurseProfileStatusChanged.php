@@ -30,8 +30,22 @@ class NurseProfileStatusChanged extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        // Will add 'fcm' later
-        return ['mail'];
+        return ['database', 'mail', \App\Channels\SafeFcmChannel::class];
+    }
+
+    /**
+     * Get the FCM push notification representation.
+     */
+    public function toFcm(object $notifiable)
+    {
+        return [
+            'title' => 'Profile Status Updated',
+            'body' => "Your profile has been {$this->status}.",
+            'data' => [
+                'type' => 'profile_status_changed',
+                'status' => $this->status,
+            ]
+        ];
     }
 
     /**

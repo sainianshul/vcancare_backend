@@ -63,6 +63,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::post('/{user}/review-step', [NurseController::class, 'reviewStep'])->name('review-step');
         Route::post('/{user}/document-review/{document}', [NurseController::class, 'reviewDocument'])->name('document-review');
         Route::post('/{user}/finalize-review', [NurseController::class, 'finalizeReview'])->name('finalize-review');
+        
+        // Secure document download route
+        Route::get('/documents/{document}', [NurseController::class, 'document'])->name('document');
     });
 
     // PEOPLE — Patients
@@ -223,9 +226,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // SYSTEM — Settings
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('general', function () {
-            echo "General Settings";
-        })->name('general');
+        Route::get('general', [\App\Http\Controllers\Admin\SettingController::class, 'general'])->name('general');
+        Route::post('general', [\App\Http\Controllers\Admin\SettingController::class, 'updateGeneral'])->name('general.update');
+        
         Route::get('app', function () {
             echo "App Config";
         })->name('app');

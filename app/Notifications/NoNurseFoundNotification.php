@@ -5,22 +5,20 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
-use App\Models\RequestBid;
+use App\Models\CareRequest;
 
-class BidSelectedNotification extends Notification implements ShouldQueue
+class NoNurseFoundNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $bid;
-
-    
+    public $careRequest;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(RequestBid $bid)
+    public function __construct(CareRequest $careRequest)
     {
-        $this->bid = $bid;
+        $this->careRequest = $careRequest;
     }
 
     /**
@@ -30,11 +28,7 @@ class BidSelectedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        $channels[] = \App\Channels\SafeFcmChannel::class;
-        if (!in_array('database', $channels)) {
-            array_unshift($channels, 'database');
-        }
-        return $channels;
+        return ['database', \App\Channels\SafeFcmChannel::class];
     }
 
     /**
@@ -43,11 +37,11 @@ class BidSelectedNotification extends Notification implements ShouldQueue
     public function toFcm(object $notifiable)
     {
         return [
-            'title' => 'Bid Selected!',
-            'body' => "The patient selected your bid! Waiting for their payment to confirm the booking.",
+            'title' => 'No Nurses Found',
+            'body' => "We couldn't find any nurses matching your request #{$this->careRequest->reference_id} in your area at this moment.",
             'data' => [
-                'type' => 'bid_selected',
-                'bid_id' => $this->bid->id,
+                'type' => 'no_nurse_found',
+                'request_id' => $this->careRequest->id,
             ]
         ];
     }
@@ -60,9 +54,9 @@ class BidSelectedNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'type' => 'bid_selected',
-            'bid_id' => $this->bid->id,
-            'message' => 'Your bid was selected.',
+            'type' => 'no_nurse_found',
+            'request_id' => $this->careRequest->id,
+            'message' => "No nurses found for your request #{$this->careRequest->reference_id}.",
         ];
     }
 }

@@ -202,15 +202,13 @@ class OnboardingService
                     )
                     ->first();
 
-                // Old file + record delete
-
                 if ($existingDocument) {
-                    Storage::disk('public')->delete($existingDocument->file_path);
+                    Storage::disk('local')->delete($existingDocument->file_path);
                     $existingDocument->delete();
                 }
 
                 // Upload new file
-                $filePath = Storage::disk('public')->put('nurse/documents', $data[$field]);
+                $filePath = Storage::disk('local')->put('nurse/documents', $data[$field]);
 
                 // Save new document
                 $nurseProfile->documents()->create([

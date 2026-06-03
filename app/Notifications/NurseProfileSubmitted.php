@@ -26,8 +26,21 @@ class NurseProfileSubmitted extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        // Will add 'fcm' here when the package is installed
-        return ['mail'];
+        return ['database', 'mail', \App\Channels\SafeFcmChannel::class];
+    }
+
+    /**
+     * Get the FCM push notification representation.
+     */
+    public function toFcm(object $notifiable)
+    {
+        return [
+            'title' => 'Profile Submitted',
+            'body' => 'Your profile has been submitted and is under review.',
+            'data' => [
+                'type' => 'profile_submitted',
+            ]
+        ];
     }
 
     /**

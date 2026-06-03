@@ -29,7 +29,7 @@ class BookingConfirmedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        $channels = [TwilioChannel::class]; // SMS
+        $channels = ['database', TwilioChannel::class]; // Database & SMS
         if ($this->targetRole === 'nurse') {
             $channels[] = 'mail';
         }

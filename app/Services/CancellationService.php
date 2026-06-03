@@ -10,6 +10,7 @@ use App\Models\Booking;
 use App\Models\BookingSession;
 use App\Models\CareRequest;
 use App\Models\NurseProfile;
+use App\Contracts\PaymentGatewayInterface;
 use App\Models\WalletTransaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -28,10 +29,12 @@ use Illuminate\Support\Facades\DB;
 class CancellationService
 {
     protected WalletService $walletService;
+    protected PaymentGatewayInterface $gateway;
 
-    public function __construct(WalletService $walletService)
+    public function __construct(WalletService $walletService, PaymentGatewayInterface $gateway)
     {
         $this->walletService = $walletService;
+        $this->gateway = $gateway;
     }
 
     /**
@@ -39,7 +42,7 @@ class CancellationService
      *
      * @throws \\Exception
      */
-    public function cancelByUser(int $bookingId, int $userId, ?string $reason = null, int $refundMode = Booking::REFUND_TO_WALLET): array
+    public function cancelByUser(int $bookingId, int $userId, ?string $reason = null): array
     {
         $booking = Booking::where('id', $bookingId)
             ->where('user_id', $userId)
@@ -53,13 +56,13 @@ class CancellationService
             throw new InvalidBookingStateException('This booking cannot be cancelled.', 409);
         }
 
-        return DB::transaction(function () use ($booking, $reason, $refundMode) {
+        return DB::transaction(function () use ($booking, $reason) {
             $refundAmount = 0.0;
             $nursePayoutAmount = 0.0;
 
             // Case 1: Not yet paid — free cancel
             if ($booking->status === Booking::STATUS_PENDING_PAYMENT) {
-                return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount, $refundMode);
+                return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount);
             }
 
             // Case 2: Paid — calculate slab-based refund on remaining
@@ -76,18 +79,20 @@ class CancellationService
                 $nursePayoutAmount = round((float) $booking->nurse_per_session_rate * $booking->completed_sessions, 2);
             }
 
-            // Process refund based on user's chosen mode
+            // Process gateway refund for patient
             if ($refundAmount > 0) {
-                if ($refundMode === Booking::REFUND_TO_WALLET) {
-                    $this->walletService->credit(
-                        $booking->user_id,
-                        $refundAmount,
-                        WalletTransaction::REASON_CANCELLATION_REFUND,
-                        "Refund for cancelled booking {$booking->reference_id} ({$refundPercent}% of remaining)",
-                        $booking->id
-                    );
+                if ($booking->gateway_payment_id) {
+                    $amountInPaise = (int) round($refundAmount * 100);
+                    try {
+                        $this->gateway->createRefund($booking->gateway_payment_id, $amountInPaise, "User cancelled booking " . $booking->reference_id);
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::error("Gateway refund failed during user cancellation", [
+                            "booking_id" => $booking->id,
+                            "error" => $e->getMessage()
+                        ]);
+                        // Proceeding with cancellation even if refund fails (can be handled manually or retried)
+                    }
                 }
-                // For REFUND_TO_BANK: amount is recorded, admin processes the bank transfer manually
             }
 
             // Process nurse payout for completed sessions
@@ -104,7 +109,7 @@ class CancellationService
                 }
             }
 
-            return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount, $refundMode);
+            return $this->performCancel($booking, Booking::CANCELLED_BY_USER, $reason, $refundAmount, $nursePayoutAmount);
         });
     }
 
@@ -137,13 +142,17 @@ class CancellationService
                 $refundAmount = round((float) $booking->per_session_rate * $remainingSessions, 2);
 
                 if ($refundAmount > 0) {
-                    $this->walletService->credit(
-                        $booking->user_id,
-                        $refundAmount,
-                        WalletTransaction::REASON_CANCELLATION_REFUND,
-                        "Full refund — nurse cancelled booking {$booking->reference_id}",
-                        $booking->id
-                    );
+                    if ($booking->gateway_payment_id) {
+                        $amountInPaise = (int) round($refundAmount * 100);
+                        try {
+                            $this->gateway->createRefund($booking->gateway_payment_id, $amountInPaise, "Nurse cancelled booking " . $booking->reference_id);
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error("Gateway refund failed during nurse cancellation", [
+                                "booking_id" => $booking->id,
+                                "error" => $e->getMessage()
+                            ]);
+                        }
+                    }
                 }
 
                 // Pay nurse for completed sessions only (nurse rate, not total)
@@ -227,7 +236,6 @@ class CancellationService
         ?string $reason,
         float $refundAmount,
         float $nursePayoutAmount,
-        int $refundMode = Booking::REFUND_TO_WALLET
     ): array {
         // Cancel all upcoming sessions
         BookingSession::where('booking_id', $booking->id)
@@ -259,9 +267,9 @@ class CancellationService
                 'status' => CareRequest::STATUS_MATCHING,
             ]);
         }
-        
+
         $booking = $booking->fresh();
-        
+
         if (isset($booking->user)) {
             $booking->user->notify(new \App\Notifications\BookingCancelledNotification($booking, 'patient'));
         }
@@ -272,8 +280,6 @@ class CancellationService
         return [
             'booking' => $booking->fresh(),
             'refund_amount' => $refundAmount,
-            'refund_mode' => $refundMode,
-            'refund_mode_name' => Booking::getRefundModeList()[$refundMode] ?? 'Unknown',
             'nurse_payout_amount' => $nursePayoutAmount,
             'cancelled_by' => $cancelledBy,
         ];

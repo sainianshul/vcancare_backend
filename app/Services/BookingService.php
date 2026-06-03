@@ -129,7 +129,7 @@ class BookingService
             $careRequest->update(['status' => CareRequest::STATUS_ACCEPTED]);
             
             // Notify winning nurse
-            $bid->nurseProfile->user->notify(new \App\Notifications\BidSelectedNotification($bid));
+            // Notification removed as per request
 
             return $booking;
         });

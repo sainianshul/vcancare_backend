@@ -43,13 +43,13 @@
                 <div class="d-flex justify-content-between flex-column-auto mb-10 w-100" style="max-width: 420px;">
                     <a href="#" class="d-flex align-items-center">
                         <span class="text-gray-900 fw-bolder fs-2">
-                            Vcan<span class="text-primary">cares</span>
+                            Vcan<span class="text-primary">care</span>
                         </span>
                     </a>
                     <span class="badge badge-light-primary fw-semibold fs-8 px-4 py-2">Admin Portal</span>
                 </div>
 
-                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-100 p-10 border border-gray-200" style="max-width: 420px;">
+                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-100 p-10 border border-gray-400 shadow-sm" style="max-width: 420px;">
 
                     <div class="d-flex flex-center flex-column flex-column-fluid pb-5">
                         <h1 class="text-gray-900 fw-bolder mb-2 fs-2x">Sign in</h1>
@@ -75,9 +75,9 @@
                             <label class="form-label fw-semibold text-gray-700 fs-7 mb-2 required">
                                 Email Address
                             </label>
-                            <div class="input-group input-group-solid border rounded-2">
-                                <span class="input-group-text">
-                                    <i class="ki-outline ki-sms fs-4 text-gray-400"></i>
+                            <div class="input-group border border-gray-400 rounded-2">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="ki-outline ki-sms fs-4 text-gray-500"></i>
                                 </span>
                                 <input
                                     type="email"
@@ -86,7 +86,7 @@
                                     value="{{ old('email') }}"
                                     placeholder="admin@vcancare.com"
                                     autocomplete="off"
-                                    class="form-control form-control-transparent border border-gray-800 text-gray-900 @error('email') is-invalid @enderror"
+                                    class="form-control form-control-transparent border-0 text-gray-900 @error('email') is-invalid @enderror"
                                 />
                             </div>
                             @error('email')
@@ -102,9 +102,9 @@
                             <label class="form-label fw-semibold text-gray-700 fs-7 mb-2 required">
                                 Password
                             </label>
-                            <div class="input-group input-group-solid border rounded-2" id="kt_password_input">
-                                <span class="input-group-text">
-                                    <i class="ki-outline ki-lock-2 fs-4 text-gray-400"></i>
+                            <div class="input-group border border-gray-400 rounded-2" id="kt_password_input">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="ki-outline ki-lock-2 fs-4 text-gray-500"></i>
                                 </span>
                                 <input
                                     type="password"
@@ -112,10 +112,10 @@
                                     id="password"
                                     placeholder="Enter your password"
                                     autocomplete="off"
-                                    class="form-control form-control-transparent border border-gray-800 text-gray-900 @error('password') is-invalid @enderror"
+                                    class="form-control form-control-transparent border-0 text-gray-900 @error('password') is-invalid @enderror"
                                 />
-                                <span class="btn btn-icon" id="kt_password_toggle">
-                                    <i class="ki-outline ki-eye fs-4" id="eye_icon"></i>
+                                <span class="btn btn-icon bg-transparent border-0" id="kt_password_toggle">
+                                    <i class="ki-outline ki-eye fs-4 text-gray-500" id="eye_icon"></i>
                                 </span>
                             </div>
                             @error('password')

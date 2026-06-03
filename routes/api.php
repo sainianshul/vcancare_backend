@@ -61,8 +61,6 @@ Route::prefix('v1')->group(function () {
             Route::get('bookings/{booking_id}/sessions/{session_id}', [UserBookingController::class, 'showSession']);
             Route::post('bookings/{booking_id}/review', [\App\Http\Controllers\Api\User\NurseReviewController::class, 'store']);
 
-            // Wallet
-            Route::get('wallet', [UserBookingController::class, 'wallet']);
         });
 
         // Nurse Routes

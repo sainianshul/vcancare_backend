@@ -25,8 +25,7 @@ class SessionEndedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        $channels[] = \App\Channels\SafeFcmChannel::class;
-        return $channels;
+        return ['database', \App\Channels\SafeFcmChannel::class];
     }
 
     public function toFcm(object $notifiable)

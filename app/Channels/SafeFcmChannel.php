@@ -18,7 +18,7 @@ class SafeFcmChannel
 
         try {
             $data = $notification->toFcm($notifiable);
-            
+
             // If the notification already returns an FcmMessage, use it
             if ($data instanceof FcmMessage) {
                 $fcmMessage = $data;
@@ -36,26 +36,27 @@ class SafeFcmChannel
 
                 $fcmMessage = FcmMessage::create()
                     ->setData($stringPayload)
-                    ->setNotification(FcmNotification::create()
-                        ->setTitle($title)
-                        ->setBody($body)
+                    ->setNotification(
+                        FcmNotification::create()
+                            ->setTitle($title)
+                            ->setBody($body)
                     );
             }
 
-            // Temporarily replace the notification's toFcm method dynamically if possible,
-            // or just use the FcmChannel manually. The laravel-notification-channels/fcm
-            // expects the notification to have a toFcm method that returns an FcmMessage.
-            // Since we intercepted it, we will create an anonymous class wrapper or mock it.
-            
-            $wrapper = new class($fcmMessage) extends Notification {
-                public function __construct(private FcmMessage $msg) {}
-                public function toFcm($notifiable) { return $this->msg; }
+            // Create an anonymous class wrapper to satisfy the FcmChannel requirement
+
+            $wrapper = new class ($fcmMessage) extends Notification {
+                public function __construct(private FcmMessage $msg)
+                {}
+                public function toFcm($notifiable)
+                {
+                    return $this->msg; }
             };
 
             app(FcmChannel::class)->send($notifiable, $wrapper);
 
         } catch (\Throwable $e) {
-            // "bs fte nhi" - Catch everything so the app doesn't crash if Firebase credentials are missing
+            //  Catch everything so the app doesn't crash if Firebase credentials are missing
             Log::warning('FCM Notification Failed (Credentials might be missing): ' . $e->getMessage());
         }
     }

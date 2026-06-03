@@ -37,6 +37,7 @@
 $(document).ready(function () {
     // ── Notified Nurses DataTable ─────────────────────────────────────
     let nursesTable = $('#notified-nurses-table').DataTable({
+        destroy: true, // Prevents re-initialization errors if re-loaded
         serverSide: true,
         processing: false,
         ajax: {

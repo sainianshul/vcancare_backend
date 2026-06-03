@@ -408,11 +408,11 @@ class NurseController extends Controller
 
         $this->onboardingService->finalizeReview($user, $request->status, $request->reason, $request->can_reapply);
 
-        $actionType = $request->status == NurseProfile::STATUS_APPROVED
-            ? Activity::ACTION_APPROVED
-            : Activity::ACTION_REJECTED;
+        $actionType = $request->status == \App\Models\NurseProfile::STATUS_APPROVED
+            ? \App\Models\Activity::ACTION_APPROVED
+            : \App\Models\Activity::ACTION_REJECTED;
 
-        ActivityLogger::log(
+        \App\Helpers\ActivityLogger::log(
             $actionType,
             'Admin finalized application review.',
             $user->nurseProfile,

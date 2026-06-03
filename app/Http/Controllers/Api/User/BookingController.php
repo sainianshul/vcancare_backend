@@ -226,7 +226,6 @@ class BookingController extends Controller
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: 'reason', type: 'string', example: 'Change of plans'),
-                    new OA\Property(property: 'refund_mode', type: 'integer', example: 1, description: '1 = Wallet, 2 = Bank Account'),
                 ]
             )
         ),
@@ -239,16 +238,12 @@ class BookingController extends Controller
     {
         $request->validate([
             'reason' => 'nullable|string|max:500',
-            'refund_mode' => 'nullable|integer|in:1,2',
         ]);
-
-        $refundMode = (int) ($request->refund_mode ?? Booking::REFUND_TO_WALLET);
 
         $result = $this->cancellationService->cancelByUser(
             $bookingId,
             $request->user()->id,
-            $request->reason,
-            $refundMode
+            $request->reason
         );
 
         return ApiResponse::success('Booking cancelled successfully.', $result);
@@ -352,24 +347,5 @@ class BookingController extends Controller
         ]);
     }
 
-    #[OA\Get(
-        path: '/api/v1/user/wallet',
-        operationId: 'getUserWallet',
-        summary: 'Get wallet details',
-        description: 'Returns wallet balance and paginated transaction history.',
-        security: [['bearerAuth' => []]],
-        tags: ['User Wallet'],
-        responses: [
-            new OA\Response(response: 200, description: 'Wallet details')
-        ]
-    )]
-    public function wallet(Request $request)
-    {
-        $userId = $request->user()->id;
 
-        return ApiResponse::success('Wallet details retrieved.', [
-            'balance' => $this->walletService->getBalance($userId),
-            'transactions' => $this->walletService->getTransactions($userId),
-        ]);
-    }
 }

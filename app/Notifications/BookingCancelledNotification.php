@@ -29,7 +29,7 @@ class BookingCancelledNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        $channels = [TwilioChannel::class]; // SMS
+        $channels = ['database', TwilioChannel::class]; // Database & SMS
         if ($this->targetRole === 'nurse') {
             $channels[] = 'mail';
         }
@@ -50,7 +50,7 @@ class BookingCancelledNotification extends Notification implements ShouldQueue
     {
         return [
             'title' => 'Booking Cancelled',
-            'body' => $this->targetRole === 'patient' 
+            'body' => $this->targetRole === 'patient'
                 ? "URGENT: Booking #{$this->booking->reference_id} cancelled. Your refund has been initiated."
                 : "URGENT: Booking #{$this->booking->reference_id} was cancelled by the patient. Do not visit.",
             'data' => [
@@ -66,11 +66,11 @@ class BookingCancelledNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject("URGENT: Booking Cancelled - #{$this->booking->reference_id}")
-                    ->greeting("Hello {$notifiable->name},")
-                    ->line("The booking #{$this->booking->reference_id} scheduled for {$this->booking->start_date} has been cancelled.")
-                    ->line("Please DO NOT visit the patient location.")
-                    ->action('View Schedule', url('/'));
+            ->subject("URGENT: Booking Cancelled - #{$this->booking->reference_id}")
+            ->greeting("Hello {$notifiable->name},")
+            ->line("The booking #{$this->booking->reference_id} scheduled for {$this->booking->start_date} has been cancelled.")
+            ->line("Please DO NOT visit the patient location.")
+            ->action('View Schedule', url('/'));
     }
 
     /**
