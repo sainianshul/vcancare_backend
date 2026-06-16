@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- Profile Header -->
-    <div class="card shadow-sm border-0 mb-5 mb-xl-8">
+    <div class="card shadow-sm border border-gray-200 mb-5 mb-xl-8">
         <div class="card-body pt-9 pb-0">
             <div class="d-flex flex-wrap flex-sm-nowrap">
                 
@@ -87,63 +87,7 @@
                         </div>
                     </div>
 
-                    <!-- Stats Row -->
-                    <div class="d-flex flex-wrap flex-stack border-top border-gray-200 border-dashed pt-5 pb-2 mt-2">
-                        <div class="row w-100 g-4">
-                            <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
-                                    <div class="w-40px h-40px bg-light-warning rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
-                                        <i class="ki-outline ki-star fs-3 text-warning"></i>
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Avg Rating</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-avg-rating">
-                                            <span class="spinner-border spinner-border-sm text-warning align-middle" role="status"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
-                                    <div class="w-40px h-40px bg-light-success rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
-                                        <i class="ki-outline ki-message-text-2 fs-3 text-success"></i>
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Total Reviews</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-total-reviews">
-                                            <span class="spinner-border spinner-border-sm text-success align-middle" role="status"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
-                                    <div class="w-40px h-40px bg-light-primary rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
-                                        <i class="ki-outline ki-shield-tick fs-3 text-primary"></i>
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Trust Score</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-trust-score">
-                                            <span class="spinner-border spinner-border-sm text-primary align-middle" role="status"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="border border-gray-300 rounded px-4 py-3 bg-body d-flex align-items-center transition-all hover-scale h-100 shadow-sm">
-                                    <div class="w-40px h-40px bg-light-info rounded d-flex align-items-center justify-content-center me-3 flex-shrink-0">
-                                        <i class="ki-outline ki-briefcase fs-3 text-info"></i>
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <div class="fw-medium fs-8 text-gray-500 mb-1 text-uppercase tracking-wider">Jobs Done</div>
-                                        <div class="fs-4 fw-bold text-gray-900 lh-1" id="stat-jobs-done">
-                                            <span class="spinner-border spinner-border-sm text-info align-middle" role="status"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
@@ -182,51 +126,51 @@
             <div class="col-lg-8">
                 
                 <!-- About Details -->
-                <div class="card shadow-sm border-0 border-gray-300 mb-7">
-                    <div class="card-header border-0 pt-4 min-h-50px">
+                <div class="card shadow-sm border border-gray-200 mb-7">
+                    <div class="card-header border-bottom border-gray-200 pt-5 pb-4 min-h-50px">
                         <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">Professional Details</h3>
                     </div>
                     <div class="card-body pt-2 pb-5">
                         <div class="d-flex flex-wrap gap-4 mb-5">
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-3 mb-3 flex-grow-1">
+                            <div class="border border-gray-200 rounded py-3 px-4 me-3 mb-3 flex-grow-1">
                                 <div class="d-flex align-items-center mb-1">
-                                    <i class="ki-outline ki-medal-star fs-3 text-warning me-2"></i>
+                                    <i class="ki-outline ki-medal-star fs-4 text-primary me-2"></i>
                                     <div class="fs-6 fw-bold text-gray-900">{{ $profile->years_of_experience ?? 0 }} Years</div>
                                 </div>
-                                <div class="fw-semibold fs-8 text-gray-600">Experience</div>
+                                <div class="text-gray-500 text-uppercase fw-bold fs-9">Experience</div>
                             </div>
                             
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-3 mb-3 flex-grow-1">
+                            <div class="border border-gray-200 rounded py-3 px-4 me-3 mb-3 flex-grow-1">
                                 <div class="d-flex align-items-center mb-1">
-                                    <i class="ki-outline ki-document fs-3 text-primary me-2"></i>
+                                    <i class="ki-outline ki-document fs-4 text-primary me-2"></i>
                                     <div class="fs-6 fw-bold text-gray-900">{{ $profile->license_number ?? 'N/A' }}</div>
                                 </div>
-                                <div class="fw-semibold fs-8 text-gray-600">License Number</div>
+                                <div class="text-gray-500 text-uppercase fw-bold fs-9">License Number</div>
                             </div>
 
-                            <div class="border border-gray-300 border-dashed rounded py-3 px-4 mb-3 flex-grow-1">
+                            <div class="border border-gray-200 rounded py-3 px-4 mb-3 flex-grow-1">
                                 <div class="d-flex align-items-center mb-1">
-                                    <i class="ki-outline ki-profile-user fs-3 text-success me-2"></i>
+                                    <i class="ki-outline ki-profile-user fs-4 text-primary me-2"></i>
                                     <div class="fs-6 fw-bold text-gray-900">
                                         @if($profile->gender == \App\Models\NurseProfile::GENDER_MALE) Male
                                         @elseif($profile->gender == \App\Models\NurseProfile::GENDER_FEMALE) Female
                                         @else Other @endif
                                     </div>
                                 </div>
-                                <div class="fw-semibold fs-8 text-gray-600">Gender</div>
+                                <div class="text-gray-500 text-uppercase fw-bold fs-9">Gender</div>
                             </div>
                         </div>
 
                         <div class="row g-4">
                             <div class="col-sm-6">
-                                <div class="bg-light-info rounded p-3 border border-info border-dashed">
-                                    <span class="text-info fw-semibold d-block fs-8 mb-1">Phone Number</span>
+                                <div class="bg-white rounded p-4 border border-primary border-dashed">
+                                    <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Phone Number</span>
                                     <span class="fw-bold fs-7 text-gray-900">{{ $user->phone ?? 'N/A' }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-6">
-                                <div class="bg-light-primary rounded p-3 border border-primary border-dashed">
-                                    <span class="text-primary fw-semibold d-block fs-8 mb-1">Email Address</span>
+                                <div class="bg-white rounded p-4 border border-primary border-dashed">
+                                    <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Email Address</span>
                                     <span class="fw-bold fs-7 text-gray-900 text-truncate d-block">{{ $user->email ?? 'N/A' }}</span>
                                 </div>
                             </div>
@@ -236,7 +180,7 @@
 
                 <!-- Earnings / Bookings Graph -->
                 <div class="card shadow-sm border border-gray-300 mb-7">
-                    <div class="card-header border-0 pt-4 min-h-50px">
+                    <div class="card-header border-bottom border-gray-200 pt-5 pb-4 min-h-50px">
                         <h3 class="card-title fw-bold text-gray-900 fs-5 mb-0">Monthly Bookings & Activity</h3>
                         <div class="card-toolbar">
                             <button class="btn btn-sm btn-light border border-gray-300 text-gray-700 fw-medium px-3 py-1 fs-8">
@@ -255,7 +199,7 @@
                 
                 <!-- Location Card (Matching Request UI) -->
                 <div class="card shadow-sm border border-gray-300 mb-7">
-                    <div class="card-header border-0 pt-4 min-h-50px">
+                    <div class="card-header border-bottom border-gray-200 pt-5 pb-4 min-h-50px">
                         <h3 class="card-title align-items-start flex-column">
                             <span class="card-label fw-bold fs-5 mb-0 text-gray-900">Location</span>
                         </h3>
@@ -264,28 +208,28 @@
                         <div class="d-flex align-items-start mb-4">
                             <span class="bullet bullet-vertical h-30px bg-success me-3 mt-1"></span>
                             <div class="flex-grow-1">
-                                <span class="text-gray-600 fw-semibold d-block fs-8">Full Address</span>
+                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">Full Address</span>
                                 <span class="fw-bold fs-7 text-gray-900">{{ $profile->address ?? 'N/A' }}</span>
                             </div>
                         </div>
                         <div class="d-flex align-items-start mb-4">
                             <span class="bullet bullet-vertical h-30px bg-dark me-3 mt-1"></span>
                             <div class="flex-grow-1">
-                                <span class="text-gray-600 fw-semibold d-block fs-8">Coordinates (Lat / Lng)</span>
+                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">Coordinates (Lat / Lng)</span>
                                 <span class="fw-bold fs-7 text-gray-900">{{ $profile->latitude ?? 'N/A' }} / {{ $profile->longitude ?? 'N/A' }}</span>
                             </div>
                         </div>
                         <div class="d-flex align-items-start mb-4">
                             <span class="bullet bullet-vertical h-30px bg-primary me-3 mt-1"></span>
                             <div class="flex-grow-1">
-                                <span class="text-gray-600 fw-semibold d-block fs-8">City & State</span>
+                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">City & State</span>
                                 <span class="fw-bold fs-7 text-gray-900">{{ $profile->city ?? 'N/A' }}, {{ $profile->state ?? 'N/A' }}</span>
                             </div>
                         </div>
                         <div class="d-flex align-items-start">
                             <span class="bullet bullet-vertical h-30px bg-warning me-3 mt-1"></span>
                             <div class="flex-grow-1">
-                                <span class="text-gray-600 fw-semibold d-block fs-8">Country & Pincode</span>
+                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">Country & Pincode</span>
                                 <span class="fw-bold fs-7 text-gray-900">{{ $profile->country ?? 'N/A' }} - {{ $profile->pincode ?? 'N/A' }}</span>
                             </div>
                         </div>
@@ -393,21 +337,7 @@
 
     // Tab AJAX Loading Logic
     document.addEventListener('DOMContentLoaded', function() {
-        // Fetch Nurse Stats
-        fetch('{{ route('admin.nurses.stats', $user->id) }}')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('stat-avg-rating').innerHTML = data.avg_rating;
-                document.getElementById('stat-total-reviews').innerHTML = data.total_reviews;
-                document.getElementById('stat-trust-score').innerHTML = data.trust_score + '%';
-                document.getElementById('stat-jobs-done').innerHTML = data.jobs_done;
-            })
-            .catch(error => {
-                document.getElementById('stat-avg-rating').innerHTML = '-';
-                document.getElementById('stat-total-reviews').innerHTML = '-';
-                document.getElementById('stat-trust-score').innerHTML = '-';
-                document.getElementById('stat-jobs-done').innerHTML = '-';
-            });
+
 
         initChart();
 
@@ -523,7 +453,7 @@
                     setTimeout(() => {
                         container.innerHTML = `
                             <div class="card shadow-none border border-gray-300 bg-body">
-                                <div class="card-header border-0 pt-6">
+                                <div class="card-header border-bottom border-gray-200 pt-5 pb-4">
                                     <h3 class="card-title fw-bold text-gray-900 fs-5 text-capitalize">${targetTab.replace('-', ' ')}</h3>
                                 </div>
                                 <div class="card-body pt-4">

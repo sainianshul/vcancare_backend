@@ -34,7 +34,7 @@
             <div class="col-lg-8">
                 <div class="card mb-7 border border-gray-300" id="kt_chat_messenger" style="box-shadow: none;">
                     <!-- Card header -->
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-4 min-h-50px" id="kt_chat_messenger_header">
+                    <div class="card-header border-bottom border-gray-200 pt-5 pb-4 min-h-50px" id="kt_chat_messenger_header">
                         <div class="card-title w-100 m-0">
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <div class="d-flex flex-column">
@@ -187,8 +187,8 @@
             <div class="col-lg-4">
                 
                 {{-- Ticket Info Card --}}
-                <div class="card mb-7 border border-gray-300" style="box-shadow: none;">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-4 min-h-40px">
+                <div class="card shadow-sm border border-gray-200 mb-7">
+                    <div class="card-header border-bottom border-gray-200 pt-5 pb-4 min-h-40px">
                         <h3 class="card-title align-items-center m-0">
                             <span class="card-label fw-bold fs-6 text-gray-900">Ticket Settings</span>
                         </h3>
@@ -199,7 +199,7 @@
                             
                             {{-- Status Updater --}}
                             <div class="d-flex flex-column">
-                                <span class="text-dark fw-normal fs-8 mb-2">Current Status</span>
+                                <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2">Current Status</span>
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-light-{{ $ticket->status_color }} border border-{{ $ticket->status_color }} dropdown-toggle w-100 fw-semibold fs-7 d-flex justify-content-between align-items-center px-3 py-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span>{{ $ticket->status_text }}</span>
@@ -224,14 +224,14 @@
 
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center">
-                                    <span class="text-dark fw-normal fs-7">Priority</span>
+                                    <span class="text-gray-500 text-uppercase fw-bold fs-9">Priority</span>
                                 </div>
                                 <span class="badge badge-light-{{ $ticket->priority == 1 ? 'success' : ($ticket->priority == 2 ? 'warning' : 'danger') }} border border-{{ $ticket->priority == 1 ? 'success' : ($ticket->priority == 2 ? 'warning' : 'danger') }} px-2 py-1 fw-semibold fs-8">{{ $ticket->priority_text }}</span>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center">
-                                    <span class="text-dark fw-normal fs-7">Created At</span>
+                                    <span class="text-gray-500 text-uppercase fw-bold fs-9">Created At</span>
                                 </div>
                                 <span class="text-gray-900 fw-medium fs-7">{{ $ticket->created_at ? $ticket->created_at->format('d M Y, h:i A') : 'N/A' }}</span>
                             </div>
@@ -239,7 +239,7 @@
                             @if($ticket->resolved_at)
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center">
-                                        <span class="text-dark fw-normal fs-7">Resolved At</span>
+                                        <span class="text-gray-500 text-uppercase fw-bold fs-9">Resolved At</span>
                                     </div>
                                     <span class="text-gray-900 fw-medium fs-7">{{ $ticket->resolved_at->format('d M Y, h:i A') }}</span>
                                 </div>
@@ -250,8 +250,8 @@
                 </div>
 
                 {{-- User Profile Card --}}
-                <div class="card mb-7 border border-gray-300" style="box-shadow: none;">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-4 min-h-40px">
+                <div class="card shadow-sm border border-gray-200 mb-7">
+                    <div class="card-header border-bottom border-gray-200 pt-5 pb-4 min-h-40px">
                         <h3 class="card-title align-items-center m-0">
                             <span class="card-label fw-bold fs-6 text-gray-900">User Profile</span>
                         </h3>

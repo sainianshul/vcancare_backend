@@ -15,9 +15,9 @@
                 </ul>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <div class="d-flex align-items-center bg-light border border-gray-300 rounded px-4 py-2">
-                    <i class="ki-outline ki-calendar fs-5 text-gray-600 me-2"></i>
-                    <span class="text-gray-700 fw-medium fs-7">{{ now()->format('l, d M Y') }}</span>
+                <div class="d-flex align-items-center bg-white border border-gray-300 shadow-sm rounded px-3 py-2">
+                    <i class="ki-outline ki-calendar fs-6 text-gray-600 me-2"></i>
+                    <span class="text-gray-700 fw-bold fs-7">{{ now()->format('l, d M Y') }}</span>
                 </div>
             </div>
         </div>
@@ -35,99 +35,75 @@
             <!--end::Alerts-->
 
             <!--begin::Row 1 (Stats)-->
-            <div class="row g-5 g-xl-8 mb-xl-8">
-                <!-- Patients -->
-                <div class="col-xl-3">
-                    <div class="card hover-elevate-up shadow-sm border-0">
-                        <div class="card-body p-6">
-                            <div class="d-flex align-items-center mb-5">
-                                <div class="symbol symbol-50px me-3">
-                                    <div class="symbol-label bg-light-primary">
-                                        <i class="ki-outline ki-people fs-1 text-primary"></i>
-                                    </div>
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-primary text-white mb-4 shadow-sm border-0">
+                        <div class="card-body py-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-white-50 small text-uppercase fw-bold mb-1">Total Patients</div>
+                                    <div class="fs-1 fw-bolder" id="stat-total-patients"><span class="spinner-border spinner-border-sm text-white" role="status"></span></div>
                                 </div>
-                                <div class="d-flex flex-column">
-                                    <a href="{{ route('admin.patients.index') }}" class="text-gray-800 text-hover-primary fw-bold fs-5">Patients</a>
-                                    <span class="text-gray-500 fw-semibold fs-7">Registered Users</span>
-                                </div>
+                                <i class="ki-outline ki-people fs-3x text-white opacity-50"></i>
                             </div>
-                            <div class="d-flex justify-content-between align-items-end">
-                                <div class="fs-2hx fw-bold text-gray-900" id="stat-total-patients">
-                                    <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between border-0 py-3">
+                            <a class="small text-white stretched-link text-decoration-none fw-bold" href="{{ route('admin.patients.index') }}">View Details</a>
+                            <div class="small text-white"><i class="ki-outline ki-arrow-right text-white"></i></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Nurses -->
-                <div class="col-xl-3">
-                    <div class="card hover-elevate-up shadow-sm border-0">
-                        <div class="card-body p-6">
-                            <div class="d-flex align-items-center mb-5">
-                                <div class="symbol symbol-50px me-3">
-                                    <div class="symbol-label bg-light-success">
-                                        <i class="ki-outline ki-shield-tick fs-1 text-success"></i>
-                                    </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-success text-white mb-4 shadow-sm border-0">
+                        <div class="card-body py-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-white-50 small text-uppercase fw-bold mb-1">Approved Nurses</div>
+                                    <div class="fs-1 fw-bolder" id="stat-total-nurses"><span class="spinner-border spinner-border-sm text-white" role="status"></span></div>
                                 </div>
-                                <div class="d-flex flex-column">
-                                    <a href="{{ route('admin.nurses.index') }}" class="text-gray-800 text-hover-success fw-bold fs-5">Nurses</a>
-                                    <span class="text-gray-500 fw-semibold fs-7">Approved Staff</span>
-                                </div>
+                                <i class="ki-outline ki-shield-tick fs-3x text-white opacity-50"></i>
                             </div>
-                            <div class="d-flex justify-content-between align-items-end">
-                                <div class="fs-2hx fw-bold text-gray-900" id="stat-total-nurses">
-                                    <span class="spinner-border spinner-border-sm text-success" role="status"></span>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between border-0 py-3">
+                            <a class="small text-white stretched-link text-decoration-none fw-bold" href="{{ route('admin.nurses.index') }}">View Details</a>
+                            <div class="small text-white"><i class="ki-outline ki-arrow-right text-white"></i></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Requests -->
-                <div class="col-xl-3">
-                    <div class="card hover-elevate-up shadow-sm border-0">
-                        <div class="card-body p-6">
-                            <div class="d-flex align-items-center mb-5">
-                                <div class="symbol symbol-50px me-3">
-                                    <div class="symbol-label bg-light-warning">
-                                        <i class="ki-outline ki-document fs-1 text-warning"></i>
-                                    </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-warning text-white mb-4 shadow-sm border-0">
+                        <div class="card-body py-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-white-50 small text-uppercase fw-bold mb-1">Total Enquiries</div>
+                                    <div class="fs-1 fw-bolder" id="stat-total-requests"><span class="spinner-border spinner-border-sm text-white" role="status"></span></div>
                                 </div>
-                                <div class="d-flex flex-column">
-                                    <a href="{{ route('admin.requests.index') }}" class="text-gray-800 text-hover-warning fw-bold fs-5">Requests</a>
-                                    <span class="text-gray-500 fw-semibold fs-7">Total Enquiries</span>
-                                </div>
+                                <i class="ki-outline ki-document fs-3x text-white opacity-50"></i>
                             </div>
-                            <div class="d-flex justify-content-between align-items-end">
-                                <div class="fs-2hx fw-bold text-gray-900" id="stat-total-requests">
-                                    <span class="spinner-border spinner-border-sm text-warning" role="status"></span>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between border-0 py-3">
+                            <a class="small text-white stretched-link text-decoration-none fw-bold" href="{{ route('admin.requests.index') }}">View Details</a>
+                            <div class="small text-white"><i class="ki-outline ki-arrow-right text-white"></i></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bookings -->
-                <div class="col-xl-3">
-                    <div class="card hover-elevate-up shadow-sm border-0">
-                        <div class="card-body p-6">
-                            <div class="d-flex align-items-center mb-5">
-                                <div class="symbol symbol-50px me-3">
-                                    <div class="symbol-label bg-light-info">
-                                        <i class="ki-outline ki-calendar-tick fs-1 text-info"></i>
-                                    </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-info text-white mb-4 shadow-sm border-0">
+                        <div class="card-body py-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-white-50 small text-uppercase fw-bold mb-1">Active Bookings</div>
+                                    <div class="fs-1 fw-bolder" id="stat-total-bookings"><span class="spinner-border spinner-border-sm text-white" role="status"></span></div>
                                 </div>
-                                <div class="d-flex flex-column">
-                                    <a href="{{ route('admin.bookings.index') }}" class="text-gray-800 text-hover-info fw-bold fs-5">Bookings</a>
-                                    <span class="text-gray-500 fw-semibold fs-7">Confirmed & Active</span>
-                                </div>
+                                <i class="ki-outline ki-calendar-tick fs-3x text-white opacity-50"></i>
                             </div>
-                            <div class="d-flex justify-content-between align-items-end">
-                                <div class="fs-2hx fw-bold text-gray-900" id="stat-total-bookings">
-                                    <span class="spinner-border spinner-border-sm text-info" role="status"></span>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between border-0 py-3">
+                            <a class="small text-white stretched-link text-decoration-none fw-bold" href="{{ route('admin.bookings.index') }}">View Details</a>
+                            <div class="small text-white"><i class="ki-outline ki-arrow-right text-white"></i></div>
                         </div>
                     </div>
                 </div>
@@ -135,23 +111,17 @@
             <!--end::Row 1-->
 
             <!--begin::Row 2 (Revenue & Charts)-->
-            <div class="row g-5 g-xl-8 mb-xl-8">
+            <div class="row mb-4">
                 <!-- Main Chart -->
                 <div class="col-xl-8">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-header border-0 pt-5">
-                            <h3 class="card-title align-items-start flex-column">
-                                <span class="card-label fw-bold text-gray-900 fs-4">Revenue & Bookings</span>
-                                <span class="text-gray-500 mt-1 fw-semibold fs-7">Performance over the last 6 months</span>
+                    <div class="card shadow-sm border-gray-300 h-100">
+                        <div class="card-header border-bottom border-gray-200 pt-5 pb-4">
+                            <h3 class="card-title align-items-start flex-column m-0">
+                                <span class="fw-bold text-gray-800 fs-5"><i class="ki-outline ki-chart-line-star text-dark me-2"></i>Revenue & Bookings Overview</span>
                             </h3>
-                            <div class="card-toolbar">
-                                <button type="button" class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                    <i class="ki-outline ki-category fs-2"></i>
-                                </button>
-                            </div>
                         </div>
-                        <div class="card-body pt-0 pb-4">
-                            <div id="chart-bookings" style="height: 350px">
+                        <div class="card-body">
+                            <div id="chart-bookings" style="height: 320px">
                                 <div class="d-flex justify-content-center align-items-center h-100 placeholder-glow">
                                     <span class="spinner-border text-primary" role="status"></span>
                                 </div>
@@ -162,57 +132,45 @@
 
                 <!-- Financial Highlights -->
                 <div class="col-xl-4">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-header border-0 pt-5">
-                            <h3 class="card-title align-items-start flex-column">
-                                <span class="card-label fw-bold text-gray-900 fs-4">Financial Overview</span>
-                                <span class="text-gray-500 mt-1 fw-semibold fs-7">Earnings breakdown</span>
+                    <div class="card shadow-sm border-gray-300 h-100">
+                        <div class="card-header border-bottom border-gray-200 pt-5 pb-4">
+                            <h3 class="card-title align-items-start flex-column m-0">
+                                <span class="fw-bold text-gray-800 fs-5"><i class="ki-outline ki-wallet text-dark me-2"></i>Financial Highlights</span>
                             </h3>
                         </div>
-                        <div class="card-body p-6 d-flex flex-column justify-content-center">
-                            
-                            <!-- Total Revenue -->
-                            <div class="d-flex align-items-center bg-light-success rounded p-5 mb-5">
-                                <span class="svg-icon svg-icon-success me-5">
-                                    <i class="ki-outline ki-wallet fs-1 text-success"></i>
-                                </span>
-                                <div class="flex-grow-1 me-2">
-                                    <a href="#" class="fw-bold text-gray-800 text-hover-success fs-5">Lifetime Revenue</a>
-                                    <span class="text-gray-500 fw-semibold d-block fs-7">Total earnings till date</span>
-                                </div>
-                                <span class="fw-bold text-success py-1" id="stat-total-revenue">
-                                    <span class="spinner-border spinner-border-sm" role="status"></span>
-                                </span>
-                            </div>
-
-                            <!-- Month Revenue -->
-                            <div class="d-flex align-items-center bg-light-primary rounded p-5 mb-5">
-                                <span class="svg-icon svg-icon-primary me-5">
-                                    <i class="ki-outline ki-graph-up fs-1 text-primary"></i>
-                                </span>
-                                <div class="flex-grow-1 me-2">
-                                    <a href="#" class="fw-bold text-gray-800 text-hover-primary fs-5">This Month</a>
-                                    <span class="text-gray-500 fw-semibold d-block fs-7">{{ now()->format('F Y') }}</span>
-                                </div>
-                                <span class="fw-bold text-primary py-1" id="stat-month-revenue">
-                                    <span class="spinner-border spinner-border-sm" role="status"></span>
-                                </span>
-                            </div>
-
-                            <!-- Today Revenue -->
-                            <div class="d-flex align-items-center bg-light-warning rounded p-5">
-                                <span class="svg-icon svg-icon-warning me-5">
-                                    <i class="ki-outline ki-sun fs-1 text-warning"></i>
-                                </span>
-                                <div class="flex-grow-1 me-2">
-                                    <a href="#" class="fw-bold text-gray-800 text-hover-warning fs-5">Today's Revenue</a>
-                                    <span class="text-gray-500 fw-semibold d-block fs-7">Collection for the day</span>
-                                </div>
-                                <span class="fw-bold text-warning py-1" id="stat-today-revenue">
-                                    <span class="spinner-border spinner-border-sm" role="status"></span>
-                                </span>
-                            </div>
-
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ki-outline ki-bank fs-2 text-success me-3"></i>
+                                        <div>
+                                            <div class="fw-bold text-gray-800">Lifetime Revenue</div>
+                                            <small class="text-muted text-uppercase fw-bold fs-9">Total earnings till date</small>
+                                        </div>
+                                    </div>
+                                    <span class="fs-4 fw-bolder text-success" id="stat-total-revenue"><span class="spinner-border spinner-border-sm" role="status"></span></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ki-outline ki-graph-up fs-2 text-primary me-3"></i>
+                                        <div>
+                                            <div class="fw-bold text-gray-800">This Month</div>
+                                            <small class="text-muted text-uppercase fw-bold fs-9">{{ now()->format('F Y') }}</small>
+                                        </div>
+                                    </div>
+                                    <span class="fs-4 fw-bolder text-primary" id="stat-month-revenue"><span class="spinner-border spinner-border-sm" role="status"></span></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-4 border-bottom-0">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ki-outline ki-sun fs-2 text-warning me-3"></i>
+                                        <div>
+                                            <div class="fw-bold text-gray-800">Today's Revenue</div>
+                                            <small class="text-muted text-uppercase fw-bold fs-9">Collection for the day</small>
+                                        </div>
+                                    </div>
+                                    <span class="fs-4 fw-bolder text-warning" id="stat-today-revenue"><span class="spinner-border spinner-border-sm" role="status"></span></span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -220,28 +178,25 @@
             <!--end::Row 2-->
 
             <!--begin::Row 3 (Tables)-->
-            <div class="row g-5 g-xl-8">
+            <div class="row">
                 <!-- Recent Bookings -->
                 <div class="col-xl-6">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-header border-0 pt-5">
-                            <h3 class="card-title align-items-start flex-column">
-                                <span class="card-label fw-bold text-gray-900 fs-4">Recent Bookings</span>
-                                <span class="text-gray-500 mt-1 fw-semibold fs-7">Latest 5 active bookings</span>
+                    <div class="card shadow-sm border border-gray-200 mb-4 h-100">
+                        <div class="card-header border-bottom border-gray-200 pt-5 pb-4 d-flex justify-content-between align-items-center">
+                            <h3 class="card-title m-0">
+                                <span class="fw-bold text-gray-800 fs-5"><i class="ki-outline ki-calendar-tick text-dark me-2"></i>Recent Bookings</span>
                             </h3>
-                            <div class="card-toolbar">
-                                <a href="{{ route('admin.bookings.index') }}" class="btn btn-sm btn-light-primary">View All</a>
-                            </div>
+                            <a href="{{ route('admin.bookings.index') }}" class="btn btn-sm btn-outline btn-outline-dashed btn-outline-primary fw-bold">View All</a>
                         </div>
-                        <div class="card-body py-3">
+                        <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table align-middle gs-0 gy-4">
                                     <thead>
                                         <tr class="fw-bold text-gray-500 border-bottom border-gray-200">
-                                            <th class="ps-0 min-w-100px">Booking Ref</th>
-                                            <th class="min-w-125px">Patient</th>
-                                            <th class="min-w-100px">Amount</th>
-                                            <th class="min-w-100px">Status</th>
+                                            <th class="ps-0 min-w-100px text-uppercase fs-9">Booking Ref</th>
+                                            <th class="min-w-125px text-uppercase fs-9">Patient</th>
+                                            <th class="min-w-100px text-uppercase fs-9">Amount</th>
+                                            <th class="min-w-100px text-uppercase fs-9">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="recent-bookings-tbody">
@@ -255,25 +210,22 @@
 
                 <!-- Recent Requests -->
                 <div class="col-xl-6">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-header border-0 pt-5">
-                            <h3 class="card-title align-items-start flex-column">
-                                <span class="card-label fw-bold text-gray-900 fs-4">Recent Care Requests</span>
-                                <span class="text-gray-500 mt-1 fw-semibold fs-7">Latest 5 patient requests</span>
+                    <div class="card shadow-sm border border-gray-200 mb-4 h-100">
+                        <div class="card-header border-bottom border-gray-200 pt-5 pb-4 d-flex justify-content-between align-items-center">
+                            <h3 class="card-title m-0">
+                                <span class="fw-bold text-gray-800 fs-5"><i class="ki-outline ki-document text-dark me-2"></i>Recent Care Requests</span>
                             </h3>
-                            <div class="card-toolbar">
-                                <a href="{{ route('admin.requests.index') }}" class="btn btn-sm btn-light-warning">View All</a>
-                            </div>
+                            <a href="{{ route('admin.requests.index') }}" class="btn btn-sm btn-outline btn-outline-dashed btn-outline-warning fw-bold">View All</a>
                         </div>
-                        <div class="card-body py-3">
+                        <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table align-middle gs-0 gy-4">
                                     <thead>
                                         <tr class="fw-bold text-gray-500 border-bottom border-gray-200">
-                                            <th class="ps-0 min-w-100px">Request Ref</th>
-                                            <th class="min-w-125px">Patient</th>
-                                            <th class="min-w-100px">City</th>
-                                            <th class="min-w-100px">Status</th>
+                                            <th class="ps-0 min-w-100px text-uppercase fs-9">Request Ref</th>
+                                            <th class="min-w-125px text-uppercase fs-9">Patient</th>
+                                            <th class="min-w-100px text-uppercase fs-9">City</th>
+                                            <th class="min-w-100px text-uppercase fs-9">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="recent-requests-tbody">
@@ -302,14 +254,14 @@ document.addEventListener('DOMContentLoaded', function() {
     $.get('{{ route("admin.system.errors.pending-count") }}').done(function(res) {
         if (res.count > 0) {
             $('#pending-errors-container').html(`
-                <div class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row p-5 mb-5 rounded shadow-sm border border-danger border-dashed">
-                    <i class="ki-outline ki-shield-cross fs-2hx text-danger me-4 mb-5 mb-sm-0"></i>
+                <div class="alert alert-dismissible bg-white border border-danger d-flex align-items-center p-4 mb-5 rounded shadow-sm">
+                    <i class="ki-outline ki-shield-cross fs-1 text-danger me-4"></i>
                     <div class="d-flex flex-column pe-0 pe-sm-10 text-gray-800">
-                        <h4 class="fw-bold text-danger mb-1">System Errors Detected</h4>
-                        <span>${res.count} application error(s) logged. Please review them immediately to ensure system stability.</span>
+                        <span class="fw-bold text-danger fs-6">System Errors Detected</span>
+                        <span class="fs-8">${res.count} application error(s) logged. Please review them immediately.</span>
                     </div>
-                    <div class="mt-4 mt-sm-0 ms-sm-auto">
-                        <a href="{{ route('admin.system.error-logs') }}" class="btn btn-sm btn-danger fw-bold">Review Logs</a>
+                    <div class="ms-auto">
+                        <a href="{{ route('admin.system.error-logs') }}" class="btn btn-sm btn-outline btn-outline-dashed btn-outline-danger fw-bold">Review Logs</a>
                     </div>
                 </div>
             `);
@@ -319,14 +271,14 @@ document.addEventListener('DOMContentLoaded', function() {
     $.get('{{ route("admin.nurses.pending-count") }}').done(function(res) {
         if (res.count > 0) {
             $('#pending-nurses-container').html(`
-                <div class="alert alert-dismissible bg-light-info d-flex flex-column flex-sm-row p-5 mb-5 rounded shadow-sm border border-info border-dashed">
-                    <i class="ki-outline ki-profile-user fs-2hx text-info me-4 mb-5 mb-sm-0"></i>
+                <div class="alert alert-dismissible bg-white border border-info d-flex align-items-center p-4 mb-5 rounded shadow-sm">
+                    <i class="ki-outline ki-profile-user fs-1 text-info me-4"></i>
                     <div class="d-flex flex-column pe-0 pe-sm-10 text-gray-800">
-                        <h4 class="fw-bold text-info mb-1">Nurse Approvals Pending</h4>
-                        <span>${res.count} nurse profile(s) awaiting verification. Approve them to onboard new nurses.</span>
+                        <span class="fw-bold text-info fs-6">Nurse Approvals Pending</span>
+                        <span class="fs-8">${res.count} nurse profile(s) awaiting verification.</span>
                     </div>
-                    <div class="mt-4 mt-sm-0 ms-sm-auto">
-                        <a href="{{ route('admin.nurses.pending_approval') }}" class="btn btn-sm btn-info fw-bold">Review Nurses</a>
+                    <div class="ms-auto">
+                        <a href="{{ route('admin.nurses.pending_approval') }}" class="btn btn-sm btn-outline btn-outline-dashed btn-outline-info fw-bold">Review Nurses</a>
                     </div>
                 </div>
             `);
@@ -336,14 +288,14 @@ document.addEventListener('DOMContentLoaded', function() {
     $.get('{{ route("admin.support.pending-count") }}').done(function(res) {
         if (res.count > 0) {
             $('#pending-tickets-container').html(`
-                <div class="alert alert-dismissible bg-light-primary d-flex flex-column flex-sm-row p-5 mb-5 rounded shadow-sm border border-primary border-dashed">
-                    <i class="ki-outline ki-message-text-2 fs-2hx text-primary me-4 mb-5 mb-sm-0"></i>
+                <div class="alert alert-dismissible bg-white border border-primary d-flex align-items-center p-4 mb-5 rounded shadow-sm">
+                    <i class="ki-outline ki-message-text-2 fs-1 text-primary me-4"></i>
                     <div class="d-flex flex-column pe-0 pe-sm-10 text-gray-800">
-                        <h4 class="fw-bold text-primary mb-1">Unresolved Support Tickets</h4>
-                        <span>${res.count} support ticket(s) are open and require a response.</span>
+                        <span class="fw-bold text-primary fs-6">Unresolved Support Tickets</span>
+                        <span class="fs-8">${res.count} support ticket(s) are open and require a response.</span>
                     </div>
-                    <div class="mt-4 mt-sm-0 ms-sm-auto">
-                        <a href="{{ route('admin.support.index') }}?status=0" class="btn btn-sm btn-primary fw-bold">View Tickets</a>
+                    <div class="ms-auto">
+                        <a href="{{ route('admin.support.index') }}?status=0" class="btn btn-sm btn-outline btn-outline-dashed btn-outline-primary fw-bold">View Tickets</a>
                     </div>
                 </div>
             `);
@@ -373,11 +325,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 bookingsHtml += `<tr>
                     <td>
                         <a href="/admin/bookings/${b.id}" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">#${b.reference_id}</a>
-                        <span class="text-muted fw-semibold d-block fs-7">${b.created_at}</span>
+                        <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">${b.created_at}</span>
                     </td>
                     <td>
                         <span class="text-gray-800 fw-bold d-block fs-6">${b.user_name}</span>
-                        <span class="text-muted fw-semibold d-block fs-7">Nurse: ${b.nurse_name}</span>
+                        <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">Nurse: ${b.nurse_name}</span>
                     </td>
                     <td>
                         <span class="text-success fw-bold d-block fs-6">₹${b.total_amount}</span>
@@ -400,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 requestsHtml += `<tr>
                     <td>
                         <a href="/admin/requests/${r.id}" class="text-gray-900 fw-bold text-hover-warning mb-1 fs-6">#${r.reference_id}</a>
-                        <span class="text-muted fw-semibold d-block fs-7">${r.created_at}</span>
+                        <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">${r.created_at}</span>
                     </td>
                     <td>
                         <span class="text-gray-800 fw-bold d-block fs-6">${r.user_name}</span>
@@ -409,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="text-gray-600 fw-semibold d-block fs-7">${r.city}</span>
                     </td>
                     <td>
-                        <span class="badge badge-light-${sc} fs-7 fw-bold">${r.status_text}</span>
+                        <span class="badge badge-light-${sc} border border-${sc} fs-7 fw-bold">${r.status_text}</span>
                     </td>
                 </tr>`;
             });

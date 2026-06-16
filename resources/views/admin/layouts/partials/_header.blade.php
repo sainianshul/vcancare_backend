@@ -23,6 +23,12 @@
     </script>
     <!--end::Theme mode setup-->
 
+    <!--begin::Turbo (SPA Navigation)-->
+    <script type="module">
+        import hotwiredTurbo from 'https://cdn.skypack.dev/@hotwired/turbo';
+    </script>
+    <!--end::Turbo-->
+
     <!--begin::Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

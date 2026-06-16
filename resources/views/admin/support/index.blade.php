@@ -9,10 +9,10 @@
         ['label' => 'Tickets'],
     ]" />
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border border-gray-200">
 
         {{-- Toolbar --}}
-        <div class="card-header border-0 pt-5 pb-3">
+        <div class="card-header border-bottom border-gray-200 pt-5 pb-4">
             <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
 
                 {{-- Search --}}
@@ -116,7 +116,7 @@
                     class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100"
                 >
                     <thead>
-                        <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
+                        <tr class="text-start text-gray-500 fw-bold fs-9 text-uppercase gs-0 border-bottom border-gray-200 border-1">
                             <th class="w-50px">ID</th>
                             <th class="min-w-175px">User</th>
                             <th class="min-w-250px">Subject / Category</th>
