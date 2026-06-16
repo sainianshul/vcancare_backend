@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="light" style="background-color:#f5f8fa;">
 <!--begin::Head-->
 
 <head>
@@ -20,14 +20,11 @@
         var mode = localStorage.getItem('data-bs-theme') || 'light';
         if (mode === 'system') mode = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
         document.documentElement.setAttribute('data-bs-theme', mode);
+        document.documentElement.style.backgroundColor = mode === 'dark' ? '#1e1e2d' : '#f5f8fa';
     </script>
     <!--end::Theme mode setup-->
 
-    <!--begin::Turbo (SPA Navigation)-->
-    <script type="module">
-        import hotwiredTurbo from 'https://cdn.skypack.dev/@hotwired/turbo';
-    </script>
-    <!--end::Turbo-->
+
 
     <!--begin::Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
