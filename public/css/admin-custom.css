@@ -26,10 +26,26 @@
 }
 
 /* ============================================
-   ROOT — Prevent infinite scroll
+   ROOT — Prevent infinite scroll + Anti-Flash
    ============================================ */
-html { height: 100%; overflow: hidden; }
-body { height: 100%; overflow: auto; margin: 0; padding: 0; }
+html {
+    height: 100%;
+    overflow: hidden;
+    /* Anti-flash: match exact app background so page never goes white between navigations */
+    background-color: #f5f8fa;
+}
+body {
+    height: 100%;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f8fa;
+}
+[data-bs-theme="dark"] html,
+[data-bs-theme="dark"] body {
+    background-color: #1e1e2d;
+}
+
 
 /* ============================================
    SIDEBAR — Fixed full-height with scroll

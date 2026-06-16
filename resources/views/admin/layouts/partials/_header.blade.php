@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="light" style="background-color:#f5f8fa;">
 <!--begin::Head-->
 
 <head>
@@ -20,6 +20,7 @@
         var mode = localStorage.getItem('data-bs-theme') || 'light';
         if (mode === 'system') mode = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
         document.documentElement.setAttribute('data-bs-theme', mode);
+        document.documentElement.style.backgroundColor = mode === 'dark' ? '#1e1e2d' : '#f5f8fa';
     </script>
     <!--end::Theme mode setup-->
 
