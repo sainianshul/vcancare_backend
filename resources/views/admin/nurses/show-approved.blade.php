@@ -69,6 +69,9 @@
                                 <button class="btn btn-sm btn-light-info border border-info fw-bold px-4 py-2 hover-scale">
                                     <i class="ki-outline ki-message-text-2 fs-5 me-1"></i> Email
                                 </button>
+                                <a href="{{ route('admin.nurses.show-application', $user->id) }}" class="btn btn-sm btn-light-dark border border-dark fw-bold px-4 py-2 hover-scale" data-bs-toggle="tooltip" title="View verification documents and onboarding details">
+                                    <i class="ki-outline ki-folder-open fs-5 me-1"></i> Verification History
+                                </a>
                                 <a href="{{ route('admin.nurses.edit', $user->id) }}" class="btn btn-sm btn-light-warning border border-warning fw-bold px-4 py-2 hover-scale">
                                     <i class="ki-outline ki-pencil fs-5 me-1"></i> Edit
                                 </a>

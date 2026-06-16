@@ -21,7 +21,7 @@
         ]" />
             </div>
             <div class="d-flex align-items-center gap-2 gap-lg-3">
-                <a href="{{ route('admin.nurses.index') }}" class="btn btn-sm btn-light fw-semibold border border-gray-300">
+                <a href="{{ url()->previous() }}" class="btn btn-sm btn-light fw-semibold border border-gray-300">
                     <i class="ki-outline ki-arrow-left fs-4 me-1"></i>Back
                 </a>
             </div>
@@ -44,6 +44,7 @@
             @endif
 
             <!--begin::Navbar (Same as Pending view)-->
+            @if(!$isReadOnly)
             <div class="card card-bordered border-gray-300 mb-5 mb-xl-10 shadow-none">
                 <div class="card-body pt-9 pb-9">
                     <div class="d-flex flex-wrap flex-sm-nowrap">
@@ -119,6 +120,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             <!--end::Navbar-->
 
             @php
@@ -378,18 +380,17 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
 
-                        // Reload the step content to reflect changes
-                        const activeStepElement = document.querySelector(`.step-nav-item[data-step="5"]`);
-                        if (activeStepElement) {
-                            showStep(5, activeStepElement);
+                        // Update the badge instantly via Vanilla DOM (no reload)
+                        const badge = document.getElementById(`doc-badge-${docId}`);
+                        if (badge) {
+                            if (status == {{ \App\Models\NurseDocument::STATUS_APPROVED }}) {
+                                badge.className = 'badge badge-light-success text-success border-success badge-sm px-2 py-1 fs-9';
+                                badge.innerText = 'Approved';
+                            } else if (status == {{ \App\Models\NurseDocument::STATUS_REJECTED }}) {
+                                badge.className = 'badge badge-light-danger text-danger border-danger badge-sm px-2 py-1 fs-9';
+                                badge.innerText = 'Rejected';
+                            }
                         }
                     }
                 },
