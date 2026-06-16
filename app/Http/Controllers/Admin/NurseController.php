@@ -347,10 +347,9 @@ class NurseController extends Controller
     public function reviewDocument(Request $request, $id, $documentId)
     {
         $user = User::findOrFail($id);
-        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
 
         $request->validate([
-            'status' => 'required|integer|in:1,2', // 1=Approved, 2=Rejected
+            'status' => 'required|in:1,2'
         ]);
 
         $document = NurseDocument::where('nurse_id', $user->nurseProfile->id)->findOrFail($documentId);
@@ -358,10 +357,20 @@ class NurseController extends Controller
         $document->update([
             'status' => $request->status,
             'reviewed_by' => auth()->id(),
-            'reviewed_at' => now(),
         ]);
 
         return response()->json(['success' => true, 'message' => 'Document status updated.']);
+    }
+
+    public function document($documentId)
+    {
+        $document = NurseDocument::findOrFail($documentId);
+        
+        if (!\Storage::disk('public')->exists($document->file_path)) {
+            abort(404, 'Document not found on server.');
+        }
+
+        return \Storage::disk('public')->response($document->file_path);
     }
 
     public function getReviewStepView(Request $request, $id, $step)

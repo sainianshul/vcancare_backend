@@ -35,13 +35,14 @@
         <div class="row g-5">
             @forelse($sectionData['documents'] ?? [] as $doc)
             <div class="col-md-6">
-                <div class="border border-gray-300 rounded p-5 d-flex flex-column h-100 position-relative transition-all hover-border-primary">
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="w-40px h-40px bg-light-primary rounded d-flex align-items-center justify-content-center me-3 border border-primary border-dashed">
+                <div class="border border-primary border-dashed rounded p-5 d-flex flex-column h-100 position-relative transition-all hover-border-primary bg-hover-light">
+                    
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="w-40px h-40px bg-light-primary rounded d-flex align-items-center justify-content-center me-4 border border-primary border-dashed flex-shrink-0">
                             <i class="ki-outline ki-document fs-2 text-primary"></i>
                         </div>
-                        <div class="d-flex flex-column">
-                            <span class="text-gray-900 fw-bold fs-6">{{ $doc['document_type_name'] ?? 'Document' }}</span>
+                        <div class="flex-grow-1 d-flex flex-column">
+                            <span class="text-gray-900 fw-bold fs-6 mb-1 lh-1">{{ $doc['document_type_name'] ?? 'Document' }}</span>
                             @if(isset($doc['status']))
                                 @php
                                     $docStatusClass = 'badge-light-warning text-warning border-warning';
@@ -51,20 +52,20 @@
                                         $docStatusClass = 'badge-light-danger text-danger border-danger';
                                     }
                                 @endphp
-                                <div class="d-flex align-items-center gap-2 mt-1">
-                                    <span class="badge {{ $docStatusClass }} badge-sm px-2 py-1 fs-9">{{ $doc['status_name'] ?? 'Pending' }}</span>
+                                <div class="mt-1">
+                                    <span id="doc-badge-{{ $doc['id'] }}" class="badge {{ $docStatusClass }} badge-sm px-2 py-1 fs-9">{{ $doc['status_name'] ?? 'Pending' }}</span>
                                 </div>
                             @endif
                         </div>
                     </div>
                     
-                    <div class="mt-auto d-flex justify-content-between align-items-center pt-4 border-top border-gray-200 border-dashed">
+                    <div class="mt-auto pt-4 border-top border-gray-200 border-dashed d-flex justify-content-between align-items-center">
                         @if(!$isReadOnly)
                             <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-sm btn-icon btn-light-danger border border-danger" onclick="processDocumentReview({{ $doc['id'] }}, {{ \App\Models\NurseDocument::STATUS_REJECTED }})" data-bs-toggle="tooltip" title="Reject Document">
+                                <button type="button" class="btn btn-sm btn-icon btn-light border border-gray-300 btn-active-light-danger" onclick="processDocumentReview({{ $doc['id'] }}, {{ \App\Models\NurseDocument::STATUS_REJECTED }})" data-bs-toggle="tooltip" title="Reject Document">
                                     <i class="ki-outline ki-cross fs-4"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-icon btn-light-success border border-success" onclick="processDocumentReview({{ $doc['id'] }}, {{ \App\Models\NurseDocument::STATUS_APPROVED }})" data-bs-toggle="tooltip" title="Approve Document">
+                                <button type="button" class="btn btn-sm btn-icon btn-light border border-gray-300 btn-active-light-success" onclick="processDocumentReview({{ $doc['id'] }}, {{ \App\Models\NurseDocument::STATUS_APPROVED }})" data-bs-toggle="tooltip" title="Approve Document">
                                     <i class="ki-outline ki-check fs-4"></i>
                                 </button>
                             </div>
@@ -72,7 +73,7 @@
                             <span class="badge badge-light fw-medium text-gray-600 border border-gray-300 fs-8 px-3 py-1">PDF / Image</span>
                         @endif
 
-                        <a href="{{ route('nurses.document', $doc['id']) }}" target="_blank" class="btn btn-sm btn-light-primary fw-bold px-4">
+                        <a href="{{ route('admin.nurses.document', $doc['id']) }}" target="_blank" class="btn btn-sm btn-outline btn-outline-dashed btn-outline-dark fw-bold text-uppercase fs-9 px-4">
                             View File
                         </a>
                     </div>
@@ -102,7 +103,8 @@
 <style>
 .hover-border-primary:hover {
     border-color: var(--bs-primary) !important;
-    background-color: var(--bs-primary-light);
+    border-style: solid !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important;
 }
 </style>
 
