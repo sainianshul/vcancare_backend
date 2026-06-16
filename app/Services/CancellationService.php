@@ -10,6 +10,7 @@ use App\Models\Booking;
 use App\Models\BookingSession;
 use App\Models\CareRequest;
 use App\Models\NurseProfile;
+use App\Contracts\PaymentGatewayInterface;
 use App\Models\WalletTransaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -28,10 +29,12 @@ use Illuminate\Support\Facades\DB;
 class CancellationService
 {
     protected WalletService $walletService;
+    protected PaymentGatewayInterface $gateway;
 
-    public function __construct(WalletService $walletService)
+    public function __construct(WalletService $walletService, PaymentGatewayInterface $gateway)
     {
         $this->walletService = $walletService;
+        $this->gateway = $gateway;
     }
 
     /**
@@ -76,15 +79,20 @@ class CancellationService
                 $nursePayoutAmount = round((float) $booking->nurse_per_session_rate * $booking->completed_sessions, 2);
             }
 
-            // Process refund to user wallet
+            // Process gateway refund for patient
             if ($refundAmount > 0) {
-                $this->walletService->credit(
-                    $booking->user_id,
-                    $refundAmount,
-                    WalletTransaction::REASON_CANCELLATION_REFUND,
-                    "Refund for cancelled booking {$booking->reference_id} ({$refundPercent}% of remaining)",
-                    $booking->id
-                );
+                if ($booking->gateway_payment_id) {
+                    $amountInPaise = (int) round($refundAmount * 100);
+                    try {
+                        $this->gateway->createRefund($booking->gateway_payment_id, $amountInPaise, "User cancelled booking " . $booking->reference_id);
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::error("Gateway refund failed during user cancellation", [
+                            "booking_id" => $booking->id,
+                            "error" => $e->getMessage()
+                        ]);
+                        // Proceeding with cancellation even if refund fails (can be handled manually or retried)
+                    }
+                }
             }
 
             // Process nurse payout for completed sessions
@@ -134,13 +142,17 @@ class CancellationService
                 $refundAmount = round((float) $booking->per_session_rate * $remainingSessions, 2);
 
                 if ($refundAmount > 0) {
-                    $this->walletService->credit(
-                        $booking->user_id,
-                        $refundAmount,
-                        WalletTransaction::REASON_CANCELLATION_REFUND,
-                        "Full refund — nurse cancelled booking {$booking->reference_id}",
-                        $booking->id
-                    );
+                    if ($booking->gateway_payment_id) {
+                        $amountInPaise = (int) round($refundAmount * 100);
+                        try {
+                            $this->gateway->createRefund($booking->gateway_payment_id, $amountInPaise, "Nurse cancelled booking " . $booking->reference_id);
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error("Gateway refund failed during nurse cancellation", [
+                                "booking_id" => $booking->id,
+                                "error" => $e->getMessage()
+                            ]);
+                        }
+                    }
                 }
 
                 // Pay nurse for completed sessions only (nurse rate, not total)
@@ -223,7 +235,7 @@ class CancellationService
         int $cancelledBy,
         ?string $reason,
         float $refundAmount,
-        float $nursePayoutAmount
+        float $nursePayoutAmount,
     ): array {
         // Cancel all upcoming sessions
         BookingSession::where('booking_id', $booking->id)
@@ -254,6 +266,15 @@ class CancellationService
             $booking->careRequest?->update([
                 'status' => CareRequest::STATUS_MATCHING,
             ]);
+        }
+
+        $booking = $booking->fresh();
+
+        if (isset($booking->user)) {
+            $booking->user->notify(new \App\Notifications\BookingCancelledNotification($booking, 'patient'));
+        }
+        if (isset($booking->nurse->user)) {
+            $booking->nurse->user->notify(new \App\Notifications\BookingCancelledNotification($booking, 'nurse'));
         }
 
         return [

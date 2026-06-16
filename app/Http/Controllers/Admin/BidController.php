@@ -51,35 +51,7 @@ class BidController extends Controller
         return $dataTable->ajax();
     }
 
-    public function accepted(BidDataTable $dataTable)
-    {
-        return $dataTable->render('admin.bids.index', [
-            'title' => 'Accepted Bids',
-            'dataUrl' => route('admin.bids.accepted.data'),
-            'hideStatusFilter' => true
-        ]);
-    }
 
-    public function acceptedData(BidDataTable $dataTable)
-    {
-        request()->merge(['status' => RequestBid::STATUS_SELECTED]);
-        return $dataTable->ajax();
-    }
-
-    public function rejected(BidDataTable $dataTable)
-    {
-        return $dataTable->render('admin.bids.index', [
-            'title' => 'Rejected Bids',
-            'dataUrl' => route('admin.bids.rejected.data'),
-            'hideStatusFilter' => true
-        ]);
-    }
-
-    public function rejectedData(BidDataTable $dataTable)
-    {
-        request()->merge(['status' => RequestBid::STATUS_REJECTED]);
-        return $dataTable->ajax();
-    }
 
     /**
      * Display the specified bid.

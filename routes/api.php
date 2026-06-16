@@ -56,11 +56,11 @@ Route::prefix('v1')->group(function () {
             Route::post('bookings/{booking_id}/pay', [UserBookingController::class, 'initiatePayment']);
             Route::post('bookings/{booking_id}/confirm-payment', [UserBookingController::class, 'confirmPayment']);
             Route::post('bookings/{booking_id}/cancel', [UserBookingController::class, 'cancel']);
-            Route::get('bookings/{booking_id}/otp', [UserBookingController::class, 'getSessionOtp']);
+            Route::get('sessions/today', [UserBookingController::class, 'todaySessions']);
+            Route::get('bookings/{booking_id}/sessions', [UserBookingController::class, 'listSessions']);
+            Route::get('bookings/{booking_id}/sessions/{session_id}', [UserBookingController::class, 'showSession']);
             Route::post('bookings/{booking_id}/review', [\App\Http\Controllers\Api\User\NurseReviewController::class, 'store']);
 
-            // Wallet
-            Route::get('wallet', [UserBookingController::class, 'wallet']);
         });
 
         // Nurse Routes
@@ -84,7 +84,11 @@ Route::prefix('v1')->group(function () {
                 Route::get('schedule', [NurseBookingController::class, 'schedule']);
                 Route::post('sessions/{session_id}/start', [NurseBookingController::class, 'startSession']);
                 Route::post('sessions/{session_id}/end', [NurseBookingController::class, 'endSession']);
+                Route::post('sessions/{session_id}/force-end', [NurseBookingController::class, 'forceEndSession']);
                 Route::post('bookings/{booking_id}/cancel', [NurseBookingController::class, 'cancel']);
+                Route::get('sessions/today', [NurseBookingController::class, 'todaySessions']);
+                Route::get('bookings/{booking_id}/sessions', [NurseBookingController::class, 'listSessions']);
+                Route::get('bookings/{booking_id}/sessions/{session_id}', [NurseBookingController::class, 'showSession']);
 
                 // Wallet & Withdrawals
                 Route::get('wallet', [NurseBookingController::class, 'wallet']);

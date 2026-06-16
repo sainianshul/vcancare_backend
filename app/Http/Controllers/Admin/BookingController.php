@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\DataTables\Booking\BookingDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\NurseReview;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -79,15 +81,15 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($id);
         $sessions = $booking->sessions()->orderBy('session_number');
 
-                return \Yajra\DataTables\Facades\DataTables::of($sessions)
+        return datatables()->of($sessions)
             ->addColumn('session_date', function ($session) {
                 return $session->session_date ? $session->session_date->format('d M Y') : '—';
             })
             ->addColumn('start_time', function ($session) {
-                return $session->start_time ? \Carbon\Carbon::parse($session->start_time)->format('h:i A') : '—';
+                return $session->start_time ? Carbon::parse($session->start_time)->format('h:i A') : '—';
             })
             ->addColumn('end_time', function ($session) {
-                return $session->end_time ? \Carbon\Carbon::parse($session->end_time)->format('h:i A') : '—';
+                return $session->end_time ? Carbon::parse($session->end_time)->format('h:i A') : '—';
             })
             ->addColumn('started_at', function ($session) {
                 return $session->started_at ? $session->started_at->format('d M Y h:i A') : '—';
@@ -143,7 +145,7 @@ class BookingController extends Controller
             9 => 'ki-outline ki-notification',
         ];
 
-        return \Yajra\DataTables\Facades\DataTables::of($logs)
+        return datatables()->of($logs)
             ->addColumn('event', function ($log) use ($eventColors, $eventIcons) {
                 $color = $eventColors[$log->event_type] ?? 'dark';
                 $icon = $eventIcons[$log->event_type] ?? 'ki-outline ki-information';
@@ -178,8 +180,8 @@ class BookingController extends Controller
     public function reviewsData($id)
     {
         $booking = Booking::findOrFail($id);
-        
-        $reviews = \App\Models\NurseReview::with(['user'])
+
+        $reviews = NurseReview::with(['user'])
             ->where('booking_id', $booking->id)
             ->latest()
             ->select(['id', 'user_id', 'rating', 'review', 'created_at']);
@@ -216,14 +218,14 @@ class BookingController extends Controller
     public function bidsData($id)
     {
         $booking = Booking::with('careRequest')->findOrFail($id);
-        
+
         if (!$booking->careRequest) {
-            return \Yajra\DataTables\Facades\DataTables::of(collect([]))->make(true);
+            return datatables()->of(collect([]))->make(true);
         }
 
         $bids = $booking->careRequest->bids()->with('nurse.user');
 
-                return \Yajra\DataTables\Facades\DataTables::of($bids)
+        return datatables()->of($bids)
             ->addColumn('nurse', function ($bid) {
                 $nurseInfo = '<span class="text-gray-500 fs-7">Unknown</span>';
                 if ($bid->nurse && $bid->nurse->user) {

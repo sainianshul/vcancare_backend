@@ -254,20 +254,7 @@
                                 <span class="menu-title">Active Bids</span>
                             </a>
                         </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.bids.accepted') ? 'active' : '' }}"
-                                href="{{ route('admin.bids.accepted') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Accepted Bids</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('admin.bids.rejected') ? 'active' : '' }}"
-                                href="{{ route('admin.bids.rejected') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Rejected Bids</span>
-                            </a>
-                        </div>
+
                     </div>
                 </div>
 
@@ -447,6 +434,13 @@
                             </a>
                         </div>
                         <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.system.communication-logs.*') ? 'active' : '' }}"
+                                href="{{ route('admin.system.communication-logs.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Communication Logs</span>
+                            </a>
+                        </div>
+                        {{-- <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.system.failed-jobs') ? 'active' : '' }}"
                                 href="{{ route('admin.system.failed-jobs') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
@@ -466,7 +460,7 @@
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Backups</span>
                             </a>
-                        </div>
+                        </div> --}}
                         <div class="menu-item">
                             <a class="menu-link" href="{{ url('/api/documentation') }}" target="_blank">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
@@ -494,7 +488,7 @@
                                 <span class="menu-title">General</span>
                             </a>
                         </div>
-                        <div class="menu-item">
+                        {{-- <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('admin.settings.app') ? 'active' : '' }}"
                                 href="{{ route('admin.settings.app') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
@@ -507,7 +501,7 @@
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Roles &amp; Permissions</span>
                             </a>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 

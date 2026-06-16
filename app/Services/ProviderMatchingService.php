@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\CareRequest;
 use App\Models\NurseProfile;
+use App\Models\Booking;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
@@ -33,6 +34,11 @@ class ProviderMatchingService
 
         $distanceQuery = "ST_Distance_Sphere(nurse_profiles.location, ST_GeomFromText('POINT({$lng} {$lat})', 4326)) / 1000";
 
+        $requestStartDate = $careRequest->start_date;
+        $requestEndDate = $careRequest->end_date ?? $careRequest->start_date;
+        $requestStartTime = $careRequest->start_time;
+        $requestEndTime = $careRequest->end_time;
+
         return NurseProfile::query()
             ->select('nurse_profiles.*')
             ->selectRaw("{$distanceQuery} AS distance")
@@ -57,6 +63,22 @@ class ProviderMatchingService
                     ->whereTime('available_to', '>=', $adjustedEndTime);
             })
 
+            // 5. Exclude nurses who have conflicting bookings (date+time overlap)
+            ->whereDoesntHave('bookings', function ($query) use ($requestStartDate, $requestEndDate, $requestStartTime, $requestEndTime) {
+                $query->whereIn('status', [
+                    Booking::STATUS_CONFIRMED,
+                    Booking::STATUS_ACTIVE,
+                    Booking::STATUS_PENDING_PAYMENT,
+                ])
+                    // Date overlap: booking.start_date <= request.end_date AND booking.end_date >= request.start_date
+                    ->where('start_date', '<=', $requestEndDate)
+                    ->where('end_date', '>=', $requestStartDate)
+                    // Time overlap: booking.start_time < request.end_time AND booking.end_time > request.start_time
+                    ->when($requestStartTime && $requestEndTime, function ($q) use ($requestStartTime, $requestEndTime) {
+                        $q->where('start_time', '<', $requestEndTime)
+                            ->where('end_time', '>', $requestStartTime);
+                    });
+            })
             ->get();
     }
 

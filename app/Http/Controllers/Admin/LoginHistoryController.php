@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\DataTables\LoginHistoryDataTable;
 use App\Models\LoginHistory;
+use App\Infrastructure\IpLocation;
+use Illuminate\Http\Request;
 
 class LoginHistoryController extends Controller
 {
@@ -28,7 +30,7 @@ class LoginHistoryController extends Controller
     {
         $loginHistory = LoginHistory::with('user')->findOrFail($id);
         
-        $ipLocation = new \App\Infrastructure\IpLocation($loginHistory->ip_address);
+        $ipLocation = new IpLocation($loginHistory->ip_address);
 
         return view('admin.login-history.show', compact('loginHistory', 'ipLocation'));
     }

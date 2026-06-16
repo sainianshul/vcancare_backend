@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\System;
 use App\DataTables\System\ErrorLogsDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\ApplicationError;
+use Illuminate\Http\Request;
 
 class ErrroLogsController extends Controller
 {
@@ -31,7 +32,7 @@ class ErrroLogsController extends Controller
         return view('admin.systems.error-logs.show', compact('error'));
     }
 
-    public function status(\Illuminate\Http\Request $request, $id)
+    public function status(Request $request, $id)
     {
         $error = ApplicationError::findOrFail($id);
         $error->status = $request->status;

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTables\Request\RequestBidsDataTable;
 use App\DataTables\Request\RequestDataTable;
+use App\DataTables\Request\RequestNotifiedNursesDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\CareRequest;
 use Illuminate\Http\Request;
 
 class RequestController extends Controller
@@ -38,9 +41,9 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        $careRequest = \App\Models\CareRequest::with([
-            'user', 
-            'careType', 
+        $careRequest = CareRequest::with([
+            'user',
+            'careType',
             'bids.nurse.user'
         ])->findOrFail($id);
 
@@ -50,7 +53,7 @@ class RequestController extends Controller
     /**
      * Get bids data for the specific request (AJAX).
      */
-    public function bidsData($id, \App\DataTables\Request\RequestBidsDataTable $dataTable)
+    public function bidsData($id, RequestBidsDataTable $dataTable)
     {
         return $dataTable->withRequestId($id)->ajax();
     }
@@ -58,7 +61,7 @@ class RequestController extends Controller
     /**
      * Get notified nurses data for the specific request (AJAX).
      */
-    public function notifiedNursesData($id, \App\DataTables\Request\RequestNotifiedNursesDataTable $dataTable)
+    public function notifiedNursesData($id, RequestNotifiedNursesDataTable $dataTable)
     {
         return $dataTable->withRequestId($id)->ajax();
     }
@@ -68,9 +71,8 @@ class RequestController extends Controller
      */
     public function destroy($id)
     {
-        $careRequest = \App\Models\CareRequest::findOrFail($id);
-        $careRequest->delete(); // Uses SoftDeletes
-
+        $careRequest = CareRequest::findOrFail($id);
+        $careRequest->delete();
         return response()->json(['success' => true]);
     }
 }

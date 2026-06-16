@@ -9,6 +9,7 @@ use App\Helpers\ApiResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -65,6 +66,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Model Not Found – API JSON, 
         $exceptions->render(function (ModelNotFoundException $e, $request) {
+            if ($request->is('api/documentation*') || $request->is('docs/asset/*'))
+                return null;
+            if (!$request->is('api/*') && !$request->expectsJson()) {
+                return null;
+            }
+            return ApiResponse::error('Resource not found', 404);
+        });
+
+        // Not Found Http Exception (e.g. invalid route or model not found converted)
+        $exceptions->render(function (NotFoundHttpException $e, $request) {
             if ($request->is('api/documentation*') || $request->is('docs/asset/*'))
                 return null;
             if (!$request->is('api/*') && !$request->expectsJson()) {

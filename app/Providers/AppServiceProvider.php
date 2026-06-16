@@ -15,6 +15,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Contracts\PaymentGatewayInterface::class,
             \App\Services\Gateways\DummyPaymentGateway::class
         );
+
+        $this->app->bind(
+            \App\Contracts\SmsServiceInterface::class,
+            \App\Services\Sms\TwilioSmsService::class
+        );
     }
 
     /**
@@ -22,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Notifications\Events\NotificationSent::class,
+            \App\Listeners\LogNotificationSent::class
+        );
     }
 }

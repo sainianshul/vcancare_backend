@@ -104,8 +104,11 @@ class BiddingService
             $cacheEntry->update(['status' => NurseRequestCache::STATUS_BID_PLACED]);
 
             // Increment bid counter on care request
-            CareRequest::where('id', $careRequestId)
-                ->increment('total_bids_received');
+            $careRequest = CareRequest::find($careRequestId);
+            $careRequest->increment('total_bids_received');
+            
+            // Notify patient
+            $careRequest->user->notify(new \App\Notifications\NewBidPlacedNotification($bid));
 
             return $bid;
         });

@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "darkaonline/l5-swagger": "^11.0",
+        "laravel-notification-channels/fcm": "^5.1",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
@@ -30,7 +31,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/settings.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

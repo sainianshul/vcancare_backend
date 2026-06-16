@@ -43,17 +43,17 @@
                 <div class="d-flex justify-content-between flex-column-auto mb-10 w-100" style="max-width: 420px;">
                     <a href="#" class="d-flex align-items-center">
                         <span class="text-gray-900 fw-bolder fs-2">
-                            Vcan<span class="text-primary">cares</span>
+                            Vcan<span class="text-primary">care</span>
                         </span>
                     </a>
                     <span class="badge badge-light-primary fw-semibold fs-8 px-4 py-2">Admin Portal</span>
                 </div>
 
-                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-100 p-10 border border-gray-200" style="max-width: 420px;">
+                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded w-100 p-10 border border-gray-200 border-top border-top-3 border-primary shadow-sm" style="max-width: 420px;">
 
                     <div class="d-flex flex-center flex-column flex-column-fluid pb-5">
-                        <h1 class="text-gray-900 fw-bolder mb-2 fs-2x">Sign in</h1>
-                        <span class="text-gray-500 fw-normal fs-6">Enter your credentials to access the dashboard</span>
+                        <h1 class="text-gray-900 fw-bolder mb-2 fs-2x">Administrator Login</h1>
+                        <span class="text-gray-500 fw-normal fs-7">Please authenticate to access the system</span>
                     </div>
 
                     @if ($errors->any())
@@ -72,12 +72,12 @@
                         @csrf
 
                         <div class="fv-row mb-5">
-                            <label class="form-label fw-semibold text-gray-700 fs-7 mb-2 required">
+                            <label class="form-label text-gray-500 text-uppercase fw-bold fs-9 mb-2 required">
                                 Email Address
                             </label>
-                            <div class="input-group input-group-solid border rounded-2">
-                                <span class="input-group-text">
-                                    <i class="ki-outline ki-sms fs-4 text-gray-400"></i>
+                            <div class="input-group border border-gray-300 rounded">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="ki-outline ki-sms fs-4 text-gray-500"></i>
                                 </span>
                                 <input
                                     type="email"
@@ -86,7 +86,7 @@
                                     value="{{ old('email') }}"
                                     placeholder="admin@vcancare.com"
                                     autocomplete="off"
-                                    class="form-control form-control-transparent border border-gray-800 text-gray-900 @error('email') is-invalid @enderror"
+                                    class="form-control form-control-transparent border-0 text-gray-900 @error('email') is-invalid @enderror"
                                 />
                             </div>
                             @error('email')
@@ -99,12 +99,12 @@
                         </div>
 
                         <div class="fv-row mb-5" data-kt-password-meter="true">
-                            <label class="form-label fw-semibold text-gray-700 fs-7 mb-2 required">
+                            <label class="form-label text-gray-500 text-uppercase fw-bold fs-9 mb-2 required">
                                 Password
                             </label>
-                            <div class="input-group input-group-solid border rounded-2" id="kt_password_input">
-                                <span class="input-group-text">
-                                    <i class="ki-outline ki-lock-2 fs-4 text-gray-400"></i>
+                            <div class="input-group border border-gray-300 rounded" id="kt_password_input">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="ki-outline ki-lock-2 fs-4 text-gray-500"></i>
                                 </span>
                                 <input
                                     type="password"
@@ -112,10 +112,10 @@
                                     id="password"
                                     placeholder="Enter your password"
                                     autocomplete="off"
-                                    class="form-control form-control-transparent border border-gray-800 text-gray-900 @error('password') is-invalid @enderror"
+                                    class="form-control form-control-transparent border-0 text-gray-900 @error('password') is-invalid @enderror"
                                 />
-                                <span class="btn btn-icon" id="kt_password_toggle">
-                                    <i class="ki-outline ki-eye fs-4" id="eye_icon"></i>
+                                <span class="btn btn-icon bg-transparent border-0" id="kt_password_toggle">
+                                    <i class="ki-outline ki-eye fs-4 text-gray-500" id="eye_icon"></i>
                                 </span>
                             </div>
                             @error('password')
@@ -145,7 +145,7 @@
 
                         <div class="d-grid mb-8">
                             <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">
-                                <span class="indicator-label fw-semibold">
+                                <span class="indicator-label text-uppercase fw-bold fs-8">
                                     Sign in to dashboard
                                 </span>
                                 <span class="indicator-progress">

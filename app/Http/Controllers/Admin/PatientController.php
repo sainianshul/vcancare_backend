@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTables\Booking\BookingDataTable;
 use App\DataTables\PatientDataTable;
 use App\DataTables\BlockedPatientDataTable;
+use App\DataTables\Request\RequestDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\CareRequest;
+use App\Models\LoginHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class PatientController extends Controller
 {
@@ -24,9 +30,33 @@ class PatientController extends Controller
     {
         abort_unless($patient->isUser(), 404);
 
-        $apiToken = $patient->tokens()->latest()->first();
+        return view('admin.patients.show', compact('patient'));
+    }
 
-        return view('admin.patients.show', compact('patient', 'apiToken'));
+    public function create()
+    {
+        return view('admin.patients.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20|unique:users,phone',
+            'email' => 'nullable|email|unique:users,email',
+            'status' => 'required|integer|in:' . implode(',', array_keys(User::getStatusList())),
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'status' => $request->status,
+            'role' => User::ROLE_USER,
+            'password' => Hash::make(Str::random(16)),
+        ]);
+
+        return redirect()->route('admin.patients.index')->with('success', 'Patient added successfully.');
     }
 
     public function edit(User $patient)
@@ -88,8 +118,8 @@ class PatientController extends Controller
     }
     public function stats(User $patient)
     {
-        $totalRequests = \App\Models\CareRequest::where('user_id', $patient->id)->count();
-        $completedRequests = \App\Models\CareRequest::where('user_id', $patient->id)->where('status', \App\Models\CareRequest::STATUS_COMPLETED)->count();
+        $totalRequests = CareRequest::where('user_id', $patient->id)->count();
+        $completedRequests = CareRequest::where('user_id', $patient->id)->where('status', CareRequest::STATUS_COMPLETED)->count();
 
         return response()->json([
             'total_requests' => $totalRequests,
@@ -102,7 +132,7 @@ class PatientController extends Controller
         return view('admin.patients.tabs.requests', compact('patient'));
     }
 
-    public function requestsData(User $patient, \App\DataTables\Request\RequestDataTable $dataTable)
+    public function requestsData(User $patient, RequestDataTable $dataTable)
     {
         request()->merge(['user_id' => $patient->id]);
         return $dataTable->ajax();
@@ -113,7 +143,7 @@ class PatientController extends Controller
         return view('admin.patients.tabs.bookings', compact('patient'));
     }
 
-    public function bookingsData(User $patient, \App\DataTables\Booking\BookingDataTable $dataTable)
+    public function bookingsData(User $patient, BookingDataTable $dataTable)
     {
         request()->merge(['user_id' => $patient->id]);
         return $dataTable->ajax();
@@ -126,7 +156,7 @@ class PatientController extends Controller
 
     public function loginHistoryData(User $patient)
     {
-        $logins = \App\Models\LoginHistory::where('user_id', $patient->id)->latest();
+        $logins = LoginHistory::where('user_id', $patient->id)->latest();
 
         return datatables()->of($logins)
             ->editColumn('ip_address', function ($login) {
@@ -137,7 +167,7 @@ class PatientController extends Controller
                 if (stripos($login->user_agent, 'mobile') !== false || stripos($login->user_agent, 'android') !== false || stripos($login->user_agent, 'iphone') !== false) {
                     $icon = 'ki-phone';
                 }
-                return '<div class="d-flex align-items-center"><i class="ki-outline ' . $icon . ' fs-3 me-2 text-primary"></i><span class="text-truncate d-inline-block" style="max-width:250px;" title="' . htmlspecialchars($login->user_agent) . '">' . \Str::limit($login->user_agent, 40) . '</span></div>';
+                return '<div class="d-flex align-items-center"><i class="ki-outline ' . $icon . ' fs-3 me-2 text-primary"></i><span class="text-truncate d-inline-block" style="max-width:250px;" title="' . htmlspecialchars($login->user_agent) . '">' . Str::limit($login->user_agent, 40) . '</span></div>';
             })
             ->editColumn('created_at', function ($login) {
                 return '<span class="text-gray-600 fs-7">' . $login->created_at->format('d M Y, h:i A') . '</span>';

@@ -12,8 +12,7 @@
             // Bids
             { name: 'All Bids', route: '{{ route('admin.bids.index') }}', icon: 'ki-outline ki-handcart', color: 'warning' },
             { name: 'Today\'s Bids', route: '{{ route('admin.bids.today') }}', icon: 'ki-outline ki-abstract-26', color: 'warning' },
-            { name: 'Accepted Bids', route: '{{ route('admin.bids.accepted') }}', icon: 'ki-outline ki-check-circle', color: 'success' },
-            { name: 'Rejected Bids', route: '{{ route('admin.bids.rejected') }}', icon: 'ki-outline ki-cross-circle', color: 'danger' },
+
 
             // Bookings
             { name: 'All Bookings', route: '{{ route('admin.bookings.index') }}', icon: 'ki-outline ki-calendar-tick', color: 'info' },

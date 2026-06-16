@@ -1,11 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BidController;
+use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\NurseController;
 use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Admin\System\ErrroLogsController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -57,13 +61,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/{user}/care-requests/data', [NurseController::class, 'careRequestsData'])->name('care-requests.data');
         Route::get('/{user}/review-step-view/{step}', [NurseController::class, 'getReviewStepView'])->name('review-step-view');
         Route::post('/{user}/review-step', [NurseController::class, 'reviewStep'])->name('review-step');
+        Route::post('/{user}/document-review/{document}', [NurseController::class, 'reviewDocument'])->name('document-review');
         Route::post('/{user}/finalize-review', [NurseController::class, 'finalizeReview'])->name('finalize-review');
+        
+        // Secure document download route
+        Route::get('/documents/{document}', [NurseController::class, 'document'])->name('document');
     });
 
     // PEOPLE — Patients
     Route::prefix('patients')->name('patients.')->group(function () {
         Route::get('/', [PatientController::class, 'index'])->name('index');
         Route::get('data', [PatientController::class, 'data'])->name('data');
+        Route::get('create', [PatientController::class, 'create'])->name('create');
+        Route::post('store', [PatientController::class, 'store'])->name('store');
+
         Route::get('blocked', [PatientController::class, 'blocked'])->name('blocked');
         Route::get('blocked/data', [PatientController::class, 'blockedData'])->name('blocked.data');
         Route::post('{patient}/unblock', [PatientController::class, 'unblock'])->name('unblock');
@@ -91,57 +102,40 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // Care Request
     Route::prefix('requests')->name('requests.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\RequestController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Admin\RequestController::class, 'data'])->name('data');
-        Route::get('today', [\App\Http\Controllers\Admin\RequestController::class, 'todayIndex'])->name('today');
-        Route::get('{request}/bids-data', [\App\Http\Controllers\Admin\RequestController::class, 'bidsData'])->name('bids-data');
-        Route::get('{request}/notified-nurses-data', [\App\Http\Controllers\Admin\RequestController::class, 'notifiedNursesData'])->name('notified-nurses-data');
-        Route::get('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'show'])->name('show');
-        Route::delete('{request}', [\App\Http\Controllers\Admin\RequestController::class, 'destroy'])->name('destroy');
-
-        Route::get('new', function () {
-            echo "New Requests";
-        })->name('new');
-        Route::get('active', function () {
-            echo "Active Requests";
-        })->name('active');
-        Route::get('completed', function () {
-            echo "Completed Requests";
-        })->name('completed');
-        Route::get('cancelled', function () {
-            echo "Cancelled Requests";
-        })->name('cancelled');
+        Route::get('/', [RequestController::class, 'index'])->name('index');
+        Route::get('/data', [RequestController::class, 'data'])->name('data');
+        Route::get('today', [RequestController::class, 'todayIndex'])->name('today');
+        Route::get('{request}/bids-data', [RequestController::class, 'bidsData'])->name('bids-data');
+        Route::get('{request}/notified-nurses-data', [RequestController::class, 'notifiedNursesData'])->name('notified-nurses-data');
+        Route::get('{request}', [RequestController::class, 'show'])->name('show');
+        Route::delete('{request}', [RequestController::class, 'destroy'])->name('destroy');
     });
 
     // Care
     Route::prefix('bookings')->name('bookings.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Admin\BookingController::class, 'data'])->name('data');
-        Route::get('active', [\App\Http\Controllers\Admin\BookingController::class, 'active'])->name('active');
-        Route::get('active/data', [\App\Http\Controllers\Admin\BookingController::class, 'activeData'])->name('active-data');
-        Route::get('cancelled', [\App\Http\Controllers\Admin\BookingController::class, 'cancelled'])->name('cancelled');
-        Route::get('cancelled/data', [\App\Http\Controllers\Admin\BookingController::class, 'cancelledData'])->name('cancelled-data');
-        Route::get('{booking}/sessions-data', [\App\Http\Controllers\Admin\BookingController::class, 'sessionsData'])->name('sessions-data');
-        Route::get('{booking}/payment-logs-data', [\App\Http\Controllers\Admin\BookingController::class, 'paymentLogsData'])->name('payment-logs-data');
-        Route::get('{booking}/reviews-data', [\App\Http\Controllers\Admin\BookingController::class, 'reviewsData'])->name('reviews-data');
-        Route::get('{booking}/bids-data', [\App\Http\Controllers\Admin\BookingController::class, 'bidsData'])->name('bids-data');
-        Route::get('{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'show'])->name('show');
+        Route::get('/', [BookingController::class, 'index'])->name('index');
+        Route::get('/data', [BookingController::class, 'data'])->name('data');
+        Route::get('active', [BookingController::class, 'active'])->name('active');
+        Route::get('active/data', [BookingController::class, 'activeData'])->name('active-data');
+        Route::get('cancelled', [BookingController::class, 'cancelled'])->name('cancelled');
+        Route::get('cancelled/data', [BookingController::class, 'cancelledData'])->name('cancelled-data');
+        Route::get('{booking}/sessions-data', [BookingController::class, 'sessionsData'])->name('sessions-data');
+        Route::get('{booking}/payment-logs-data', [BookingController::class, 'paymentLogsData'])->name('payment-logs-data');
+        Route::get('{booking}/reviews-data', [BookingController::class, 'reviewsData'])->name('reviews-data');
+        Route::get('{booking}/bids-data', [BookingController::class, 'bidsData'])->name('bids-data');
+        Route::get('{booking}', [BookingController::class, 'show'])->name('show');
     });
 
     // OPERATIONS — Bids
     Route::prefix('bids')->name('bids.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\BidController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Admin\BidController::class, 'data'])->name('data');
-        Route::get('today', [\App\Http\Controllers\Admin\BidController::class, 'todayIndex'])->name('today');
-        Route::get('today/data', [\App\Http\Controllers\Admin\BidController::class, 'todayData'])->name('today.data');
-        Route::get('active', [\App\Http\Controllers\Admin\BidController::class, 'active'])->name('active');
-        Route::get('active/data', [\App\Http\Controllers\Admin\BidController::class, 'activeData'])->name('active.data');
-        Route::get('accepted', [\App\Http\Controllers\Admin\BidController::class, 'accepted'])->name('accepted');
-        Route::get('accepted/data', [\App\Http\Controllers\Admin\BidController::class, 'acceptedData'])->name('accepted.data');
-        Route::get('rejected', [\App\Http\Controllers\Admin\BidController::class, 'rejected'])->name('rejected');
-        Route::get('rejected/data', [\App\Http\Controllers\Admin\BidController::class, 'rejectedData'])->name('rejected.data');
+        Route::get('/', [BidController::class, 'index'])->name('index');
+        Route::get('/data', [BidController::class, 'data'])->name('data');
+        Route::get('today', [BidController::class, 'todayIndex'])->name('today');
+        Route::get('today/data', [BidController::class, 'todayData'])->name('today.data');
+        Route::get('active', [BidController::class, 'active'])->name('active');
+        Route::get('active/data', [BidController::class, 'activeData'])->name('active.data');
 
-        Route::get('{bid}', [\App\Http\Controllers\Admin\BidController::class, 'show'])->name('show');
+        Route::get('{bid}', [BidController::class, 'show'])->name('show');
     });
 
     // OPERATIONS — Services
@@ -176,22 +170,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     });
 
     // Comments
-    Route::post('comments', [\App\Http\Controllers\Admin\CommentController::class, 'store'])->name('comments.store');
-    Route::delete('comments/{comment}', [\App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
-    // API Token management 
-    Route::delete('api-tokens/{tokenId}/revoke', function ($tokenId) {
-        $token = \Laravel\Sanctum\PersonalAccessToken::findOrFail($tokenId);
-        $token->delete();
-        return response()->json(['success' => true]);
-    })->name('api-tokens.revoke');
-
-    Route::post('api-tokens/{userId}/issue', function ($userId) {
-        $user = User::findOrFail($userId);
-        // Issue an additional token for admin testing without revoking user's active sessions
-        $plainTextToken = $user->createToken('admin-swagger-testing')->plainTextToken;
-        return response()->json(['success' => true, 'token' => $plainTextToken]);
-    })->name('api-tokens.issue');
 
 
     // System
@@ -203,6 +184,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('error-logs/pending-count', [ErrroLogsController::class, 'pendingCount'])->name('errors.pending-count');
         Route::post('error-logs/{id}/status', [ErrroLogsController::class, 'status'])->name('errors.status');
         Route::get('error-logs/{id}', [ErrroLogsController::class, 'show'])->name('errors.show');
+        
+        Route::prefix('communication-logs')->name('communication-logs.')->group(function() {
+            Route::get('/', [\App\Http\Controllers\Admin\System\CommunicationLogController::class, 'index'])->name('index');
+            Route::get('data', [\App\Http\Controllers\Admin\System\CommunicationLogController::class, 'data'])->name('data');
+            Route::post('empty', [\App\Http\Controllers\Admin\System\CommunicationLogController::class, 'empty'])->name('empty');
+        });
 
 
         Route::get('failed-jobs', function () {
@@ -239,9 +226,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // SYSTEM — Settings
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('general', function () {
-            echo "General Settings";
-        })->name('general');
+        Route::get('general', [\App\Http\Controllers\Admin\SettingController::class, 'general'])->name('general');
+        Route::post('general', [\App\Http\Controllers\Admin\SettingController::class, 'updateGeneral'])->name('general.update');
+        
         Route::get('app', function () {
             echo "App Config";
         })->name('app');

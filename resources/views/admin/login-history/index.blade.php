@@ -9,10 +9,10 @@
         ['label' => 'Login History'],
     ]" />
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border border-gray-200">
 
         {{-- Toolbar --}}
-        <div class="card-header border-0 pt-5 pb-3">
+        <div class="card-header border-bottom border-gray-200 pt-5 pb-4">
 
             <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
 
@@ -109,7 +109,7 @@
 
                     <thead>
 
-                        <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
+                        <tr class="text-start text-gray-500 fw-bold fs-9 text-uppercase gs-0 border-bottom border-gray-200 border-1">
 
                             <th class="w-50px">
                                 S.No
@@ -178,15 +178,10 @@
         $(function () {
 
             var table = $('#login-history-table').DataTable({
-
                 serverSide: true,
-
                 processing: false,
-
                 ajax: {
-
                     url: '{{ route('admin.login-history.data') }}',
-
                     data: function (d) {
                         d.status = $('#filter-status').val();
                     }

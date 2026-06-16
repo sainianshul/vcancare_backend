@@ -9,6 +9,7 @@ use App\Models\CareRequest;
 use App\Models\CareType;
 use App\Models\NurseRequestCache;
 use App\Helpers\BiddingWindow;
+use App\Models\RequestBid;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -35,7 +36,7 @@ class CareRequestService
     /**
      * Create a care request and run nurse matching.
      *
-     * @throws CareRequestException
+     * 
      */
     public function createAndMatch(array $data, int $userId): array
     {
@@ -120,12 +121,10 @@ class CareRequestService
             ];
         }
 
-        // If status is FAILED or EXPIRED, allow full edit and re-run matching
+        // If status is PENDING or FAILED_NO_NURSES, allow full edit and re-run matching
         if (
             in_array($careRequest->status, [
                 CareRequest::STATUS_FAILED_NO_NURSES,
-                CareRequest::STATUS_FAILED_NO_BIDS,
-                CareRequest::STATUS_EXPIRED,
                 CareRequest::STATUS_PENDING
             ])
         ) {
@@ -172,9 +171,9 @@ class CareRequestService
                 ->update(['status' => NurseRequestCache::STATUS_EXPIRED]);
 
             // Cancel any pending bids
-            \App\Models\RequestBid::where('care_request_id', $careRequest->id)
-                ->whereIn('status', [\App\Models\RequestBid::STATUS_PENDING])
-                ->update(['status' => \App\Models\RequestBid::STATUS_CANCELLED]);
+            RequestBid::where('care_request_id', $careRequest->id)
+                ->whereIn('status', [RequestBid::STATUS_PENDING])
+                ->update(['status' => RequestBid::STATUS_CANCELLED]);
         });
 
         return $careRequest;
@@ -229,6 +228,10 @@ class CareRequestService
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
+
+            if (isset($nurse->user)) {
+                $nurse->user->notify(new \App\Notifications\NewCareRequestNotification($careRequest));
+            }
         }
 
         if (!empty($records)) {

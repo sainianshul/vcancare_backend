@@ -13,6 +13,9 @@ return [
     // Time flexibility in hours
     'time_flexibility_hours' => 1,
 
+    // Maximum distance in meters a nurse can be from the patient to force end a session
+    'maximum_diameter_for_force_end' => 100,
+
     // Minimum hours before a care request can start
     'min_booking_notice_hours' => 6,
 
@@ -23,6 +26,8 @@ return [
     'matching_attempts' => [
         ['radius_km' => 5,  'time_flex_hours' => 0],
         ['radius_km' => 5,  'time_flex_hours' => 1],
+        ['radius_km' => 7,  'time_flex_hours' => 0],
+        ['radius_km' => 7,  'time_flex_hours' => 1],
         ['radius_km' => 10, 'time_flex_hours' => 0],
         ['radius_km' => 10, 'time_flex_hours' => 1],
     ],

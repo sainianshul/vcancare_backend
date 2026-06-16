@@ -51,6 +51,10 @@ class BookingController extends Controller
 
         $bookings = $this->bookingService->listForNurse($nurseId);
 
+        $bookings->getCollection()->transform(function ($booking) {
+            return $booking->getNurseBookingArray();
+        });
+
         return ApiResponse::success('Bookings retrieved successfully.', [
             'bookings' => $bookings,
         ]);
@@ -149,37 +153,199 @@ class BookingController extends Controller
         path: '/api/v1/nurse/sessions/{session_id}/end',
         operationId: 'endNurseSession',
         summary: 'End session',
-        description: 'Completes a started session. If all sessions are done, booking completes and nurse gets paid.',
+        description: 'Completes a started session with end OTP. If all sessions are done, booking completes and nurse gets paid.',
         security: [['bearerAuth' => []]],
         tags: ['Nurse Bookings'],
         parameters: [
             new OA\Parameter(name: 'session_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],
         requestBody: new OA\RequestBody(
-            required: false,
+            required: true,
             content: new OA\JsonContent(
+                required: ['otp'],
                 properties: [
+                    new OA\Property(property: 'otp', type: 'string', minLength: 6, maxLength: 6, example: '654321'),
                     new OA\Property(property: 'notes', type: 'string', example: 'Vitals stable, medicine administered.'),
                 ]
             )
         ),
         responses: [
             new OA\Response(response: 200, description: 'Session completed'),
-            new OA\Response(response: 409, description: 'Session not started')
+            new OA\Response(response: 409, description: 'Session not started'),
+            new OA\Response(response: 422, description: 'Invalid End OTP')
         ]
     )]
     public function endSession(Request $request, int $sessionId)
     {
-        $request->validate(['notes' => 'nullable|string|max:1000']);
+        $request->validate([
+            'otp' => 'required|string|size:6',
+            'notes' => 'nullable|string|max:1000'
+        ]);
 
         $nurseId = $request->user()->nurseProfile->id ?? null;
         if (!$nurseId) {
             return ApiResponse::error('Nurse profile not found.', 404);
         }
 
-        $session = $this->bookingService->endSession($sessionId, $nurseId, $request->notes);
+        $session = $this->bookingService->endSession($sessionId, $nurseId, $request->otp, $request->notes);
 
         return ApiResponse::success('Session completed successfully.', ['session' => $session]);
+    }
+
+    #[OA\Post(
+        path: '/api/v1/nurse/sessions/{session_id}/force-end',
+        operationId: 'forceEndNurseSession',
+        summary: 'Force End session',
+        description: 'Completes a started session without OTP if nurse is at patient location.',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Bookings'],
+        parameters: [
+            new OA\Parameter(name: 'session_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['reason', 'latitude', 'longitude'],
+                properties: [
+                    new OA\Property(property: 'reason', type: 'string', example: 'Patient phone dead'),
+                    new OA\Property(property: 'latitude', type: 'number', format: 'float', example: 28.704060),
+                    new OA\Property(property: 'longitude', type: 'number', format: 'float', example: 77.102493),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Session completed'),
+            new OA\Response(response: 409, description: 'Distance exceeded or session not started')
+        ]
+    )]
+    public function forceEndSession(Request $request, int $sessionId)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:1000',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric'
+        ]);
+
+        $nurseId = $request->user()->nurseProfile->id ?? null;
+        if (!$nurseId) {
+            return ApiResponse::error('Nurse profile not found.', 404);
+        }
+
+        $session = $this->bookingService->forceEndSession(
+            $sessionId, 
+            $nurseId, 
+            $request->reason, 
+            (float) $request->latitude, 
+            (float) $request->longitude
+        );
+
+        return ApiResponse::success('Session force ended successfully.', ['session' => $session]);
+    }
+
+    #[OA\Get(
+        path: '/api/v1/nurse/sessions/today',
+        operationId: 'todayNurseSessions',
+        summary: 'Get today\'s sessions',
+        description: 'Returns a list of today\'s sessions for the nurse.',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Bookings'],
+        responses: [
+            new OA\Response(response: 200, description: 'Today\'s sessions retrieved')
+        ]
+    )]
+    public function todaySessions(Request $request)
+    {
+        $nurseId = $request->user()->nurseProfile->id ?? null;
+        if (!$nurseId) {
+            return ApiResponse::success('Today\'s sessions retrieved successfully.', ['sessions' => []]);
+        }
+
+        $sessions = \App\Models\BookingSession::whereHas('booking', function($query) use ($nurseId) {
+                $query->where('nurse_id', $nurseId)
+                      ->whereIn('status', [\App\Models\Booking::STATUS_CONFIRMED, \App\Models\Booking::STATUS_ACTIVE]);
+            })
+            ->where('session_date', now()->format('Y-m-d'))
+            ->with(['booking'])
+            ->get();
+
+        $formattedSessions = $sessions->map(function ($session) {
+            return $session->getNurseSessionArray();
+        });
+
+        return ApiResponse::success('Today\'s sessions retrieved successfully.', [
+            'sessions' => $formattedSessions
+        ]);
+    }
+
+    #[OA\Get(
+        path: '/api/v1/nurse/bookings/{booking_id}/sessions',
+        operationId: 'listNurseBookingSessions',
+        summary: 'List sessions for a booking',
+        description: 'Returns all sessions for a specific booking assigned to the nurse.',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Bookings'],
+        parameters: [
+            new OA\Parameter(name: 'booking_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Sessions retrieved')
+        ]
+    )]
+    public function listSessions(Request $request, int $bookingId)
+    {
+        $nurseId = $request->user()->nurseProfile->id ?? null;
+        if (!$nurseId) {
+            return ApiResponse::error('Nurse profile not found.', 404);
+        }
+
+        $booking = \App\Models\Booking::where('id', $bookingId)
+            ->where('nurse_id', $nurseId)
+            ->firstOrFail();
+
+        $sessions = $booking->sessions()->orderBy('session_date')->get();
+
+        $formattedSessions = $sessions->map(function ($session) {
+            return $session->getNurseSessionArray();
+        });
+
+        return ApiResponse::success('Sessions retrieved successfully.', [
+            'sessions' => $formattedSessions
+        ]);
+    }
+
+    #[OA\Get(
+        path: '/api/v1/nurse/bookings/{booking_id}/sessions/{session_id}',
+        operationId: 'showNurseBookingSession',
+        summary: 'Show particular session details',
+        description: 'Returns details of a specific session for the nurse.',
+        security: [['bearerAuth' => []]],
+        tags: ['Nurse Bookings'],
+        parameters: [
+            new OA\Parameter(name: 'booking_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'session_id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Session details retrieved')
+        ]
+    )]
+    public function showSession(Request $request, int $bookingId, int $sessionId)
+    {
+        $nurseId = $request->user()->nurseProfile->id ?? null;
+        if (!$nurseId) {
+            return ApiResponse::error('Nurse profile not found.', 404);
+        }
+
+        $session = \App\Models\BookingSession::where('booking_id', $bookingId)
+            ->where('id', $sessionId)
+            ->whereHas('booking', function ($q) use ($nurseId) {
+                $q->where('nurse_id', $nurseId);
+            })
+            ->with('booking')
+            ->firstOrFail();
+
+        return ApiResponse::success('Session details retrieved successfully.', [
+            'session' => $session->getNurseSessionArray()
+        ]);
     }
 
     #[OA\Post(

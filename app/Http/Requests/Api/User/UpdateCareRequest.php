@@ -44,4 +44,44 @@ class UpdateCareRequest extends FormRequest
             'end_time' => ['sometimes', 'date_format:H:i'],
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $startDate = $this->input('start_date');
+            $startTime = $this->input('start_time');
+
+            if ($startDate && $startTime) {
+                try {
+                    $userTz = $this->input('timezone', 'Asia/Kolkata');
+                    $shiftStart = \Carbon\Carbon::parse($startDate . ' ' . $startTime, $userTz);
+
+                    $minHours = config('care.min_booking_notice_hours', 6);
+                    $maxDays = config('care.max_booking_advance_days', 4);
+
+                    // Earliest they can book is X hours from right now in their timezone
+                    $minValidTime = now($userTz)->addHours($minHours);
+
+                    // Latest they can book is X days from today (end of the day) in their timezone
+                    $maxValidTime = now($userTz)->addDays($maxDays)->endOfDay();
+
+                    if ($shiftStart->isBefore($minValidTime)) {
+                        $validator->errors()->add(
+                            'start_time',
+                            "Booking must be made at least {$minHours} hours in advance. Please choose a later time."
+                        );
+                    }
+
+                    if ($shiftStart->isAfter($maxValidTime)) {
+                        $validator->errors()->add(
+                            'start_date',
+                            "You can only schedule bookings up to {$maxDays} days in advance."
+                        );
+                    }
+                } catch (\Exception $e) {
+                    // Ignore date parsing exceptions here; standard Laravel rules catch format issues.
+                }
+            }
+        });
+    }
 }

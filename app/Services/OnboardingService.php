@@ -7,6 +7,7 @@ use App\Models\CareTypeNurse;
 use App\Models\NurseDocument;
 use App\Models\NurseEducation;
 use App\Models\NurseProfile;
+use App\Models\NurseProfileVerification;
 use App\Models\NurseWorkHistory;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -201,15 +202,13 @@ class OnboardingService
                     )
                     ->first();
 
-                // Old file + record delete
-
                 if ($existingDocument) {
-                    Storage::disk('public')->delete($existingDocument->file_path);
+                    Storage::disk('local')->delete($existingDocument->file_path);
                     $existingDocument->delete();
                 }
 
                 // Upload new file
-                $filePath = Storage::disk('public')->put('nurse/documents', $data[$field]);
+                $filePath = Storage::disk('local')->put('nurse/documents', $data[$field]);
 
                 // Save new document
                 $nurseProfile->documents()->create([
@@ -261,6 +260,8 @@ class OnboardingService
                 'onboarding_step' => NurseProfile::STEP_SUBMIT_FOR_REVIEW,
                 'is_onboarding_completed' => true,
             ]);
+
+            $user->notify(new \App\Notifications\NurseProfileSubmitted());
         });
     }
 
@@ -340,12 +341,16 @@ class OnboardingService
             NurseProfile::STEP_DOCUMENTS => [
                 'documents' =>
                     $nurseProfile
-                        ->documents
+                        ->documents()
+                        ->orderBy('id')
+                        ->get()
                         ->map(fn($document) => [
+                            'id' => $document->id,
                             'document_type' => $document->document_type,
                             'document_type_name' => $document->document_type_text,
                             'status' => $document->status,
                             'status_name' => $document->status_text,
+                            'rejection_reason' => $document->rejection_reason,
                             'file_path' => $document->file_path,
                         ])
                         ->values()
@@ -382,7 +387,7 @@ class OnboardingService
             throw new InvalidOnboardingStepException('Nurse profile not found.');
         }
 
-        \App\Models\NurseProfileVerification::updateOrCreate(
+        NurseProfileVerification::updateOrCreate(
             [
                 'nurse_profile_id' => $nurseProfile->id,
                 'step_id' => $stepId,
@@ -421,6 +426,9 @@ class OnboardingService
             }
 
             $nurseProfile->update($updateData);
+
+            $statusName = $status == NurseProfile::STATUS_APPROVED ? 'approved' : 'rejected';
+            $user->notify(new \App\Notifications\NurseProfileStatusChanged($statusName, $reason));
         });
     }
 

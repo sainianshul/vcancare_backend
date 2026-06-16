@@ -51,6 +51,22 @@ class Booking extends Model
     const CANCELLED_BY_ADMIN = 3;
     const CANCELLED_BY_SYSTEM = 4;
 
+    /*
+    |--------------------------------------------------------------------------
+    | Refund Mode Constants
+    |--------------------------------------------------------------------------
+    */
+    const REFUND_TO_WALLET = 1;
+    const REFUND_TO_BANK = 2;
+
+    public static function getRefundModeList(): array
+    {
+        return [
+            self::REFUND_TO_WALLET => 'Wallet',
+            self::REFUND_TO_BANK => 'Bank Account',
+        ];
+    }
+
     protected $fillable = [
         'reference_id',
         'care_request_id',
@@ -81,6 +97,18 @@ class Booking extends Model
         'cancelled_at',
         'cancellation_reason',
         'parent_booking_id',
+        'patient_name',
+        'patient_age',
+        'contact_phone',
+        'secondary_phone',
+        'care_type_name',
+        'address',
+        'city',
+        'state',
+        'country',
+        'pincode',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [
@@ -311,6 +339,97 @@ class Booking extends Model
     public function paymentLogs()
     {
         return $this->morphMany(PaymentLog::class, 'loggable');
+    }
+
+    public function getUserBookingArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'reference_id' => $this->reference_id,
+            'user_id' => $this->user_id,
+            'nurse_id' => $this->nurse_id,
+            'total_amount' => $this->total_amount,
+            'start_date' => $this->start_date ? $this->start_date->toIso8601String() : null,
+            'end_date' => $this->end_date ? $this->end_date->toIso8601String() : null,
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
+            'total_sessions' => $this->total_sessions,
+            'completed_sessions' => $this->completed_sessions,
+            'status' => $this->status,
+            'status_name' => $this->status_text,
+            'payment_status' => $this->payment_status,
+            'payment_status_name' => $this->payment_status_text,
+            'payment_method' => $this->payment_method,
+            'payment_method_name' => $this->payment_method_text,
+            'cancelled_by' => $this->cancelled_by,
+            'cancelled_at' => $this->cancelled_at ? $this->cancelled_at->toIso8601String() : null,
+            'cancellation_reason' => $this->cancellation_reason,
+            'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
+            'nurse' => $this->nurse && $this->nurse->user ? [
+                'id' => $this->nurse->id,
+                'name' => $this->nurse->user->name,
+                'profile_photo' => $this->nurse->user->profile_photo,
+            ] : null,
+        ];
+    }
+
+    public function getUserBookingDetailArray(): array
+    {
+        $data = $this->getUserBookingArray();
+        
+        $data['care_request'] = [
+            'id' => $this->careRequest ? $this->careRequest->id : null,
+            'reference_id' => $this->careRequest ? $this->careRequest->reference_id : null,
+            'patient_name' => $this->patient_name ?? ($this->careRequest ? $this->careRequest->patient_name : null),
+            'patient_age' => $this->patient_age ?? ($this->careRequest ? $this->careRequest->patient_age : null),
+            'contact_phone' => $this->contact_phone ?? ($this->careRequest ? $this->careRequest->contact_phone : null),
+            'secondary_phone' => $this->secondary_phone ?? ($this->careRequest ? $this->careRequest->secondary_phone : null),
+            'care_type_name' => $this->care_type_name ?? ($this->careRequest && $this->careRequest->careType ? $this->careRequest->careType->name : null),
+            'address' => $this->address ?? ($this->careRequest ? $this->careRequest->address : null),
+            'city' => $this->city ?? ($this->careRequest ? $this->careRequest->city : null),
+            'state' => $this->state ?? ($this->careRequest ? $this->careRequest->state : null),
+            'country' => $this->country ?? ($this->careRequest ? $this->careRequest->country : null),
+            'pincode' => $this->pincode ?? ($this->careRequest ? $this->careRequest->pincode : null),
+            'latitude' => $this->latitude ?? ($this->careRequest ? $this->careRequest->latitude : null),
+            'longitude' => $this->longitude ?? ($this->careRequest ? $this->careRequest->longitude : null),
+        ];
+
+        $data['sessions'] = $this->relationLoaded('sessions') && $this->sessions ? $this->sessions->map(function($session) {
+            return $session->getUserSessionArray();
+        })->toArray() : [];
+
+        return $data;
+    }
+
+    public function getNurseBookingArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'reference_id' => $this->reference_id,
+            'user_id' => $this->user_id,
+            'nurse_amount' => $this->nurse_amount,
+            'start_date' => $this->start_date ? $this->start_date->toIso8601String() : null,
+            'end_date' => $this->end_date ? $this->end_date->toIso8601String() : null,
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
+            'total_sessions' => $this->total_sessions,
+            'completed_sessions' => $this->completed_sessions,
+            'status' => $this->status,
+            'status_name' => $this->status_text,
+            'patient_name' => $this->patient_name ?? ($this->careRequest ? $this->careRequest->patient_name : null),
+            'patient_age' => $this->patient_age ?? ($this->careRequest ? $this->careRequest->patient_age : null),
+            'contact_phone' => $this->contact_phone ?? ($this->careRequest ? $this->careRequest->contact_phone : null),
+            'secondary_phone' => $this->secondary_phone ?? ($this->careRequest ? $this->careRequest->secondary_phone : null),
+            'care_type_name' => $this->care_type_name ?? ($this->careRequest && $this->careRequest->careType ? $this->careRequest->careType->name : null),
+            'address' => $this->address ?? ($this->careRequest ? $this->careRequest->address : null),
+            'city' => $this->city ?? ($this->careRequest ? $this->careRequest->city : null),
+            'state' => $this->state ?? ($this->careRequest ? $this->careRequest->state : null),
+            'country' => $this->country ?? ($this->careRequest ? $this->careRequest->country : null),
+            'pincode' => $this->pincode ?? ($this->careRequest ? $this->careRequest->pincode : null),
+            'latitude' => $this->latitude ?? ($this->careRequest ? $this->careRequest->latitude : null),
+            'longitude' => $this->longitude ?? ($this->careRequest ? $this->careRequest->longitude : null),
+            'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
+        ];
     }
 }
 

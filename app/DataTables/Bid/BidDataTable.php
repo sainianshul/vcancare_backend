@@ -42,15 +42,11 @@ class BidDataTable extends DataTable
 
                 $user = $nurse->user;
                 $url = route('admin.nurses.show', $user->id);
-                $avatar = '<div class="symbol symbol-38px symbol-circle">' . $user->avatar_html . '</div>';
 
                 return '
-                    <div class="d-flex align-items-center gap-3">
-                        ' . $avatar . '
-                        <div class="d-flex flex-column">
-                            <a href="' . $url . '" class="text-gray-800 text-hover-primary fw-semibold fs-6 lh-1 mb-1">' . e($user->name) . '</a>
-                            <span class="text-muted fw-normal fs-7">ID: ' . e($nurse->id) . '</span>
-                        </div>
+                    <div class="d-flex flex-column">
+                        <a href="' . $url . '" class="text-gray-800 text-hover-primary fw-semibold fs-6 lh-1 mb-1">' . e($user->name) . '</a>
+                        <span class="text-muted fw-normal fs-7">ID: ' . e($nurse->id) . '</span>
                     </div>
                 ';
             })

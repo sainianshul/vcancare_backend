@@ -69,7 +69,7 @@
                                                 class="badge badge-light-primary border border-primary fw-semibold px-3 py-1 me-2">
                                                 <i class="ki-outline ki-magnifier fs-7 text-primary me-1"></i> Under Review
                                             </span>
-                                            <x-api-token-badge :token="$apiToken" :user-id="$user->id" />
+
                                         </div>
                                         <div class="d-flex gap-2">
                                             <button
@@ -155,7 +155,7 @@
                                 }
                             @endphp
 
-                            <div class="step-nav-item cursor-pointer d-flex align-items-center px-4 py-3 rounded transition-all {{ $loop->first ? 'bg-light-primary border border-primary' : 'hover-bg-light border border-transparent' }}"
+                            <div class="step-nav-item cursor-pointer d-flex align-items-center px-4 py-3 rounded transition {{ $loop->first ? 'bg-light-primary border border-primary' : 'bg-hover-light border border-transparent' }}"
                                 data-step="{{ $stepId }}" onclick="showStep({{ $stepId }}, this)">
 
                                 <div
@@ -171,7 +171,7 @@
 
                         <!-- Final Approval Tab -->
                         @if(!$isReadOnly)
-                            <div class="step-nav-item cursor-pointer d-flex align-items-center px-4 py-3 rounded transition-all hover-bg-light border border-transparent"
+                            <div class="step-nav-item cursor-pointer d-flex align-items-center px-4 py-3 rounded transition bg-hover-light border border-transparent"
                                 data-step="final" onclick="showStep('final', this)">
                                 <div
                                     class="w-25px h-25px rounded bg-dark d-flex align-items-center justify-content-center me-4">
@@ -208,17 +208,6 @@
 
 @endsection
 
-@push('styles')
-    <style>
-        .step-nav-item.transition-all {
-            transition: all 0.2s ease;
-        }
-
-        .hover-bg-light:hover {
-            background-color: var(--bs-gray-100);
-        }
-    </style>
-@endpush
 
 @push('scripts')
     <script>
@@ -234,7 +223,7 @@
             // Reset nav styles
             document.querySelectorAll('.step-nav-item').forEach(el => {
                 el.classList.remove('bg-light-primary', 'border-primary');
-                el.classList.add('hover-bg-light', 'border-transparent');
+                el.classList.add('bg-hover-light', 'border-transparent');
 
                 let label = el.querySelector('.nav-label');
                 if (label) {
@@ -244,7 +233,7 @@
             });
 
             // Set active style
-            element.classList.remove('hover-bg-light', 'border-transparent');
+            element.classList.remove('bg-hover-light', 'border-transparent');
             element.classList.add('bg-light-primary', 'border-primary');
 
             let activeLabel = element.querySelector('.nav-label');
@@ -365,10 +354,47 @@
                         if (activeStepElement) {
                             showStep(stepId, activeStepElement);
                         }
+                    } else {
+                        Swal.fire('Cannot Approve', response.message, 'warning');
                     }
                 },
                 error: function (xhr) {
                     Swal.fire('Error', 'An error occurred while saving the verification.', 'error');
+                }
+            });
+        }
+
+        function processDocumentReview(docId, status) {
+            submitDocumentReview(docId, status);
+        }
+
+        function submitDocumentReview(docId, status) {
+            $.ajax({
+                url: `{{ url('admin/nurses') }}/{{ $user->id }}/document-review/${docId}`,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    status: status
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        // Reload the step content to reflect changes
+                        const activeStepElement = document.querySelector(`.step-nav-item[data-step="5"]`);
+                        if (activeStepElement) {
+                            showStep(5, activeStepElement);
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire('Error', 'An error occurred while saving the document verification.', 'error');
                 }
             });
         }

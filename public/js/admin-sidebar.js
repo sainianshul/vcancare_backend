@@ -167,4 +167,7 @@
     } else {
         init();
     }
+    
+    // Re-initialize sidebar on Turbo navigation
+    document.addEventListener('turbo:load', init);
 })();

@@ -71,7 +71,7 @@
                                             <i class="ki-outline {{ $patient->status_icon }} fs-7 text-{{ $patient->status_color }} me-1"></i>
                                             {{ $patient->status_name }}
                                         </span>
-                                        <x-api-token-badge :token="$apiToken" :user-id="$patient->id" />
+
                                     </div>
 
                                     <div class="d-flex flex-wrap fw-medium fs-7 mb-4 pe-2 gap-5">

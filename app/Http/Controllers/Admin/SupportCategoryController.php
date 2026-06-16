@@ -22,12 +22,12 @@ class SupportCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255|unique:support_categories,name',
             'status' => 'required|boolean',
         ]);
 
-        SupportCategory::create($request->all());
+        SupportCategory::create($validated);
 
         return redirect()->route('admin.support.categories.index')->with('success', 'Support category created successfully.');
     }
@@ -39,12 +39,12 @@ class SupportCategoryController extends Controller
     {
         $category = SupportCategory::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255|unique:support_categories,name,' . $category->id,
             'status' => 'required|boolean',
         ]);
 
-        $category->update($request->all());
+        $category->update($validated);
 
         return redirect()->route('admin.support.categories.index')->with('success', 'Support category updated successfully.');
     }

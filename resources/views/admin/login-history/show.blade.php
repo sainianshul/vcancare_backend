@@ -37,11 +37,11 @@
         <div class="col-xl-8">
             
             {{-- IP Location Overview --}}
-            <div class="card shadow-none border border-gray-300 mb-5 mb-xl-8">
-                <div class="card-header border-0 pt-6">
+            <div class="card shadow-sm border border-gray-200 mb-5 mb-xl-8">
+                <div class="card-header border-bottom border-gray-200 pt-5 pb-4">
                     <h3 class="card-title align-items-start flex-column">
                         <span class="card-label fw-bold fs-6 mb-1 text-gray-800">IP Intelligence</span>
-                        <span class="text-gray-500 mt-1 fw-semibold fs-8">Geographic & network routing data</span>
+                        <span class="text-gray-500 mt-1 text-uppercase fw-bold fs-9">Geographic & network routing data</span>
                     </h3>
                     <div class="card-toolbar">
                         <span class="badge badge-light-primary fw-bold px-3 py-2 fs-8">
@@ -56,7 +56,7 @@
                         <div class="d-flex flex-wrap gap-5">
                             
                             {{-- Huge side icon for visual appeal as requested --}}
-                            <div class="d-flex align-items-center justify-content-center bg-light-primary rounded" style="width: 120px; height: 120px; border: 1px dashed var(--bs-primary);">
+                            <div class="d-flex align-items-center justify-content-center bg-white border border-primary border-dashed rounded" style="width: 120px; height: 120px; border: 1px dashed var(--bs-primary);">
                                 <i class="ki-outline ki-map fs-5x text-primary opacity-75"></i>
                             </div>
 
@@ -65,15 +65,15 @@
                                     {{-- Left Stats --}}
                                     <div class="col-sm-6 pe-sm-5">
                                         <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-gray-200">
-                                            <span class="text-gray-500 fw-semibold fs-7">Country</span>
+                                            <span class="text-gray-500 text-uppercase fw-bold fs-9">Country</span>
                                             <span class="text-gray-800 fw-bold fs-7">{{ $ipLocation->getCountry() ?: '—' }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-gray-200">
-                                            <span class="text-gray-500 fw-semibold fs-7">Region</span>
+                                            <span class="text-gray-500 text-uppercase fw-bold fs-9">Region</span>
                                             <span class="text-gray-800 fw-bold fs-7">{{ $ipLocation->getRegion() ?: '—' }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center py-3">
-                                            <span class="text-gray-500 fw-semibold fs-7">City</span>
+                                            <span class="text-gray-500 text-uppercase fw-bold fs-9">City</span>
                                             <span class="text-gray-800 fw-bold fs-7">{{ $ipLocation->getCity() ?: '—' }}</span>
                                         </div>
                                     </div>
@@ -81,15 +81,15 @@
                                     {{-- Right Stats --}}
                                     <div class="col-sm-6 ps-sm-5 border-sm-start border-gray-200">
                                         <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-gray-200">
-                                            <span class="text-gray-500 fw-semibold fs-7">ISP</span>
+                                            <span class="text-gray-500 text-uppercase fw-bold fs-9">ISP</span>
                                             <span class="text-gray-800 fw-bold fs-7">{{ $ipLocation->getIsp() ?: '—' }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-gray-200">
-                                            <span class="text-gray-500 fw-semibold fs-7">Zip Code</span>
+                                            <span class="text-gray-500 text-uppercase fw-bold fs-9">Zip Code</span>
                                             <span class="text-gray-800 fw-bold fs-7">{{ $ipLocation->getZip() ?: '—' }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center py-3">
-                                            <span class="text-gray-500 fw-semibold fs-7">Coordinates</span>
+                                            <span class="text-gray-500 text-uppercase fw-bold fs-9">Coordinates</span>
                                             <span class="text-gray-800 fw-bold fs-7">{{ $ipLocation->getLat() ?: '—' }}, {{ $ipLocation->getLon() ?: '—' }}</span>
                                         </div>
                                     </div>
@@ -119,8 +119,8 @@
         <div class="col-xl-4">
             
             {{-- User Profile --}}
-            <div class="card shadow-none border border-gray-300 mb-5 mb-xl-8">
-                <div class="card-header border-0 pt-6">
+            <div class="card shadow-sm border border-gray-200 mb-5 mb-xl-8">
+                <div class="card-header border-bottom border-gray-200 pt-5 pb-4">
                     <h3 class="card-title align-items-start flex-column">
                         <span class="card-label fw-bold fs-6 mb-1 text-gray-800">Account Identity</span>
                     </h3>
@@ -142,7 +142,7 @@
 
                         <div class="d-flex flex-column gap-3">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-gray-500 fw-semibold fs-7">Privilege</span>
+                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Privilege</span>
                                 @if((int)$loginHistory->user->role === \App\Models\User::ROLE_ADMIN)
                                     <span class="badge badge-light-danger fw-bold px-2 py-1 fs-8">Admin</span>
                                 @elseif((int)$loginHistory->user->role === \App\Models\User::ROLE_USER)
@@ -154,22 +154,22 @@
                                 @endif
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-gray-500 fw-semibold fs-7">Email</span>
+                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Email</span>
                                 <span class="text-gray-800 fw-bold fs-7">{{ $loginHistory->user->email ?: '—' }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-gray-500 fw-semibold fs-7">Phone</span>
+                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Phone</span>
                                 <span class="text-gray-800 fw-bold fs-7">{{ $loginHistory->user->phone ?: '—' }}</span>
                             </div>
                         </div>
 
                         @if((int)$loginHistory->user->role === \App\Models\User::ROLE_USER)
                             <a href="{{ route('admin.patients.show', $loginHistory->user->id) }}" class="btn btn-light-primary border border-primary btn-sm w-100 fw-bold fs-8 px-3 py-2 mt-4">
-                                Go to Profile <i class="ki-outline ki-arrow-right fs-6 ms-1"></i>
+                                View Full Profile <i class="ki-outline ki-arrow-right fs-7 ms-2"></i>
                             </a>
                         @elseif((int)$loginHistory->user->role === \App\Models\User::ROLE_NURSE)
                             <a href="{{ route('admin.nurses.show', $loginHistory->user->id) }}" class="btn btn-light-success border border-success btn-sm w-100 fw-bold fs-8 px-3 py-2 mt-4">
-                                Go to Profile <i class="ki-outline ki-arrow-right fs-6 ms-1"></i>
+                                View Full Profile <i class="ki-outline ki-arrow-right fs-7 ms-2"></i>
                             </a>
                         @endif
                     @else
@@ -184,7 +184,7 @@
             </div>
 
             {{-- Session Result --}}
-            <div class="card shadow-none border border-gray-300">
+            <div class="card shadow-sm border border-gray-200">
                 <div class="card-body p-6">
                     
                     <div class="d-flex align-items-center mb-5">
@@ -208,11 +208,11 @@
 
                     <div class="d-flex flex-column gap-3">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span class="text-gray-500 fw-semibold fs-7">Timestamp</span>
+                            <span class="text-gray-500 text-uppercase fw-bold fs-9">Timestamp</span>
                             <span class="text-gray-800 fw-bold fs-7">{{ $loginHistory->logged_in_at ? $loginHistory->logged_in_at->format('d M, Y') : '—' }}</span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
-                            <span class="text-gray-500 fw-semibold fs-7">Clock</span>
+                            <span class="text-gray-500 text-uppercase fw-bold fs-9">Clock</span>
                             <span class="text-gray-800 fw-bold fs-7">{{ $loginHistory->logged_in_at ? $loginHistory->logged_in_at->format('H:i:s') : '—' }}</span>
                         </div>
                     </div>

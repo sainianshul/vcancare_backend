@@ -264,7 +264,7 @@
                     "Nurse Bookings"
                 ],
                 "summary": "End session",
-                "description": "Completes a started session. If all sessions are done, booking completes and nurse gets paid.",
+                "description": "Completes a started session with end OTP. If all sessions are done, booking completes and nurse gets paid.",
                 "operationId": "endNurseSession",
                 "parameters": [
                     {
@@ -277,11 +277,20 @@
                     }
                 ],
                 "requestBody": {
-                    "required": false,
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "otp"
+                                ],
                                 "properties": {
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "654321",
+                                        "maxLength": 6,
+                                        "minLength": 6
+                                    },
                                     "notes": {
                                         "type": "string",
                                         "example": "Vitals stable, medicine administered."
@@ -298,6 +307,161 @@
                     },
                     "409": {
                         "description": "Session not started"
+                    },
+                    "422": {
+                        "description": "Invalid End OTP"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/sessions/{session_id}/force-end": {
+            "post": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "Force End session",
+                "description": "Completes a started session without OTP if nurse is at patient location.",
+                "operationId": "forceEndNurseSession",
+                "parameters": [
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "reason",
+                                    "latitude",
+                                    "longitude"
+                                ],
+                                "properties": {
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Patient phone dead"
+                                    },
+                                    "latitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 28.70406
+                                    },
+                                    "longitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 77.102493
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Session completed"
+                    },
+                    "409": {
+                        "description": "Distance exceeded or session not started"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/sessions/today": {
+            "get": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "Get today's sessions",
+                "description": "Returns a list of today's sessions for the nurse.",
+                "operationId": "todayNurseSessions",
+                "responses": {
+                    "200": {
+                        "description": "Today's sessions retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/bookings/{booking_id}/sessions": {
+            "get": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "List sessions for a booking",
+                "description": "Returns all sessions for a specific booking assigned to the nurse.",
+                "operationId": "listNurseBookingSessions",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sessions retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/nurse/bookings/{booking_id}/sessions/{session_id}": {
+            "get": {
+                "tags": [
+                    "Nurse Bookings"
+                ],
+                "summary": "Show particular session details",
+                "description": "Returns details of a specific session for the nurse.",
+                "operationId": "showNurseBookingSession",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session details retrieved"
                     }
                 },
                 "security": [
@@ -1660,7 +1824,7 @@
                     "User Bookings"
                 ],
                 "summary": "Cancel a booking",
-                "description": "Cancels booking with slab-based refund to wallet.",
+                "description": "Cancels booking with slab-based refund. User chooses refund mode: 1 = Wallet, 2 = Bank Account.",
                 "operationId": "cancelUserBooking",
                 "parameters": [
                     {
@@ -1681,6 +1845,11 @@
                                     "reason": {
                                         "type": "string",
                                         "example": "Change of plans"
+                                    },
+                                    "refund_mode": {
+                                        "description": "1 = Wallet, 2 = Bank Account",
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1703,14 +1872,34 @@
                 ]
             }
         },
-        "/api/v1/user/bookings/{booking_id}/otp": {
+        "/api/v1/user/sessions/today": {
             "get": {
                 "tags": [
                     "User Bookings"
                 ],
-                "summary": "Get daily session OTP",
-                "description": "Generates a 6-digit OTP for today's session to share with the nurse.",
-                "operationId": "getUserBookingOtp",
+                "summary": "Get today's sessions",
+                "description": "Returns a list of today's sessions for the user with OTPs.",
+                "operationId": "todayUserSessions",
+                "responses": {
+                    "200": {
+                        "description": "Today's sessions retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/{booking_id}/sessions": {
+            "get": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "List sessions for a booking",
+                "description": "Returns all sessions for a specific booking.",
+                "operationId": "listUserBookingSessions",
                 "parameters": [
                     {
                         "name": "booking_id",
@@ -1723,10 +1912,45 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OTP generated"
+                        "description": "Sessions retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/bookings/{booking_id}/sessions/{session_id}": {
+            "get": {
+                "tags": [
+                    "User Bookings"
+                ],
+                "summary": "Show particular session details",
+                "description": "Returns details of a specific session. Includes OTPs if the session is today.",
+                "operationId": "showUserBookingSession",
+                "parameters": [
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     },
-                    "404": {
-                        "description": "No session today"
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session details retrieved"
                     }
                 },
                 "security": [
