@@ -30,4 +30,29 @@
 
 {{-- Page-specific scripts --}}
 @stack('scripts')
+
+<!--begin::Hover Prefetch (makes sidebar navigation feel instant)-->
+<script>
+(function(){
+    // When user hovers on any internal link, prefetch it so click is instant
+    var defined = {};
+    document.addEventListener('mouseover', function(e) {
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var url = a.href;
+        // Only prefetch same-origin, non-hash, non-javascript links
+        if (a.origin !== location.origin) return;
+        if (url.indexOf('#') !== -1 || url.indexOf('javascript:') !== -1) return;
+        if (a.target === '_blank') return;
+        if (defined[url]) return;
+        defined[url] = true;
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = url;
+        document.head.appendChild(link);
+    }, {passive: true});
+})();
+</script>
+<!--end::Hover Prefetch-->
+
 <!--end::Javascript-->
