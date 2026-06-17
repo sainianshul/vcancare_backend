@@ -4,6 +4,41 @@
     data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-push-header="true"
     data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" class="app-default">
 
+    <style>
+        /* Force a clean, neutral light-gray background instead of Metronic's default purplish tint */
+        body, 
+        #kt_app_body,
+        #kt_app_root, 
+        #kt_app_page, 
+        #kt_app_wrapper, 
+        .app-default,
+        .app-root,
+        .app-page,
+        .app-wrapper,
+        #kt_app_main,
+        .app-main,
+        #kt_app_content,
+        .app-content {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+        }
+
+        /* Ensure cards remain pure white for contrast */
+        .card:not([class*="bg-"]) {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+        }
+
+        /* Increase sidebar text font size */
+        #kt_app_sidebar .menu-item .menu-title {
+            font-size: 1.05rem !important;
+        }
+        
+        #kt_app_sidebar .menu-item .menu-heading {
+            font-size: 0.9rem !important;
+        }
+    </style>
+
     <!--begin::App-->
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
 

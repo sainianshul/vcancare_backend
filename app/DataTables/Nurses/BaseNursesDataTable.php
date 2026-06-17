@@ -19,12 +19,15 @@ abstract class BaseNursesDataTable extends DataTable
             $contact = e($user->email ?? $user->phone ?? '—');
             $avatar = '<div class="symbol symbol-38px symbol-circle">' . $user->avatar_html . '</div>';
 
+            $adminBadge = $user->created_by_admin ? '<span class="badge badge-light-primary fw-bold px-2 py-1 fs-9 border border-primary mt-1" style="width: max-content;"><i class="ki-outline ki-shield-tick fs-8 text-primary me-1"></i>Created by Admin</span>' : '';
+
             return '
                 <div class="d-flex align-items-center gap-3">
                     ' . $avatar . '
                     <div class="d-flex flex-column">
                         <span class="text-gray-800 fw-semibold fs-6 lh-1 mb-1">' . e($user->name) . '</span>
-                        <span class="text-muted fw-normal fs-7">' . $contact . '</span>
+                        <span class="text-muted fw-normal fs-7 mb-1">' . $contact . '</span>
+                        ' . $adminBadge . '
                     </div>
                 </div>
             ';

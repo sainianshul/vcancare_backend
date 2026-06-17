@@ -29,7 +29,9 @@
                             <div class="d-flex align-items-center mb-2">
                                 <span class="text-gray-900 fs-2 fw-bold me-2">{{ $user->name }}</span>
                                 <i class="ki-outline ki-verify fs-1 text-primary me-2" title="Verified Professional"></i>
-
+                                @if($user->created_by_admin)
+                                    <span class="badge badge-light-primary fw-bold px-2 py-1 fs-9 border border-primary"><i class="ki-outline ki-shield-tick fs-8 text-primary me-1"></i>Added by Admin</span>
+                                @endif
                             </div>
                             <div class="d-flex flex-wrap fw-medium fs-7 mb-4 pe-2">
                                 <span class="d-flex align-items-center text-gray-800 me-5 mb-2">
@@ -48,14 +50,14 @@
                             
                             <!-- Key Dates -->
                             <div class="d-flex flex-wrap fw-medium fs-8 mb-4">
-                                <span class="badge badge-light border border-gray-300 text-gray-700 me-3 mb-2 px-3 py-2">
-                                    <i class="ki-outline ki-calendar-add fs-7 me-1"></i> Joined: {{ $profile->created_at->diffForHumans() }}
+                                <span class="badge badge-light-primary text-primary me-3 mb-2 px-3 py-2 fw-bold">
+                                    <i class="ki-outline ki-calendar-add fs-7 me-1 text-primary"></i> Joined: {{ $profile->created_at->diffForHumans() }}
                                 </span>
-                                <span class="badge badge-light border border-gray-300 text-gray-700 me-3 mb-2 px-3 py-2">
-                                    <i class="ki-outline ki-check-square fs-7 me-1"></i> Verified: {{ $profile->approved_at ? \Carbon\Carbon::parse($profile->approved_at)->format('d M Y') : 'N/A' }}
+                                <span class="badge badge-light-success text-success me-3 mb-2 px-3 py-2 fw-bold">
+                                    <i class="ki-outline ki-check-square fs-7 me-1 text-success"></i> Verified: {{ $profile->approved_at ? \Carbon\Carbon::parse($profile->approved_at)->format('d M Y') : 'N/A' }}
                                 </span>
-                                <span class="badge badge-light border border-gray-300 text-gray-700 mb-2 px-3 py-2">
-                                    <i class="ki-outline ki-time fs-7 me-1"></i> Last Login: {{ $user->last_login_at ? \Carbon\Carbon::parse($user->last_login_at)->diffForHumans() : 'Never' }}
+                                <span class="badge badge-light-info text-info mb-2 px-3 py-2 fw-bold">
+                                    <i class="ki-outline ki-time fs-7 me-1 text-info"></i> Last Login: {{ $user->last_login_at ? \Carbon\Carbon::parse($user->last_login_at)->diffForHumans() : 'Never' }}
                                 </span>
                             </div>
                         </div>
@@ -63,18 +65,39 @@
                         <!-- Actions & Badges -->
                         <div class="d-flex flex-column align-items-end my-4">
                             <div class="d-flex mb-4 gap-2">
-                                <button class="btn btn-sm btn-light-primary border border-primary fw-bold px-4 py-2 hover-scale">
-                                    <i class="ki-outline ki-sms fs-5 me-1"></i> SMS
-                                </button>
-                                <button class="btn btn-sm btn-light-info border border-info fw-bold px-4 py-2 hover-scale">
-                                    <i class="ki-outline ki-message-text-2 fs-5 me-1"></i> Email
-                                </button>
-                                <a href="{{ route('admin.nurses.show-application', $user->id) }}" class="btn btn-sm btn-light-dark border border-dark fw-bold px-4 py-2 hover-scale" data-bs-toggle="tooltip" title="View verification documents and onboarding details">
+
+                                <a href="{{ route('admin.nurses.show-application', $user->id) }}" class="btn btn-sm btn-light border border-gray-300 fw-semibold text-gray-700 px-4 py-2 hover-scale" data-bs-toggle="tooltip" title="View verification documents and onboarding details">
                                     <i class="ki-outline ki-folder-open fs-5 me-1"></i> Verification History
                                 </a>
-                                <a href="{{ route('admin.nurses.edit', $user->id) }}" class="btn btn-sm btn-light-warning border border-warning fw-bold px-4 py-2 hover-scale">
+                                <a href="{{ route('admin.nurses.edit', $user->id) }}" class="btn btn-sm btn-light border border-gray-300 fw-semibold text-gray-700 px-4 py-2 hover-scale">
                                     <i class="ki-outline ki-pencil fs-5 me-1"></i> Edit
                                 </a>
+                                
+                                <!-- Status Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border border-gray-300 fw-semibold text-gray-700 px-4 py-2 hover-scale dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ki-outline ki-setting-2 fs-5 me-1"></i> Status
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border border-gray-200">
+                                        <li><h6 class="dropdown-header text-gray-800 fw-bold">Change Status</h6></li>
+<li>
+                                            <form action="{{ route('admin.nurses.status.update', $user->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="status" value="{{ \App\Models\NurseProfile::STATUS_SUSPENDED }}">
+                                                <input type="hidden" name="reason" value="Suspended by Admin">
+                                                <button type="submit" class="dropdown-item py-2 {{ $profile->status == \App\Models\NurseProfile::STATUS_SUSPENDED ? 'active' : '' }}" onclick="return confirm('Are you sure you want to suspend this nurse?')"><i class="ki-outline ki-minus-circle fs-6 text-warning me-2"></i> Suspend Account</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ route('admin.nurses.status.update', $user->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="status" value="{{ \App\Models\NurseProfile::STATUS_REJECTED }}">
+                                                <input type="hidden" name="reason" value="Rejected by Admin">
+                                                <button type="submit" class="dropdown-item py-2 text-danger {{ $profile->status == \App\Models\NurseProfile::STATUS_REJECTED ? 'active' : '' }}" onclick="return confirm('Are you sure you want to reject this nurse?')"><i class="ki-outline ki-cross-circle fs-6 text-danger me-2"></i> Mark Rejected</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                             
                             <!-- Services Badges -->
@@ -116,6 +139,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="activity">Activity Log</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-active-primary text-gray-600 px-4 py-4 cursor-pointer" data-tab="contact">Contact</a>
                 </li>
             </ul>
         </div>
@@ -451,6 +477,21 @@
                             container.innerHTML = '<div class="alert alert-danger m-5">Failed to load care requests. Please try again.</div>';
                         }
                     });
+                } else if (targetTab === 'contact') {
+                    $.ajax({
+                        url: '{{ route('admin.nurses.contact-form', $user->id) }}',
+                        type: 'GET',
+                        success: function (response) {
+                            container.innerHTML = response;
+                            const scripts = container.getElementsByTagName('script');
+                            for (let i = 0; i < scripts.length; i++) {
+                                eval(scripts[i].innerText);
+                            }
+                        },
+                        error: function () {
+                            container.innerHTML = '<div class="alert alert-danger m-5">Failed to load contact form. Please try again.</div>';
+                        }
+                    });
                 } else {
                     // Fake AJAX request for other pending tabs
                     setTimeout(() => {
@@ -479,3 +520,6 @@
     });
 </script>
 @endpush
+
+
+

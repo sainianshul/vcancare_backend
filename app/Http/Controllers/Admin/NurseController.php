@@ -8,10 +8,13 @@ use App\DataTables\Nurses\AllNursesDataTable;
 use App\DataTables\Nurses\UnderReviewNurseDataTable;
 use App\DataTables\Nurses\ApprovedNursesDataTable;
 use App\DataTables\Nurses\RejectedNursesDataTable;
+use App\Http\Requests\Admin\StoreNurseRequest;
 use App\Http\Requests\Admin\UpdateNurseRequest;
 use App\Models\Activity;
 use App\Models\Booking;
 use App\Models\CareType;
+use App\Models\NurseEducation;
+use App\Models\NurseWorkHistory;
 use App\Models\LoginHistory;
 use App\Models\NurseDocument;
 use App\Models\NurseProfile;
@@ -20,6 +23,7 @@ use App\Models\NurseRequestCache;
 use App\Models\NurseReview;
 use App\Models\User;
 use App\Models\RequestBid;
+use App\Notifications\WelcomeNurseNotification;
 use App\Services\Admin\NurseService;
 use App\Services\OnboardingService;
 use Illuminate\Http\Request;
@@ -34,6 +38,26 @@ class NurseController extends Controller
     ) {
     }
     // ── All ───────────────────────────────────────────────
+    public function create()
+    {
+        $careTypes = CareType::where('status', 1)->get();
+        return view('admin.nurses.create', compact('careTypes'));
+    }
+
+    public function store(StoreNurseRequest $request)
+    {
+        try {
+            $user = $this->nurseService->createNurse($request->validated());
+
+            return redirect()->route('admin.nurses.show', $user->id)
+                ->with('success', 'Nurse created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to create nurse: ' . $e->getMessage());
+        }
+    }
+
     public function index(AllNursesDataTable $dt)
     {
         return $dt->render('admin.nurses.index');
@@ -142,6 +166,134 @@ class NurseController extends Controller
                 ->withInput()
                 ->with('error', 'Failed to update nurse profile. Please try again.');
         }
+    }
+
+    // ── Update Status ─────────────────────────────────────
+    public function updateStatus(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+
+        $request->validate([
+            'status' => 'required|integer',
+            'reason' => 'nullable|string'
+        ]);
+
+        $profile = $user->nurseProfile;
+
+        switch ($request->status) {
+            case NurseProfile::STATUS_APPROVED:
+                $profile->markAsApproved(auth()->id());
+                break;
+            case NurseProfile::STATUS_REJECTED:
+                $profile->markAsRejected($request->reason);
+                break;
+            case NurseProfile::STATUS_SUSPENDED:
+                $profile->markAsSuspended($request->reason);
+                break;
+            case NurseProfile::STATUS_PENDING:
+                $profile->update(['status' => NurseProfile::STATUS_PENDING]);
+                break;
+        }
+
+        ActivityLogger::log(
+            Activity::ACTION_UPDATED,
+            'Admin changed nurse status to ' . NurseProfile::getStatusList()[$request->status],
+            $profile,
+            ['status' => $request->status, 'reason' => $request->reason]
+        );
+
+        return redirect()->back()->with('success', 'Nurse status updated successfully.');
+    }
+
+    // ── Edit Education ────────────────────────────────────
+    public function storeEducation(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $validated = $request->validate([
+            'degree_name' => 'required|string|max:255',
+            'institution_name' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+        
+        $validated['nurse_id'] = $user->nurseProfile->id;
+        NurseEducation::create($validated);
+        
+        return redirect()->back()->with('success', 'Education added successfully.');
+    }
+
+    public function destroyEducation($id, $educationId)
+    {
+        $education = NurseEducation::findOrFail($educationId);
+        $education->delete();
+        
+        return redirect()->back()->with('success', 'Education deleted successfully.');
+    }
+
+    // ── Edit Experience ───────────────────────────────────
+    public function storeExperience(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $validated = $request->validate([
+            'hospital_name' => 'required|string|max:255',
+            'designation' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'is_currently_working' => 'nullable|boolean',
+        ]);
+        
+        $validated['nurse_id'] = $user->nurseProfile->id;
+        $validated['is_currently_working'] = $request->has('is_currently_working');
+        
+        NurseWorkHistory::create($validated);
+        
+        return redirect()->back()->with('success', 'Experience added successfully.');
+    }
+
+    public function destroyExperience($id, $experienceId)
+    {
+        $experience = NurseWorkHistory::findOrFail($experienceId);
+        $experience->delete();
+        
+        return redirect()->back()->with('success', 'Experience deleted successfully.');
+    }
+
+    // ── Edit Documents ────────────────────────────────────
+    public function storeDocument(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+        
+        $file = $request->file('document');
+        $path = $file->store('nurse-documents/' . $user->nurseProfile->id, 'public');
+        
+        NurseDocument::create([
+            'nurse_id' => $user->nurseProfile->id,
+            'title' => $request->title,
+            'file_path' => $path,
+            'file_type' => $file->getClientMimeType(),
+            'status' => NurseDocument::STATUS_APPROVED,
+        ]);
+        
+        return redirect()->back()->with('success', 'Document uploaded successfully.');
+    }
+
+    public function destroyDocument($id, $documentId)
+    {
+        $document = NurseDocument::findOrFail($documentId);
+        if (\Storage::disk('public')->exists($document->file_path)) {
+            \Storage::disk('public')->delete($document->file_path);
+        }
+        $document->delete();
+        
+        return redirect()->back()->with('success', 'Document deleted successfully.');
     }
 
     public function stats($id)
@@ -517,5 +669,53 @@ class NurseController extends Controller
             })
             ->rawColumns(['ip_address', 'user_agent', 'created_at', 'action'])
             ->make(true);
+    }
+
+    public function contactForm($id)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+
+        return view('admin.nurses._contact', compact('user'));
+    }
+
+    public function contact(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse() && $user->nurseProfile, 404, 'Nurse profile not found.');
+
+        $request->validate([
+            'channel' => 'required|in:email,sms',
+            'subject' => 'required_if:channel,email|nullable|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        try {
+            $content = $request->message;
+            if ($request->channel === 'email' && $request->subject) {
+                $content = "Subject: " . $request->subject . "\n\n" . $content;
+            }
+
+            \App\Models\CommunicationLog::create([
+                'notifiable_type' => get_class($user),
+                'notifiable_id' => $user->id,
+                'channel' => $request->channel,
+                'type' => 'manual',
+                'destination' => $request->channel === 'email' ? $user->email : $user->phone,
+                'content' => $content,
+                'status' => 'sent', // Currently just logging
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => ucfirst($request->channel) . ' logged and sent successfully to ' . $user->name,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to process message: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

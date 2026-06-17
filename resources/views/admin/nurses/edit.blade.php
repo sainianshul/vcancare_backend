@@ -40,14 +40,7 @@
             <x-alert-success />
             <x-form-errors />
 
-            <!-- Top Warning Alert -->
-            <div class="alert alert-dismissible bg-light-warning border border-warning d-flex flex-column flex-sm-row p-4 mb-7">
-                <i class="ki-outline ki-information-5 fs-1 text-warning mb-2 mb-sm-0 me-3"></i>
-                <div class="d-flex flex-column pe-0 pe-sm-10">
-                    <h5 class="fw-semibold text-warning mb-1 fs-6">Important Notice</h5>
-                    <span class="text-gray-700 fs-7">You cannot edit the Nurse's core Onboarding data (e.g., Education, Work History, Documents) from this screen. To update those, the nurse must re-submit their onboarding application.</span>
-                </div>
-            </div>
+
 
             <!--begin::Form-->
             <form id="kt_nurse_edit_form" action="{{ route('admin.nurses.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="form d-flex flex-column gap-5 gap-lg-7">
@@ -274,7 +267,7 @@
                                 </div>
                             </div>
                             <div class="card-body pt-2">
-                                <label class="form-label text-gray-700 fw-semibold fs-7 mb-1">Select Care Types</label>
+                                <label class="form-label text-gray-700 fw-semibold fs-7 mb-1 required">Select Care Types</label>
                                 @php
                                     $selectedCareTypes = old('care_types', $user->nurseProfile->careTypes->pluck('id')->toArray() ?? []);
                                 @endphp
@@ -286,7 +279,193 @@
                                     @endforeach
                                 </select>
                             </div>
+                        </div> <!-- end card -->
+                    </div> <!-- end col-lg-4 -->
+                </div> <!-- end row -->
+
+            <div class="separator separator-dashed border-gray-300 my-8"></div>
+            
+            <h2 class="fs-3 fw-bold text-gray-900 mb-5">Professional History & Verification</h2>
+
+            <div class="row g-5 g-lg-7">
+                <div class="col-lg-12">
+                    <!-- Education Card -->
+                    <div class="card card-flush py-4 card-bordered border-gray-300 shadow-sm mb-5 mb-lg-7">
+                        <div class="card-header border-0 pt-4 min-h-40px">
+                            <div class="card-title">
+                                <h2 class="fs-6 fw-bold text-gray-800 text-uppercase m-0">
+                                    <i class="ki-outline ki-book-open fs-3 text-primary me-2"></i>Education History
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="card-body pt-2">
+                            <div id="educations-container">
+                                @php
+                                    $oldEducations = old('educations', $user->nurseProfile->educations->toArray() ?: [[]]);
+                                @endphp
+                                @foreach($oldEducations as $index => $edu)
+                                <div class="row g-3 mb-3 education-row">
+                                    <div class="col-md-3">
+                                        <input type="text" name="educations[{{ $index }}][degree_name]" class="form-control form-control-sm @error("educations.$index.degree_name") is-invalid @enderror" placeholder="Degree Name (e.g. B.Sc Nursing)" value="{{ $edu['degree_name'] ?? $edu['degree_or_course'] ?? '' }}">
+                                        @error("educations.$index.degree_name") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="educations[{{ $index }}][institution_name]" class="form-control form-control-sm @error("educations.$index.institution_name") is-invalid @enderror" placeholder="Institution / College" value="{{ $edu['institution_name'] ?? $edu['institute_name'] ?? '' }}">
+                                        @error("educations.$index.institution_name") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" name="educations[{{ $index }}][start_date]" class="form-control form-control-sm @error("educations.$index.start_date") is-invalid @enderror" value="{{ isset($edu['start_date']) ? \Carbon\Carbon::parse($edu['start_date'])->format('Y-m-d') : (isset($edu['start_year']) ? \Carbon\Carbon::parse($edu['start_year'])->format('Y-m-d') : '') }}">
+                                        @error("educations.$index.start_date") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" name="educations[{{ $index }}][end_date]" class="form-control form-control-sm @error("educations.$index.end_date") is-invalid @enderror" placeholder="End Date" value="{{ isset($edu['end_date']) && $edu['end_date'] ? \Carbon\Carbon::parse($edu['end_date'])->format('Y-m-d') : (isset($edu['end_year']) && $edu['end_year'] ? \Carbon\Carbon::parse($edu['end_year'])->format('Y-m-d') : '') }}">
+                                        @error("educations.$index.end_date") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-center gap-2">
+                                        @if($loop->index > 0 || count($oldEducations) > 1)
+                                            <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-edu"><i class="ki-outline ki-trash fs-6"></i></button>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            <button type="button" class="btn btn-sm btn-light-primary mt-3" id="add-education">
+                                <i class="ki-outline ki-plus fs-6"></i> Add Another Degree
+                            </button>
+                            <div class="text-muted fs-8 mt-2">Leave blank if not applicable. To remove, delete the row.</div>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="col-lg-12">
+                    <!-- Work Experience Card -->
+                    <div class="card card-flush py-4 card-bordered border-gray-300 shadow-sm mb-5 mb-lg-7">
+                        <div class="card-header border-0 pt-4 min-h-40px">
+                            <div class="card-title">
+                                <h2 class="fs-6 fw-bold text-gray-800 text-uppercase m-0">
+                                    <i class="ki-outline ki-briefcase fs-3 text-info me-2"></i>Work Experience
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="card-body pt-2">
+                            <div id="experiences-container">
+                                @php
+                                    $oldExperiences = old('experiences', $user->nurseProfile->workHistories->toArray() ?: [[]]);
+                                @endphp
+                                @foreach($oldExperiences as $index => $exp)
+                                <div class="row g-3 mb-3 experience-row">
+                                    <div class="col-md-3">
+                                        <input type="text" name="experiences[{{ $index }}][designation]" class="form-control form-control-sm @error("experiences.$index.designation") is-invalid @enderror" placeholder="Designation / Role" value="{{ $exp['designation'] ?? $exp['role_or_position'] ?? '' }}">
+                                        @error("experiences.$index.designation") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="experiences[{{ $index }}][hospital_name]" class="form-control form-control-sm @error("experiences.$index.hospital_name") is-invalid @enderror" placeholder="Hospital / Clinic Name" value="{{ $exp['hospital_name'] ?? $exp['organization_name'] ?? '' }}">
+                                        @error("experiences.$index.hospital_name") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" name="experiences[{{ $index }}][start_date]" class="form-control form-control-sm @error("experiences.$index.start_date") is-invalid @enderror" value="{{ isset($exp['start_date']) ? \Carbon\Carbon::parse($exp['start_date'])->format('Y-m-d') : '' }}">
+                                        @error("experiences.$index.start_date") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" name="experiences[{{ $index }}][end_date]" class="form-control form-control-sm @error("experiences.$index.end_date") is-invalid @enderror" value="{{ isset($exp['end_date']) && $exp['end_date'] ? \Carbon\Carbon::parse($exp['end_date'])->format('Y-m-d') : '' }}">
+                                        @error("experiences.$index.end_date") <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-2 d-flex flex-column gap-2">
+                                        <div class="form-check form-check-sm">
+                                            <input class="form-check-input" type="checkbox" name="experiences[{{ $index }}][is_currently_working]" value="1" {{ !empty($exp['is_currently_working']) ? 'checked' : '' }}>
+                                            <label class="form-check-label fs-8">Present</label>
+                                        </div>
+                                        @if($loop->index > 0 || count($oldExperiences) > 1)
+                                            <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-exp"><i class="ki-outline ki-trash fs-6"></i></button>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            <button type="button" class="btn btn-sm btn-light-info mt-3" id="add-experience">
+                                <i class="ki-outline ki-plus fs-6"></i> Add Another Experience
+                            </button>
+                            <div class="text-muted fs-8 mt-2">Leave blank if not applicable. To remove, delete the row.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12">
+                    <!-- Documents Upload Card -->
+                    <div class="card card-flush py-4 card-bordered border-gray-300 shadow-sm mb-5 mb-lg-7">
+                        <div class="card-header border-0 pt-4 min-h-40px">
+                            <div class="card-title">
+                                <h2 class="fs-6 fw-bold text-gray-800 text-uppercase m-0">
+                                    <i class="ki-outline ki-file fs-3 text-warning me-2"></i>Verification Documents
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="card-body pt-2">
+                            <p class="text-muted fs-7 mb-5">Upload new documents or view existing ones. Existing documents will be kept unless deleted.</p>
+                            
+                            <!-- Existing Documents -->
+                            @if($user->nurseProfile->documents->count() > 0)
+                            <div class="mb-5">
+                                <h4 class="fs-6 fw-bold text-gray-800 mb-3">Existing Documents</h4>
+                                <div class="table-responsive">
+                                    <table class="table align-middle table-row-dashed fs-7 gy-3">
+                                        <thead>
+                                            <tr class="text-start text-muted fw-bold text-uppercase gs-0">
+                                                <th>Title</th>
+                                                <th>Type</th>
+                                                <th>Status</th>
+                                                <th class="text-end">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-gray-800 fw-medium">
+                                            @foreach($user->nurseProfile->documents as $doc)
+                                            <tr id="doc-row-{{ $doc->id }}">
+                                                <td>{{ $doc->title }}</td>
+                                                <td>{{ strtoupper(pathinfo($doc->file_path, PATHINFO_EXTENSION)) }}</td>
+                                                <td>
+                                                    @if($doc->status == \App\Models\NurseDocument::STATUS_APPROVED)
+                                                        <span class="badge badge-light-success">Approved</span>
+                                                    @elseif($doc->status == \App\Models\NurseDocument::STATUS_REJECTED)
+                                                        <span class="badge badge-light-danger">Rejected</span>
+                                                    @else
+                                                        <span class="badge badge-light-warning">Pending</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-end">
+                                                    <!-- Hidden input to keep this document -->
+                                                    <input type="hidden" name="existing_documents[]" value="{{ $doc->id }}">
+                                                    
+                                                    <a href="{{ route('admin.nurses.document', $doc->id) }}" target="_blank" class="btn btn-icon btn-sm btn-light-primary me-2" title="View"><i class="ki-outline ki-eye fs-6"></i></a>
+                                                    <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-existing-doc" data-id="{{ $doc->id }}" title="Delete"><i class="ki-outline ki-trash fs-6"></i></button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            @endif
+
+                            <div class="separator separator-dashed border-gray-300 my-5"></div>
+
+                            <h4 class="fs-6 fw-bold text-gray-800 mb-3">Upload New Documents</h4>
+                            <div class="row g-5">
+                                @php
+                                    $documentTypes = \App\Models\NurseDocument::getDocumentTypeList();
+                                @endphp
+                                @foreach($documentTypes as $id => $label)
+                                <div class="col-md-6">
+                                    <label class="form-label text-gray-700 fw-semibold fs-7 mb-1">{{ $label }}</label>
+                                    <input type="file" name="documents[{{ $id }}]" class="form-control form-control-sm border border-gray-300 bg-transparent @error('documents.'.$id) is-invalid @enderror" accept=".pdf,.jpg,.jpeg,.png">
+                                    @error('documents.'.$id) <div class="invalid-feedback d-block fs-8">{{ $message }}</div> @enderror
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             </form>
             <!--end::Form-->
         </div>
@@ -313,6 +492,73 @@
             width: '100%'
         });
 
+        // Repeater JS
+        let eduIndex = $('.education-row').length;
+        $('#add-education').click(function() {
+            let row = `
+            <div class="row g-3 mb-3 education-row">
+                <div class="col-md-3">
+                    <input type="text" name="educations[`+eduIndex+`][degree_name]" class="form-control form-control-sm" placeholder="Degree Name (e.g. B.Sc Nursing)" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="educations[`+eduIndex+`][institution_name]" class="form-control form-control-sm" placeholder="Institution / College" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="educations[`+eduIndex+`][start_date]" class="form-control form-control-sm" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="educations[`+eduIndex+`][end_date]" class="form-control form-control-sm" placeholder="End Date">
+                </div>
+                <div class="col-md-2 d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-edu"><i class="ki-outline ki-trash fs-6"></i></button>
+                </div>
+            </div>`;
+            $('#educations-container').append(row);
+            eduIndex++;
+        });
+
+        $(document).on('click', '.remove-edu', function() {
+            $(this).closest('.education-row').remove();
+        });
+
+        let expIndex = $('.experience-row').length;
+        $('#add-experience').click(function() {
+            let row = `
+            <div class="row g-3 mb-3 experience-row">
+                <div class="col-md-3">
+                    <input type="text" name="experiences[`+expIndex+`][designation]" class="form-control form-control-sm" placeholder="Designation / Role" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="experiences[`+expIndex+`][hospital_name]" class="form-control form-control-sm" placeholder="Hospital / Clinic Name" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="experiences[`+expIndex+`][start_date]" class="form-control form-control-sm" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="experiences[`+expIndex+`][end_date]" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-2 d-flex flex-column gap-2">
+                    <div class="form-check form-check-sm">
+                        <input class="form-check-input" type="checkbox" name="experiences[`+expIndex+`][is_currently_working]" value="1">
+                        <label class="form-check-label fs-8">Present</label>
+                    </div>
+                    <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-exp"><i class="ki-outline ki-trash fs-6"></i></button>
+                </div>
+            </div>`;
+            $('#experiences-container').append(row);
+            expIndex++;
+        });
+
+        $(document).on('click', '.remove-exp', function() {
+            $(this).closest('.experience-row').remove();
+        });
+
+        $(document).on('click', '.remove-existing-doc', function() {
+            if(confirm('Are you sure you want to remove this document? It will be permanently deleted upon saving.')) {
+                $(this).closest('tr').remove();
+            }
+        });
+
         // ── Image upload preview ──
         $('#avatar-upload').on('change', function () {
             const file = this.files[0];
@@ -327,3 +573,8 @@
     });
 </script>
 @endpush
+
+
+
+
+

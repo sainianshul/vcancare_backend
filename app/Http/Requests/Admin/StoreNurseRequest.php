@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateNurseRequest extends FormRequest
+class StoreNurseRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -33,16 +33,15 @@ class UpdateNurseRequest extends FormRequest
 
     public function rules(): array
     {
-        // $this->user points to the User model from Route model binding -> {user}
-        $routeParam = $this->route('user');
-        $userId = $routeParam instanceof \App\Models\User ? $routeParam->id : $routeParam;
-
         return [
             // User Table fields
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'phone' => ['required', 'string', 'max:15'],
             'profile_photo' => ['nullable', 'image', 'max:2048'],
+            
+            // Notification / Auto Approve
+            'auto_approve' => ['nullable', 'boolean'],
 
             // NurseProfile Table fields
             'is_available' => ['required', 'boolean'],
@@ -69,8 +68,6 @@ class UpdateNurseRequest extends FormRequest
             'care_types.*' => ['integer', Rule::exists('care_types', 'id')],
 
             // Documents
-            'existing_documents' => ['nullable', 'array'],
-            'existing_documents.*' => ['integer', Rule::exists('nurse_documents', 'id')],
             'documents' => ['nullable', 'array'],
             'documents.*' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
 

@@ -26,7 +26,7 @@ class ApprovedNursesDataTable extends BaseNursesDataTable
 
             return '
                 <div class="d-flex flex-column">
-                    <span class="fw-bold text-gray-800">⭐ ' . $rating . '</span>
+                    <span class="fw-bold text-gray-800">' . $rating . '</span>
                     <span class="text-muted fs-7">' . $reviews . ' reviews</span>
                 </div>
             ';

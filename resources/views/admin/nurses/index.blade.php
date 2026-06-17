@@ -51,12 +51,12 @@
 
 
                     {{-- Add Nurse — only All page --}}
-                    {{-- <a href="#" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
+                    <a href="{{ route('admin.nurses.create') }}" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
                         <i class="ki-duotone ki-plus-square fs-5 me-1">
                             <span class="path1"></span><span class="path2"></span><span class="path3"></span>
                         </i>
                         Add Nurse
-                    </a> --}}
+                    </a>
 
                 </div>
             </div>
