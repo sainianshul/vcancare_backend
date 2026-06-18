@@ -16,12 +16,7 @@
                 <span class="text-gray-500 mt-1 fw-semibold fs-7">This nurse's application was declined.</span>
             </h3>
             <div class="card-toolbar">
-                <button class="btn btn-sm btn-light-primary border border-primary fw-bold px-4 py-2 me-2">
-                    <i class="ki-outline ki-sms fs-5 me-1"></i> Send SMS
-                </button>
-                <button class="btn btn-sm btn-light-info border border-info fw-bold px-4 py-2 me-2">
-                    <i class="ki-outline ki-sms fs-5 me-1"></i> Send Email
-                </button>
+
                 <a href="{{ route('admin.nurses.edit', $user->id) }}" class="btn btn-sm btn-light-warning border border-warning fw-bold px-4 py-2">
                     <i class="ki-outline ki-pencil fs-5 me-1"></i> Edit
                 </a>
@@ -79,3 +74,4 @@
     <x-comments type="{{ \App\Models\Comment::TYPE_NURSE }}" :model-id="$user->id" />
 
 @endsection
+

@@ -34,6 +34,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
         Route::get('/', [NurseController::class, 'index'])->name('index');
         Route::get('/data', [NurseController::class, 'indexData'])->name('data');
+        
+        Route::get('/create', [NurseController::class, 'create'])->name('create');
+        Route::post('/store', [NurseController::class, 'store'])->name('store');
 
         Route::get('/pending_approval', [NurseController::class, 'pending'])->name('pending_approval');
         Route::get('/pending_approval/data', [NurseController::class, 'pendingData'])->name('pending_approval.data');
@@ -55,6 +58,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/{user}/bids/data', [NurseController::class, 'bidsData'])->name('bids.data');
         Route::get('/{user}/bookings', [NurseController::class, 'bookings'])->name('bookings');
         Route::get('/{user}/bookings/data', [NurseController::class, 'bookingsData'])->name('bookings.data');
+        Route::get('/{user}/contact-form', [NurseController::class, 'contactForm'])->name('contact-form');
+        Route::post('/{user}/contact', [NurseController::class, 'contact'])->name('contact');
         Route::get('/{user}/login-history', [NurseController::class, 'loginHistory'])->name('login-history');
         Route::get('/{user}/login-history/data', [NurseController::class, 'loginHistoryData'])->name('login-history.data');
         Route::get('/{user}/care-requests', [NurseController::class, 'careRequests'])->name('care-requests');
@@ -63,6 +68,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::post('/{user}/review-step', [NurseController::class, 'reviewStep'])->name('review-step');
         Route::post('/{user}/document-review/{document}', [NurseController::class, 'reviewDocument'])->name('document-review');
         Route::post('/{user}/finalize-review', [NurseController::class, 'finalizeReview'])->name('finalize-review');
+        
+        // Status Control
+        Route::post('/{user}/status', [NurseController::class, 'updateStatus'])->name('status.update');
+
+        // Edit profile sections
+        Route::post('/{user}/education', [NurseController::class, 'storeEducation'])->name('education.store');
+        Route::delete('/{user}/education/{id}', [NurseController::class, 'destroyEducation'])->name('education.destroy');
+        Route::post('/{user}/experience', [NurseController::class, 'storeExperience'])->name('experience.store');
+        Route::delete('/{user}/experience/{id}', [NurseController::class, 'destroyExperience'])->name('experience.destroy');
+        Route::post('/{user}/documents', [NurseController::class, 'storeDocument'])->name('documents.store');
+        Route::delete('/{user}/documents/{id}', [NurseController::class, 'destroyDocument'])->name('documents.destroy');
         
         // Secure document download route
         Route::get('/documents/{document}', [NurseController::class, 'document'])->name('document');
@@ -145,15 +161,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // Payments
     Route::prefix('payments')->name('payments.')->group(function () {
-        Route::get('transactions', function () {
-            echo "Transactions";
-        })->name('transactions');
-        Route::get('payouts', function () {
-            echo "Nurse Payouts";
-        })->name('payouts');
-        Route::get('refunds', function () {
-            echo "Refunds";
-        })->name('refunds');
+        Route::get('transactions', [\App\Http\Controllers\Admin\PaymentController::class, 'transactions'])->name('transactions');
+        Route::get('transactions/data', [\App\Http\Controllers\Admin\PaymentController::class, 'transactionsData'])->name('transactions-data');
+        
+        Route::get('payouts', [\App\Http\Controllers\Admin\PaymentController::class, 'payouts'])->name('payouts');
+        Route::get('payouts/data', [\App\Http\Controllers\Admin\PaymentController::class, 'payoutsData'])->name('payouts-data');
+        
+        Route::get('refunds', [\App\Http\Controllers\Admin\PaymentController::class, 'refunds'])->name('refunds');
+        Route::get('refunds/data', [\App\Http\Controllers\Admin\PaymentController::class, 'refundsData'])->name('refunds-data');
     });
 
     // Reports

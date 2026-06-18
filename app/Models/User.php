@@ -29,6 +29,7 @@ class User extends Authenticatable
         'role',
         'profile_photo',
         'status',
+        'created_by_admin',
         'fcm_token',
         'blocked_reason',
         'phone_verified_at',

@@ -44,33 +44,33 @@
             
             {{-- Patient / User Card --}}
             <div class="col-xl-4">
-                <div class="card shadow-sm h-100 border border-primary">
+                <div class="card shadow-sm h-100">
                     <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
                         <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Patient Info</h3>
                     </div>
-                    <div class="card-body pt-2 pb-4">
+                    <div class="card-body pt-4 pb-4">
                         @if($booking->user)
                             <div class="d-flex align-items-center mb-4">
-                                <div class="symbol symbol-45px symbol-circle me-4">
+                                <div class="symbol symbol-40px symbol-circle me-3">
                                     @if($booking->user->profile_photo)
                                         <img src="{{ Storage::url($booking->user->profile_photo) }}" alt="{{ $booking->user->name }}" class="object-fit-cover" />
                                     @else
-                                        <span class="symbol-label bg-white text-gray-700 fs-5 fw-bold border border-gray-200">
+                                        <span class="symbol-label bg-light-primary text-primary fs-6 fw-bold">
                                             {{ mb_strtoupper(mb_substr($booking->user->name ?? 'U', 0, 2)) }}
                                         </span>
                                     @endif
                                 </div>
-                                <div>
-                                    <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="fs-6 text-gray-900 text-hover-primary fw-bold d-block">{{ $booking->user->name }}</a>
-                                    <span class="text-gray-600 fs-8">{{ $booking->user->phone ?? $booking->user->email ?? 'N/A' }}</span>
+                                <div class="d-flex flex-column">
+                                    <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="fs-6 text-gray-900 text-hover-primary fw-bold">{{ $booking->user->name }}</a>
+                                    <span class="text-gray-500 fs-8">{{ $booking->user->phone ?? $booking->user->email ?? 'N/A' }}</span>
                                 </div>
                             </div>
                             <div class="d-flex flex-wrap gap-2 mb-4">
-                                <span class="badge badge-light-success border border-success fw-bold px-2 py-1 fs-8">Active</span>
-                                <span class="badge badge-light fw-bold px-2 py-1 fs-8 text-gray-700 border border-gray-200">ID: {{ $booking->user->id }}</span>
+                                <span class="badge badge-light-success fw-bold px-2 py-1 fs-8">Active</span>
+                                <span class="badge badge-light fw-bold px-2 py-1 fs-8 text-gray-700">ID: {{ $booking->user->id }}</span>
                             </div>
-                            <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="btn btn-outline btn-outline-dashed btn-outline-primary btn-sm w-100 text-uppercase fw-bold fs-9 px-3 py-2">
-                                View Full Profile <i class="ki-outline ki-arrow-right fs-7 ms-2"></i>
+                            <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="text-primary fw-bold fs-8 d-flex align-items-center">
+                                View Profile <i class="ki-outline ki-arrow-right fs-7 ms-1 text-primary"></i>
                             </a>
                         @else
                             <div class="text-gray-600 fs-7">Unknown User</div>
@@ -81,33 +81,33 @@
 
             {{-- Assigned Nurse Card --}}
             <div class="col-xl-4">
-                <div class="card shadow-sm h-100 border border-primary">
+                <div class="card shadow-sm h-100">
                     <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
                         <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Assigned Nurse</h3>
                     </div>
-                    <div class="card-body pt-2 pb-4">
+                    <div class="card-body pt-4 pb-4">
                         @if($booking->nurse && $booking->nurse->user)
                             @php $nurseUser = $booking->nurse->user; @endphp
                             <div class="d-flex align-items-center mb-4">
-                                <div class="symbol symbol-45px symbol-circle me-4">
+                                <div class="symbol symbol-40px symbol-circle me-3">
                                     @if($nurseUser->profile_photo)
                                         <img src="{{ Storage::url($nurseUser->profile_photo) }}" alt="{{ $nurseUser->name }}" class="object-fit-cover" />
                                     @else
-                                        <span class="symbol-label bg-white text-gray-700 fs-5 fw-bold border border-gray-200">
+                                        <span class="symbol-label bg-light-info text-info fs-6 fw-bold">
                                             {{ mb_strtoupper(mb_substr($nurseUser->name ?? 'N', 0, 2)) }}
                                         </span>
                                     @endif
                                 </div>
-                                <div>
-                                    <a href="{{ route('admin.nurses.show', $nurseUser->id) }}" class="fs-6 text-gray-900 text-hover-primary fw-bold d-block">{{ $nurseUser->name }}</a>
-                                    <span class="text-gray-600 fs-8">{{ $nurseUser->phone ?? $nurseUser->email ?? 'N/A' }}</span>
+                                <div class="d-flex flex-column">
+                                    <a href="{{ route('admin.nurses.show', $nurseUser->id) }}" class="fs-6 text-gray-900 text-hover-primary fw-bold">{{ $nurseUser->name }}</a>
+                                    <span class="text-gray-500 fs-8">{{ $nurseUser->phone ?? $nurseUser->email ?? 'N/A' }}</span>
                                 </div>
                             </div>
                             <div class="d-flex flex-wrap gap-2 mb-4">
-                                <span class="badge badge-light-info border border-info fw-bold px-2 py-1 fs-8">Nurse ID: {{ $booking->nurse->id }}</span>
+                                <span class="badge badge-light-info fw-bold px-2 py-1 fs-8">Nurse ID: {{ $booking->nurse->id }}</span>
                             </div>
-                            <a href="{{ route('admin.nurses.show', $nurseUser->id) }}" class="btn btn-outline btn-outline-dashed btn-outline-primary btn-sm w-100 text-uppercase fw-bold fs-9 px-3 py-2">
-                                View Full Profile <i class="ki-outline ki-arrow-right fs-7 ms-2"></i>
+                            <a href="{{ route('admin.nurses.show', $nurseUser->id) }}" class="text-primary fw-bold fs-8 d-flex align-items-center">
+                                View Profile <i class="ki-outline ki-arrow-right fs-7 ms-1 text-primary"></i>
                             </a>
                         @else
                             <div class="text-center text-gray-600 fs-7 mt-5">No Nurse Assigned</div>
@@ -118,11 +118,11 @@
 
             {{-- Location & References Card --}}
             <div class="col-xl-4">
-                <div class="card shadow-sm h-100 border border-primary">
+                <div class="card shadow-sm h-100">
                     <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
                         <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Location & References</h3>
                     </div>
-                    <div class="card-body pt-2 pb-4">
+                    <div class="card-body pt-4 pb-4">
                         @if($booking->careRequest)
                             <div class="mb-3">
                                 <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Service Address</span>
@@ -189,22 +189,22 @@
                     <div class="row g-5 g-xl-8">
                         {{-- Financial & Commission --}}
                         <div class="col-xl-6">
-                            <div class="card shadow-sm mb-5 border border-primary h-100">
+                            <div class="card shadow-sm mb-5 h-100">
                                 <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
                                     <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Financial & Rates</h3>
                                 </div>
-                                <div class="card-body pt-2 pb-4">
+                                <div class="card-body pt-4 pb-4">
                                     <div class="row g-4 mb-5">
                                         <div class="col-sm-6">
-                                            <div class="bg-white rounded p-4 border border-primary border-dashed ">
-                                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Total Amount</span>
-                                                <span class="fw-bold fs-4 text-gray-900">₹{{ number_format($booking->total_amount, 2) }}</span>
+                                            <div class="bg-light-primary rounded p-4">
+                                                <span class="text-primary text-uppercase fw-bold d-block fs-9 mb-1">Total Amount</span>
+                                                <span class="fw-bold fs-3 text-gray-900">₹{{ number_format($booking->total_amount, 2) }}</span>
                                             </div>
                                         </div>
                                         <div class="col-sm-6">
-                                            <div class="bg-white rounded p-4 border border-primary border-dashed ">
-                                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Earned Commission</span>
-                                                <span class="fw-bold fs-4 text-gray-900">₹{{ number_format($booking->commission_amount, 2) }}</span>
+                                            <div class="bg-light-success rounded p-4">
+                                                <span class="text-success text-uppercase fw-bold d-block fs-9 mb-1">Earned Commission</span>
+                                                <span class="fw-bold fs-3 text-gray-900">₹{{ number_format($booking->commission_amount, 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -247,35 +247,35 @@
 
                         {{-- Schedule & Service --}}
                         <div class="col-xl-6">
-                            <div class="card shadow-sm mb-5 border border-primary h-100">
+                            <div class="card shadow-sm mb-5 h-100">
                                 <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
                                     <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Schedule & Service</h3>
                                 </div>
-                                <div class="card-body pt-2 pb-4">
+                                <div class="card-body pt-4 pb-4">
                                     <div class="d-flex flex-wrap gap-4 mb-5">
-                                        <div class="border border-gray-200  rounded py-3 px-4 bg-white flex-grow-1">
+                                        <div class="bg-light rounded py-3 px-4 flex-grow-1">
                                             <div class="fs-6 fw-bold text-gray-900">{{ $booking->careRequest->careType->name ?? 'N/A' }}</div>
-                                            <div class="fw-semibold fs-8 text-gray-600 mt-1">Care Type</div>
+                                            <div class="fw-semibold fs-8 text-gray-500 mt-1">Care Type</div>
                                         </div>
-                                        <div class="border border-gray-200  rounded py-3 px-4 bg-white flex-grow-1">
+                                        <div class="bg-light rounded py-3 px-4 flex-grow-1">
                                             <div class="fs-6 fw-bold text-gray-900">{{ $booking->completed_sessions }} / {{ $booking->total_sessions }}</div>
-                                            <div class="fw-semibold fs-8 text-gray-600 mt-1">Sessions Completed</div>
+                                            <div class="fw-semibold fs-8 text-gray-500 mt-1">Sessions Completed</div>
                                         </div>
                                     </div>
 
                                     <div class="row g-4">
                                         <div class="col-sm-6">
-                                            <div class="bg-white rounded p-4 border border-primary border-dashed ">
-                                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Start Date & Time</span>
-                                                <span class="fw-bold fs-6 text-gray-900">{{ $booking->start_date ? $booking->start_date->format('d M Y') : 'N/A' }}</span>
-                                                <span class="text-gray-500 text-uppercase fw-bold fs-9 ms-2">{{ $booking->start_time ? \Carbon\Carbon::parse($booking->start_time)->format('h:i A') : '' }}</span>
+                                            <div class="bg-light-info rounded p-4">
+                                                <span class="text-info text-uppercase fw-bold d-block fs-9 mb-1">Start Date & Time</span>
+                                                <span class="fw-bold fs-5 text-gray-900 d-block">{{ $booking->start_date ? $booking->start_date->format('d M Y') : 'N/A' }}</span>
+                                                <span class="text-gray-600 fw-bold fs-8 mt-1 d-block">{{ $booking->start_time ? \Carbon\Carbon::parse($booking->start_time)->format('h:i A') : '' }}</span>
                                             </div>
                                         </div>
                                         <div class="col-sm-6">
-                                            <div class="bg-white rounded p-4 border border-primary border-dashed ">
-                                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">End Date & Time</span>
-                                                <span class="fw-bold fs-6 text-gray-900">{{ $booking->end_date ? $booking->end_date->format('d M Y') : 'N/A' }}</span>
-                                                <span class="text-gray-500 text-uppercase fw-bold fs-9 ms-2">{{ $booking->end_time ? \Carbon\Carbon::parse($booking->end_time)->format('h:i A') : '' }}</span>
+                                            <div class="bg-light-warning rounded p-4">
+                                                <span class="text-warning text-uppercase fw-bold d-block fs-9 mb-1">End Date & Time</span>
+                                                <span class="fw-bold fs-5 text-gray-900 d-block">{{ $booking->end_date ? $booking->end_date->format('d M Y') : 'N/A' }}</span>
+                                                <span class="text-gray-600 fw-bold fs-8 mt-1 d-block">{{ $booking->end_time ? \Carbon\Carbon::parse($booking->end_time)->format('h:i A') : '' }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -285,11 +285,11 @@
 
                         {{-- Payments Details & Gateway Info --}}
                         <div class="col-xl-6">
-                            <div class="card shadow-sm mb-5 border border-primary h-100">
+                            <div class="card shadow-sm mb-5 h-100">
                                 <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
                                     <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Payment Details</h3>
                                 </div>
-                                <div class="card-body pt-2 pb-4">
+                                <div class="card-body pt-4 pb-4">
                                     @if($booking->payment_method)
                                         <div class="d-flex flex-stack mb-3">
                                             <span class="text-gray-500 text-uppercase fw-bold fs-9">Payment Method</span>
@@ -334,27 +334,27 @@
                         
                         {{-- Selected Bid & Metadata --}}
                         <div class="col-xl-6">
-                            <div class="card shadow-sm mb-5 border border-primary h-100">
+                            <div class="card shadow-sm mb-5 h-100">
                                 <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
                                     <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Selected Bid & Metadata</h3>
                                 </div>
-                                <div class="card-body pt-2 pb-4">
+                                <div class="card-body pt-4 pb-4">
                                     @if($booking->bid)
                                         @php $bid = $booking->bid; @endphp
                                         <div class="d-flex flex-wrap gap-3 mb-4">
-                                            <div class="border border-gray-200  rounded py-2 px-3 bg-white flex-grow-1">
-                                                <div class="fs-6 fw-bold text-gray-900">₹{{ number_format($bid->nurse_amount, 2) }}</div>
-                                                <div class="fw-semibold fs-8 text-gray-600">Nurse Amount</div>
+                                            <div class="bg-light-primary rounded py-3 px-4 flex-grow-1">
+                                                <div class="fs-4 fw-bold text-gray-900">₹{{ number_format($bid->nurse_amount, 2) }}</div>
+                                                <div class="fw-semibold fs-8 text-primary mt-1">Nurse Amount</div>
                                             </div>
-                                            <div class="border border-gray-200  rounded py-2 px-3 bg-white flex-grow-1">
-                                                <div class="fs-6 fw-bold text-gray-900">₹{{ number_format($bid->total_amount, 2) }}</div>
-                                                <div class="fw-semibold fs-8 text-gray-600">Total Bid Amount</div>
+                                            <div class="bg-light-success rounded py-3 px-4 flex-grow-1">
+                                                <div class="fs-4 fw-bold text-gray-900">₹{{ number_format($bid->total_amount, 2) }}</div>
+                                                <div class="fw-semibold fs-8 text-success mt-1">Total Bid Amount</div>
                                             </div>
                                         </div>
                                         @if($bid->notes)
-                                            <div class="bg-white rounded p-4 border border-primary border-dashed  mb-4">
-                                                <span class="fw-bold text-gray-900 fs-8 d-block mb-1">Nurse Notes</span>
-                                                <p class="text-gray-800 fw-medium fs-8 mb-0">{{ $bid->notes }}</p>
+                                            <div class="bg-light rounded p-4 mb-4">
+                                                <span class="fw-bold text-gray-700 fs-8 d-block mb-1">Nurse Notes</span>
+                                                <p class="text-gray-900 fw-medium fs-7 mb-0">{{ $bid->notes }}</p>
                                             </div>
                                         @endif
                                     @endif
