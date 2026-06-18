@@ -43,8 +43,7 @@
                 </div>
             @endif
 
-            <!--begin::Navbar (Same as Pending view)-->
-            @if(!$isReadOnly)
+            <!--begin::Navbar-->
             <div class="card card-bordered border-gray-300 mb-5 mb-xl-10 shadow-none">
                 <div class="card-body pt-9 pb-9">
                     <div class="d-flex flex-wrap flex-sm-nowrap">
@@ -57,7 +56,13 @@
                                         {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
                                     </span>
                                 @endif
-                                <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-primary rounded-circle border border-4 border-body h-20px w-20px"></div>
+                                @if($profile->status === \App\Models\NurseProfile::STATUS_REJECTED)
+                                    <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-danger rounded-circle border border-4 border-body h-20px w-20px" title="Rejected"></div>
+                                @elseif($profile->status === \App\Models\NurseProfile::STATUS_SUSPENDED)
+                                    <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-warning rounded-circle border border-4 border-body h-20px w-20px" title="Suspended"></div>
+                                @else
+                                    <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-primary rounded-circle border border-4 border-body h-20px w-20px" title="Under Review"></div>
+                                @endif
                             </div>
                         </div>
                         <div class="flex-grow-1">
@@ -66,17 +71,59 @@
                                     <div class="d-flex justify-content-between align-items-center w-100">
                                         <div class="d-flex align-items-center mb-2">
                                             <h1 class="text-gray-900 fs-1 fw-bold me-2">{{ $user->name }}</h1>
-                                            <span
-                                                class="badge badge-light-primary border border-primary fw-semibold px-3 py-1 me-2">
-                                                <i class="ki-outline ki-magnifier fs-7 text-primary me-1"></i> Under Review
+                                            <span class="badge badge-light-{{ $profile->status_color ?? 'primary' }} border border-{{ $profile->status_color ?? 'primary' }} fw-semibold px-3 py-1 me-2">
+                                                {{ $profile->status_name ?? 'Under Review' }}
                                             </span>
-
                                         </div>
                                         <div class="d-flex gap-2">
-
                                             <a href="{{ route('admin.nurses.edit', $user->id) }}" class="btn btn-sm btn-light-warning border border-warning fw-bold px-4 py-2 shadow-sm">
                                                 <i class="ki-outline ki-pencil fs-5 me-1"></i> Edit
                                             </a>
+                                            
+                                            <!-- Status Dropdown for ReadOnly states -->
+                                            @if($isReadOnly)
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-light-dark border border-dark border-dashed fw-bold text-gray-800 px-4 py-2 shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="ki-outline ki-setting-2 fs-5 me-1 text-gray-800"></i> Status
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border border-gray-200">
+                                                        <li><h6 class="dropdown-header text-gray-800 fw-bold">Change Status</h6></li>
+                                                        
+                                                        @if($profile->status != \App\Models\NurseProfile::STATUS_APPROVED)
+                                                        <li>
+                                                            <form action="{{ route('admin.nurses.status.update', $user->id) }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="status" value="{{ \App\Models\NurseProfile::STATUS_APPROVED }}">
+                                                                <button type="submit" class="dropdown-item py-2 text-success" onclick="return confirm('Are you sure you want to approve this nurse?')"><i class="ki-outline ki-check-circle fs-6 text-success me-2"></i> Approve Account</button>
+                                                            </form>
+                                                        </li>
+                                                        @endif
+
+                                                        @if($profile->status != \App\Models\NurseProfile::STATUS_SUSPENDED)
+                                                        <li>
+                                                            <form action="{{ route('admin.nurses.status.update', $user->id) }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="status" value="{{ \App\Models\NurseProfile::STATUS_SUSPENDED }}">
+                                                                <input type="hidden" name="reason" value="Suspended by Admin">
+                                                                <button type="submit" class="dropdown-item py-2 text-warning" onclick="return confirm('Are you sure you want to suspend this nurse?')"><i class="ki-outline ki-minus-circle fs-6 text-warning me-2"></i> Suspend Account</button>
+                                                            </form>
+                                                        </li>
+                                                        @endif
+
+                                                        @if($profile->status != \App\Models\NurseProfile::STATUS_REJECTED)
+                                                        <li>
+                                                            <form action="{{ route('admin.nurses.status.update', $user->id) }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="status" value="{{ \App\Models\NurseProfile::STATUS_REJECTED }}">
+                                                                <input type="hidden" name="reason" value="Rejected by Admin">
+                                                                <button type="submit" class="dropdown-item py-2 text-danger" onclick="return confirm('Are you sure you want to mark this nurse as rejected?')"><i class="ki-outline ki-cross-circle fs-6 text-danger me-2"></i> Mark Rejected</button>
+                                                            </form>
+                                                        </li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            @endif
+
                                         </div>
                                     </div>
                                     <div class="d-flex flex-column gap-3 mt-4">
@@ -91,19 +138,15 @@
                                             </span>
                                         </div>
                                         <div class="d-flex align-items-center gap-4 mt-2">
-                                            <span
-                                                class="d-flex align-items-center text-gray-900 border border-gray-300 border-dashed rounded px-3 py-1 bg-light fs-8">
+                                            <span class="d-flex align-items-center text-gray-900 border border-gray-300 border-dashed rounded px-3 py-1 bg-light fs-8">
                                                 <i class="ki-outline ki-calendar fs-6 me-2 text-primary"></i>
                                                 <span class="fw-semibold">Joined:&nbsp;</span>
-                                                <span
-                                                    class="text-gray-900 fw-bold">{{ $user->created_at->format('d M Y') }}</span>
+                                                <span class="text-gray-900 fw-bold">{{ $user->created_at->format('d M Y') }}</span>
                                             </span>
-                                            <span
-                                                class="d-flex align-items-center text-gray-900 border border-gray-300 border-dashed rounded px-3 py-1 bg-light fs-8">
+                                            <span class="d-flex align-items-center text-gray-900 border border-gray-300 border-dashed rounded px-3 py-1 bg-light fs-8">
                                                 <i class="ki-outline ki-fingerprint-scan fs-6 me-2 text-primary"></i>
                                                 <span class="fw-semibold">Last Login:&nbsp;</span>
-                                                <span
-                                                    class="text-gray-900 fw-bold">{{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never' }}</span>
+                                                <span class="text-gray-900 fw-bold">{{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never' }}</span>
                                             </span>
                                         </div>
                                     </div>
@@ -113,7 +156,6 @@
                     </div>
                 </div>
             </div>
-            @endif
             <!--end::Navbar-->
 
             @php

@@ -39,124 +39,95 @@
             </div>
         </div>
 
-        {{-- ── INFO CARDS (ABOVE TABS) ──────────────────────────────────────── --}}
-        <div class="row g-5 g-xl-8">
-            
-            {{-- Patient / User Card --}}
-            <div class="col-xl-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
-                        <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Patient Info</h3>
-                    </div>
-                    <div class="card-body pt-4 pb-4">
+        {{-- ── INFO HEADER WIDGET ──────────────────────────────────────── --}}
+        <div class="card shadow-sm">
+            <div class="card-body pt-5 pb-5">
+                <div class="row g-5">
+                    
+                    {{-- Booked By (Creator) --}}
+                    <div class="col-md-3 col-sm-6 pe-md-4">
+                        <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2 d-block">Booked By (Creator)</span>
                         @if($booking->user)
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="symbol symbol-40px symbol-circle me-3">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-35px symbol-circle me-3">
                                     @if($booking->user->profile_photo)
-                                        <img src="{{ Storage::url($booking->user->profile_photo) }}" alt="{{ $booking->user->name }}" class="object-fit-cover" />
+                                        <img src="{{ Storage::url($booking->user->profile_photo) }}" alt="img" class="object-fit-cover" />
                                     @else
-                                        <span class="symbol-label bg-light-primary text-primary fs-6 fw-bold">
-                                            {{ mb_strtoupper(mb_substr($booking->user->name ?? 'U', 0, 2)) }}
-                                        </span>
+                                        <span class="symbol-label bg-light-primary text-primary fw-bold">{{ mb_strtoupper(mb_substr($booking->user->name ?? 'U', 0, 1)) }}</span>
                                     @endif
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="fs-6 text-gray-900 text-hover-primary fw-bold">{{ $booking->user->name }}</a>
+                                    <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="text-gray-900 text-hover-primary fw-bold fs-6">{{ $booking->user->name }}</a>
                                     <span class="text-gray-500 fs-8">{{ $booking->user->phone ?? $booking->user->email ?? 'N/A' }}</span>
+                                    <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="text-primary fs-9 fw-bold mt-1 d-flex align-items-center">View Profile <i class="ki-outline ki-arrow-right fs-9 text-primary ms-1"></i></a>
                                 </div>
                             </div>
-                            <div class="d-flex flex-wrap gap-2 mb-4">
-                                <span class="badge badge-light-success fw-bold px-2 py-1 fs-8">Active</span>
-                                <span class="badge badge-light fw-bold px-2 py-1 fs-8 text-gray-700">ID: {{ $booking->user->id }}</span>
-                            </div>
-                            <a href="{{ route('admin.patients.show', $booking->user->id) }}" class="text-primary fw-bold fs-8 d-flex align-items-center">
-                                View Profile <i class="ki-outline ki-arrow-right fs-7 ms-1 text-primary"></i>
-                            </a>
                         @else
-                            <div class="text-gray-600 fs-7">Unknown User</div>
+                            <span class="text-gray-600 fs-7">Unknown</span>
                         @endif
                     </div>
-                </div>
-            </div>
 
-            {{-- Assigned Nurse Card --}}
-            <div class="col-xl-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
-                        <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Assigned Nurse</h3>
+                    {{-- Patient Details --}}
+                    <div class="col-md-3 col-sm-6 px-md-4 border-start border-gray-200">
+                        <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2 d-block">Patient Name</span>
+                        <div class="d-flex align-items-center">
+                            <i class="ki-outline ki-user fs-2 text-info me-3"></i>
+                            <div class="d-flex flex-column">
+                                <span class="text-gray-900 fw-bold fs-6">{{ $booking->patient_name ?? ($booking->careRequest->patient_name ?? 'N/A') }} 
+                                    @if($booking->patient_age || ($booking->careRequest && $booking->careRequest->patient_age))
+                                        <span class="badge badge-light-info fs-9 px-2 py-0 ms-1">{{ $booking->patient_age ?? $booking->careRequest->patient_age }} yrs</span>
+                                    @endif
+                                </span>
+                                <span class="text-gray-500 fs-8">{{ $booking->contact_phone ?? ($booking->careRequest->contact_phone ?? 'N/A') }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body pt-4 pb-4">
+
+                    {{-- Assigned Nurse --}}
+                    <div class="col-md-3 col-sm-6 px-md-4 border-start border-gray-200">
+                        <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2 d-block">Assigned Nurse</span>
                         @if($booking->nurse && $booking->nurse->user)
-                            @php $nurseUser = $booking->nurse->user; @endphp
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="symbol symbol-40px symbol-circle me-3">
-                                    @if($nurseUser->profile_photo)
-                                        <img src="{{ Storage::url($nurseUser->profile_photo) }}" alt="{{ $nurseUser->name }}" class="object-fit-cover" />
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-35px symbol-circle me-3">
+                                    @if($booking->nurse->user->profile_photo)
+                                        <img src="{{ Storage::url($booking->nurse->user->profile_photo) }}" alt="img" class="object-fit-cover" />
                                     @else
-                                        <span class="symbol-label bg-light-info text-info fs-6 fw-bold">
-                                            {{ mb_strtoupper(mb_substr($nurseUser->name ?? 'N', 0, 2)) }}
-                                        </span>
+                                        <span class="symbol-label bg-light-success text-success fw-bold">{{ mb_strtoupper(mb_substr($booking->nurse->user->name ?? 'U', 0, 1)) }}</span>
                                     @endif
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="{{ route('admin.nurses.show', $nurseUser->id) }}" class="fs-6 text-gray-900 text-hover-primary fw-bold">{{ $nurseUser->name }}</a>
-                                    <span class="text-gray-500 fs-8">{{ $nurseUser->phone ?? $nurseUser->email ?? 'N/A' }}</span>
+                                    <a href="{{ route('admin.nurses.show', $booking->nurse->user->id) }}" class="text-gray-900 text-hover-primary fw-bold fs-6">{{ $booking->nurse->user->name }}</a>
+                                    <span class="text-gray-500 fs-8">ID: {{ $booking->nurse->id }}</span>
+                                    <a href="{{ route('admin.nurses.show', $booking->nurse->user->id) }}" class="text-primary fs-9 fw-bold mt-1 d-flex align-items-center">View Profile <i class="ki-outline ki-arrow-right fs-9 text-primary ms-1"></i></a>
                                 </div>
                             </div>
-                            <div class="d-flex flex-wrap gap-2 mb-4">
-                                <span class="badge badge-light-info fw-bold px-2 py-1 fs-8">Nurse ID: {{ $booking->nurse->id }}</span>
-                            </div>
-                            <a href="{{ route('admin.nurses.show', $nurseUser->id) }}" class="text-primary fw-bold fs-8 d-flex align-items-center">
-                                View Profile <i class="ki-outline ki-arrow-right fs-7 ms-1 text-primary"></i>
-                            </a>
+                            @if($booking->bid && $booking->bid->distance_km)
+                                <div class="mt-3 text-gray-700 fs-8 d-flex align-items-center">
+                                    <i class="ki-outline ki-route fs-7 text-gray-600 me-2"></i>
+                                    Distance: <span class="fw-bold ms-1">{{ $booking->bid->distance_km }} km</span>
+                                </div>
+                            @endif
                         @else
-                            <div class="text-center text-gray-600 fs-7 mt-5">No Nurse Assigned</div>
+                            <span class="text-gray-600 fs-7 d-flex align-items-center"><i class="ki-outline ki-minus-circle fs-3 text-muted me-2"></i> No Nurse Assigned</span>
                         @endif
                     </div>
+
+                    {{-- Service Location --}}
+                    <div class="col-md-3 col-sm-6 ps-md-4 border-start border-gray-200">
+                        <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2 d-block">Service Location</span>
+                        <div class="d-flex align-items-start">
+                            <i class="ki-outline ki-geolocation fs-2 text-danger me-2 mt-1"></i>
+                            <div class="d-flex flex-column">
+                                <span class="text-gray-900 fw-semibold fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    {{ $booking->address ?? ($booking->careRequest->address ?? 'N/A') }}
+                                </span>
+                                <span class="text-gray-500 fs-8">{{ $booking->city ?? ($booking->careRequest->city ?? '') }} - {{ $booking->pincode ?? ($booking->careRequest->pincode ?? '') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
-            {{-- Location & References Card --}}
-            <div class="col-xl-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
-                        <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Location & References</h3>
-                    </div>
-                    <div class="card-body pt-4 pb-4">
-                        @if($booking->careRequest)
-                            <div class="mb-3">
-                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Service Address</span>
-                                <span class="fw-bold fs-7 text-gray-900 d-block">{{ $booking->careRequest->address }}</span>
-                                <span class="fw-semibold fs-8 text-gray-700">{{ $booking->careRequest->city ?? 'N/A' }}, {{ $booking->careRequest->state ?? 'N/A' }} - {{ $booking->careRequest->pincode ?? 'N/A' }}</span>
-                            </div>
-                            <div class="separator separator-dashed border-gray-200 my-3"></div>
-                            <div class="d-flex flex-stack mb-2">
-                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Linked Request</span>
-                                <a href="{{ route('admin.requests.show', $booking->care_request_id) }}" class="fw-bold fs-7 text-primary text-hover-primary">#{{ $booking->careRequest->reference_id ?? $booking->care_request_id }}</a>
-                            </div>
-                        @endif
-                        @if($booking->parentBooking)
-                            <div class="d-flex flex-stack mb-2">
-                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Parent Booking</span>
-                                <a href="{{ route('admin.bookings.show', $booking->parent_booking_id) }}" class="fw-bold fs-7 text-warning text-hover-primary">#{{ $booking->parentBooking->reference_id }}</a>
-                            </div>
-                        @endif
-                        @if($booking->extensions->count() > 0)
-                            <div class="mt-2">
-                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9 mb-1">Extensions</span>
-                                <div class="d-flex flex-wrap gap-2">
-                                    @foreach($booking->extensions as $ext)
-                                        <a href="{{ route('admin.bookings.show', $ext->id) }}" class="badge badge-light-primary border border-primary fw-bold px-2 py-1 fs-8 text-gray-700 text-hover-primary">
-                                            #{{ $ext->reference_id }}
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
         </div>
 
         {{-- ── FULL WIDTH TABS ────────────────────────────────────────────────── --}}
@@ -375,6 +346,33 @@
                                             </tr>
                                         </tbody>
                                     </table>
+
+                                    @if($booking->careRequest || $booking->parentBooking || $booking->extensions->count() > 0)
+                                        <div class="separator separator-dashed border-gray-200 my-4"></div>
+                                        <h4 class="fs-6 fw-bold text-gray-800 mb-3">Linked References</h4>
+                                        @if($booking->careRequest)
+                                            <div class="d-flex flex-stack mb-2">
+                                                <span class="text-gray-500 fw-bold fs-8">Linked Request</span>
+                                                <a href="{{ route('admin.requests.show', $booking->care_request_id) }}" class="fw-bold fs-7 text-primary text-hover-primary">#{{ $booking->careRequest->reference_id ?? $booking->care_request_id }}</a>
+                                            </div>
+                                        @endif
+                                        @if($booking->parentBooking)
+                                            <div class="d-flex flex-stack mb-2">
+                                                <span class="text-gray-500 fw-bold fs-8">Parent Booking</span>
+                                                <a href="{{ route('admin.bookings.show', $booking->parent_booking_id) }}" class="fw-bold fs-7 text-warning text-hover-primary">#{{ $booking->parentBooking->reference_id }}</a>
+                                            </div>
+                                        @endif
+                                        @if($booking->extensions->count() > 0)
+                                            <div class="d-flex flex-stack mb-2">
+                                                <span class="text-gray-500 fw-bold fs-8">Extensions</span>
+                                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                    @foreach($booking->extensions as $ext)
+                                                        <a href="{{ route('admin.bookings.show', $ext->id) }}" class="badge badge-light-primary fs-8 text-hover-primary">#{{ $ext->reference_id }}</a>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>

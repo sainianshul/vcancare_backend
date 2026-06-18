@@ -117,14 +117,14 @@ class NurseController extends Controller
         $profile = $user->nurseProfile;
 
         // Route based on status
-        if ($profile->status === NurseProfile::STATUS_APPROVED) {
+        if (in_array($profile->status, [NurseProfile::STATUS_APPROVED, NurseProfile::STATUS_SUSPENDED])) {
             return view('admin.nurses.show-approved', compact('user', 'profile'));
         } elseif ($profile->status === NurseProfile::STATUS_UNDER_REVIEW) {
             return view('admin.nurses.show-review', compact('user', 'profile'));
         } elseif ($profile->status === NurseProfile::STATUS_REJECTED) {
             return view('admin.nurses.show-review', compact('user', 'profile'));
         } else {
-            // PENDING or SUSPENDED
+            // PENDING
             return view('admin.nurses.show-pending', compact('user', 'profile'));
         }
     }
