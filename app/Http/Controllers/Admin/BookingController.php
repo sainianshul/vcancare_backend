@@ -229,16 +229,22 @@ class BookingController extends Controller
             ->addColumn('nurse', function ($bid) {
                 $nurseInfo = '<span class="text-gray-500 fs-7">Unknown</span>';
                 if ($bid->nurse && $bid->nurse->user) {
-                    $initial = mb_strtoupper(mb_substr($bid->nurse->user->name, 0, 2));
+                    $initial = mb_strtoupper(mb_substr($bid->nurse->user->name ?? 'Un', 0, 2));
                     $url = route('admin.nurses.show', $bid->nurse->user->id);
+                    $distanceHtml = '';
+                    if ($bid->distance_km) {
+                        $distanceHtml = '<div class="mt-1 d-flex align-items-center text-gray-700 fs-8"><i class="ki-outline ki-route fs-8 me-1 text-gray-500"></i>' . $bid->distance_km . ' km away</div>';
+                    }
+
                     $nurseInfo = '
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-start gap-3">
                             <div class="symbol symbol-30px symbol-circle">
                                 <span class="symbol-label bg-light-info text-info fw-bold">' . e($initial) . '</span>
                             </div>
                             <div class="d-flex flex-column">
                                 <a href="' . $url . '" class="text-gray-900 text-hover-primary fw-bold fs-7">' . e($bid->nurse->user->name) . '</a>
                                 <span class="text-gray-600 fs-8">ID: ' . $bid->nurse_id . '</span>
+                                ' . $distanceHtml . '
                             </div>
                         </div>';
                 }

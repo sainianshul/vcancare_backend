@@ -27,14 +27,21 @@ class RequestBidsDataTable extends DataTable
             ->addColumn('nurse', function (RequestBid $bid) {
                 $user = $bid->nurse->user;
                 $name = $user->name ?? 'Unknown';
-                $avatar = '<div class="symbol symbol-30px symbol-circle me-3">' . $user->avatar_html . '</div>';
+                $userId = $user->id ?? 0;
+                $avatar = '<div class="symbol symbol-30px symbol-circle me-3">' . ($user->avatar_html ?? '<span class="symbol-label bg-light-info text-info fw-bold">N</span>') . '</div>';
+
+                $distanceHtml = '';
+                if ($bid->distance_km) {
+                    $distanceHtml = '<div class="mt-1 d-flex align-items-center text-gray-700 fs-8"><i class="ki-outline ki-route fs-8 me-1 text-gray-500"></i>' . $bid->distance_km . ' km away</div>';
+                }
 
                 return '
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-start">
                         ' . $avatar . '
                         <div class="d-flex flex-column">
-                            <span class="text-gray-900 fw-bold fs-7">' . e($name) . '</span>
-                            <span class="text-gray-900 fs-8">ID: ' . $bid->nurse_id . '</span>
+                            <a href="' . route('admin.nurses.show', $userId) . '" class="text-gray-900 text-hover-primary fw-bold fs-7">' . e($name) . '</a>
+                            <span class="text-gray-500 fs-8">ID: ' . $bid->nurse_id . '</span>
+                            ' . $distanceHtml . '
                         </div>
                     </div>
                 ';

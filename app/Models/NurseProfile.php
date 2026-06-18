@@ -274,6 +274,7 @@ class NurseProfile extends Model
             'approved_by' => $approvedBy,
             'approved_at' => now(),
             'rejection_reason' => null,
+            'suspension_reason' => null,
         ]);
     }
 

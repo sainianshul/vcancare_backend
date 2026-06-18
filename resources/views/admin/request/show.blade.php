@@ -36,119 +36,71 @@
             </div>
         </div>
 
-        {{-- ── INFO CARDS (ABOVE TABS) ──────────────────────────────────────── --}}
-        <div class="row g-5 g-xl-8">
-            
-            {{-- Account Owner Card --}}
-            <div class="col-xl-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
-                        <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Account Owner</h3>
-                    </div>
-                    <div class="card-body pt-4 pb-4">
-                        @if(!empty($careRequest->user))
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="symbol symbol-40px symbol-circle me-3">
-                                    <span class="symbol-label bg-light-primary text-primary fs-6 fw-bold">
-                                        {{ mb_strtoupper(mb_substr($careRequest->user->name ?? 'U', 0, 2)) }}
-                                    </span>
+        {{-- ── INFO HEADER WIDGET ──────────────────────────────────────── --}}
+        <div class="card shadow-sm">
+            <div class="card-body pt-5 pb-5">
+                <div class="row g-5">
+                    
+                    {{-- Requested By (Creator) --}}
+                    <div class="col-md-4 pe-md-4">
+                        <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2 d-block">Requested By (Creator)</span>
+                        @if($careRequest->user)
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-35px symbol-circle me-3">
+                                    @if($careRequest->user->profile_photo)
+                                        <img src="{{ Storage::url($careRequest->user->profile_photo) }}" alt="img" class="object-fit-cover" />
+                                    @else
+                                        <span class="symbol-label bg-light-primary text-primary fw-bold">{{ mb_strtoupper(mb_substr($careRequest->user->name ?? 'U', 0, 1)) }}</span>
+                                    @endif
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="{{ route('admin.patients.show', $careRequest->user->id ?? 0) }}" class="fs-6 text-gray-900 text-hover-primary fw-bold">{{ $careRequest->user->name ?? 'Unknown' }}</a>
+                                    <a href="{{ route('admin.patients.show', $careRequest->user->id) }}" class="text-gray-900 text-hover-primary fw-bold fs-6">{{ $careRequest->user->name }}</a>
                                     <span class="text-gray-500 fs-8">{{ $careRequest->user->phone ?? $careRequest->user->email ?? 'N/A' }}</span>
+                                    <a href="{{ route('admin.patients.show', $careRequest->user->id) }}" class="text-primary fs-9 fw-bold mt-1 d-flex align-items-center">View Profile <i class="ki-outline ki-arrow-right fs-9 text-primary ms-1"></i></a>
                                 </div>
                             </div>
-                            <div class="d-flex flex-wrap gap-2 mb-4">
-                                <span class="badge badge-light-success fw-bold px-2 py-1 fs-8">Active Member</span>
-                                <span class="badge badge-light fw-bold px-2 py-1 fs-8 text-gray-700">ID: {{ $careRequest->user->id ?? 'N/A' }}</span>
-                            </div>
-                            <a href="{{ route('admin.patients.show', $careRequest->user->id ?? 0) }}" class="text-primary fw-bold fs-8 d-flex align-items-center">
-                                View Profile <i class="ki-outline ki-arrow-right fs-7 ms-1 text-primary"></i>
-                            </a>
                         @else
-                            <div class="text-center text-gray-600 fs-7 mt-5">Unknown User</div>
+                            <span class="text-gray-600 fs-7">Unknown</span>
                         @endif
                     </div>
-                </div>
-            </div>
 
-            {{-- Patient Details Card --}}
-            <div class="col-xl-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
-                        <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Patient Details</h3>
-                    </div>
-                    <div class="card-body pt-4 pb-4">
-                        <div class="d-flex flex-stack mb-4">
-                            <div class="d-flex align-items-center">
-                                <div class="symbol symbol-40px me-3">
-                                    <div class="symbol-label bg-light-info text-info">
-                                        <i class="ki-outline ki-user fs-3 text-info"></i>
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <span class="text-gray-900 fw-bold fs-6">{{ $careRequest->patient_name ?? 'N/A' }}</span>
-                                    <span class="mt-1">
-                                        @if($careRequest->care_for === \App\Models\CareRequest::CARE_FOR_SELF)
-                                            <span class="badge badge-light-info fs-9 px-2 py-1">Self Care</span>
-                                        @else
-                                            <span class="badge badge-light-warning fs-9 px-2 py-1">Family Member</span>
-                                        @endif
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="d-flex flex-stack border-bottom border-gray-100 pb-2">
-                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Patient Age</span>
-                                <span class="text-gray-900 fw-bold fs-8">{{ $careRequest->patient_age ?? 'N/A' }} years</span>
-                            </div>
-                            <div class="d-flex flex-stack border-bottom border-gray-100 pb-2 pt-2">
-                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Contact Phone</span>
-                                <span class="text-gray-900 fw-bold fs-8">{{ $careRequest->contact_phone ?? 'N/A' }}</span>
-                            </div>
-                            <div class="d-flex flex-stack pt-2">
-                                <span class="text-gray-500 text-uppercase fw-bold fs-9">Secondary Phone</span>
-                                <span class="text-gray-900 fw-bold fs-8">{{ $careRequest->secondary_phone ?? 'N/A' }}</span>
+                    {{-- Patient Details --}}
+                    <div class="col-md-4 px-md-4 border-start border-gray-200">
+                        <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2 d-block">Patient Name</span>
+                        <div class="d-flex align-items-center">
+                            <i class="ki-outline ki-user fs-2 text-info me-3"></i>
+                            <div class="d-flex flex-column">
+                                <span class="text-gray-900 fw-bold fs-6">{{ $careRequest->patient_name ?? 'N/A' }} 
+                                    @if($careRequest->patient_age)
+                                        <span class="badge badge-light-info fs-9 px-2 py-0 ms-1">{{ $careRequest->patient_age }} yrs</span>
+                                    @endif
+                                    @if($careRequest->care_for === \App\Models\CareRequest::CARE_FOR_SELF)
+                                        <span class="badge badge-light-success fs-9 px-2 py-0 ms-1">Self</span>
+                                    @else
+                                        <span class="badge badge-light-warning fs-9 px-2 py-0 ms-1">Family</span>
+                                    @endif
+                                </span>
+                                <span class="text-gray-500 fs-8">{{ $careRequest->contact_phone ?? 'N/A' }}</span>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            {{-- Location Card --}}
-            <div class="col-xl-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header border-bottom border-gray-200 pt-4 pb-3 min-h-50px">
-                        <h3 class="card-title fw-bold fs-5 text-gray-900 mb-0">Location</h3>
-                    </div>
-                    <div class="card-body pt-4 pb-4">
-                        <div class="d-flex align-items-start mb-3">
-                            <span class="bullet bullet-vertical h-30px bg-primary me-3 mt-1"></span>
-                            <div class="flex-grow-1">
-                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">Full Address</span>
-                                <span class="fw-bold fs-7 text-gray-900">{{ $careRequest->address ?? 'N/A' }}</span>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-start mb-3">
-                            <span class="bullet bullet-vertical h-30px bg-info me-3 mt-1"></span>
-                            <div class="flex-grow-1">
-                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">City & State</span>
-                                <span class="fw-bold fs-7 text-gray-900">{{ $careRequest->city ?? 'N/A' }}, {{ $careRequest->state ?? 'N/A' }}</span>
-                            </div>
-                        </div>
+                    {{-- Service Location --}}
+                    <div class="col-md-4 ps-md-4 border-start border-gray-200">
+                        <span class="text-gray-500 text-uppercase fw-bold fs-9 mb-2 d-block">Service Location</span>
                         <div class="d-flex align-items-start">
-                            <span class="bullet bullet-vertical h-30px bg-success me-3 mt-1"></span>
-                            <div class="flex-grow-1">
-                                <span class="text-gray-500 text-uppercase fw-bold d-block fs-9">Pincode</span>
-                                <span class="fw-bold fs-7 text-gray-900">{{ $careRequest->pincode ?? 'N/A' }}</span>
+                            <i class="ki-outline ki-geolocation fs-2 text-danger me-2 mt-1"></i>
+                            <div class="d-flex flex-column">
+                                <span class="text-gray-900 fw-semibold fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    {{ $careRequest->address ?? 'N/A' }}
+                                </span>
+                                <span class="text-gray-500 fs-8">{{ $careRequest->city ?? '' }} - {{ $careRequest->pincode ?? '' }}</span>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
-
         </div>
 
         {{-- ── FULL WIDTH TABS ────────────────────────────────────────────────── --}}
