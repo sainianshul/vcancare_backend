@@ -53,7 +53,7 @@ class StoreNurseRequest extends FormRequest
             'city' => ['required', 'string', 'max:100'],
             'state' => ['required', 'string', 'max:100'],
             'country' => ['required', 'string', 'max:100'],
-            'pincode' => ['required', 'string', 'max:20'],
+            'pincode' => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
 

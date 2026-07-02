@@ -142,7 +142,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <label class="required form-label text-gray-700 fw-semibold fs-7 mb-1">Pincode</label>
-                                        <input type="text" name="pincode" class="form-control form-control-sm text-gray-900 border border-gray-300 bg-transparent fs-7" value="{{ old('pincode', $user->nurseProfile->pincode ?? '') }}" required />
+                                        <input type="text" name="pincode" class="form-control form-control-sm text-gray-900 border border-gray-300 bg-transparent fs-7" value="{{ old('pincode', $user->nurseProfile->pincode ?? '') }}" required pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                                     </div>
                                 </div>
                                 <div class="row mb-0">

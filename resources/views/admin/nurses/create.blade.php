@@ -155,7 +155,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <label class="required form-label text-gray-700 fw-semibold fs-7 mb-1">Pincode</label>
-                                        <input type="text" name="pincode" class="form-control form-control-sm text-gray-900 border border-gray-300 bg-transparent fs-7 @error('pincode') is-invalid @enderror" value="{{ old('pincode') }}" required />
+                                        <input type="text" name="pincode" class="form-control form-control-sm text-gray-900 border border-gray-300 bg-transparent fs-7 @error('pincode') is-invalid @enderror" value="{{ old('pincode') }}" required pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                                         @error('pincode') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                                     </div>
                                 </div>

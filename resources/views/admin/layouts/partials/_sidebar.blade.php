@@ -104,6 +104,13 @@
                                 <span class="menu-title">Rejected</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.nurses.deleted') ? 'active' : '' }}"
+                                href="{{ route('admin.nurses.deleted') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Deleted Nurses</span>
+                            </a>
+                        </div>
 
                     </div>
                 </div>
@@ -131,6 +138,13 @@
                                 href="{{ route('admin.patients.blocked') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Blocked</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('admin.patients.deleted') ? 'active' : '' }}"
+                                href="{{ route('admin.patients.deleted') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Deleted Patients</span>
                             </a>
                         </div>
                     </div>

@@ -98,7 +98,7 @@
                 <table id="faqs-table" class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100">
                     <thead>
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
-                            <th class="w-50px">#</th>
+                            <th class="w-50px">Sr. No.</th>
                             <th class="min-w-250px">Question</th>
                             <th class="min-w-150px">Category</th>
                             <th class="min-w-120px">Status</th>
@@ -138,7 +138,7 @@
                     }
                 },
                 columns: [
-                    { data: 'id', name: 'id' },
+                    { data: null, name: 'id', render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }, orderable: false, searchable: false },
                     { data: 'question', name: 'question' },
                     { data: 'category', name: 'supportCategory.name' },
                     { data: 'status', name: 'status' },

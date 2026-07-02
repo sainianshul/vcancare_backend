@@ -100,6 +100,7 @@
                                     <form action="{{ route('admin.patients.update', $patient) }}" method="POST" class="d-flex align-items-center gap-2">
                                         @csrf
                                         <input type="hidden" name="email" value="{{ $patient->email }}">
+                                        <input type="hidden" name="phone" value="{{ $patient->phone }}">
                                         <select name="status" class="form-select form-select-sm bg-transparent border-gray-300 text-gray-900 w-125px">
                                             @foreach (\App\Models\User::getStatusList() as $value => $label)
                                                 <option value="{{ $value }}" {{ $patient->status == $value ? 'selected' : '' }}>

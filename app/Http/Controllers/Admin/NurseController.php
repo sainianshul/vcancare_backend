@@ -8,6 +8,7 @@ use App\DataTables\Nurses\AllNursesDataTable;
 use App\DataTables\Nurses\UnderReviewNurseDataTable;
 use App\DataTables\Nurses\ApprovedNursesDataTable;
 use App\DataTables\Nurses\RejectedNursesDataTable;
+use App\DataTables\Nurses\DeletedNurseDataTable;
 use App\Http\Requests\Admin\StoreNurseRequest;
 use App\Http\Requests\Admin\UpdateNurseRequest;
 use App\Models\Activity;
@@ -165,6 +166,45 @@ class NurseController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Failed to update nurse profile. Please try again.');
+        }
+    }
+
+    // ── Delete Profile ────────────────────────────────────
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        abort_unless($user->isNurse(), 404, 'Nurse not found.');
+
+        try {
+            // Because User has SoftDeletes trait, this will perform a soft delete.
+            $user->delete();
+            return response()->json(['success' => true, 'message' => 'Nurse deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to delete nurse.'], 500);
+        }
+    }
+
+    // ── Deleted Nurses (Trash) ────────────────────────────
+    public function deleted(DeletedNurseDataTable $dt)
+    {
+        return $dt->render('admin.nurses.deleted');
+    }
+
+    public function deletedData(DeletedNurseDataTable $dt)
+    {
+        return $dt->ajax();
+    }
+
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        abort_unless($user->isNurse(), 404, 'Nurse not found.');
+
+        try {
+            $user->restore();
+            return response()->json(['success' => true, 'message' => 'Nurse restored successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to restore nurse.'], 500);
         }
     }
 

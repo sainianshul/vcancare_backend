@@ -16,7 +16,7 @@
             <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
 
                 {{-- Search --}}
-                <div class="d-flex align-items-center position-relative w-100 w-md-250px">
+                <div class="d-flex align-items-center position-relative">
                     <i class="ki-duotone ki-magnifier fs-5 text-gray-900 position-absolute ms-4 z-index-3">
                         <span class="path1"></span>
                         <span class="path2"></span>
@@ -24,13 +24,13 @@
                     <input
                         type="text"
                         id="dt-search"
-                        class="form-control form-control-transparent border border-gray-800 text-gray-900 w-100 ps-11 pe-4 fs-7 fw-semibold shadow-sm"
+                        class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
                         placeholder="Search by Request ID..."
                     />
                 </div>
 
                 {{-- Right Controls --}}
-                <div class="d-flex align-items-center gap-2 flex-wrap w-100 w-md-auto justify-content-md-end">
+                <div class="d-flex align-items-center gap-2">
 
                     {{-- Refresh Button --}}
                     <button type="button" class="btn btn-icon btn-light btn-active-light-primary border border-gray-300 w-35px h-35px" id="refresh-table-btn" data-bs-toggle="tooltip" title="Refresh">
@@ -39,7 +39,7 @@
 
                     @if(empty($isToday))
                     {{-- Date Filter --}}
-                    <div class="w-100 w-md-175px">
+                    <div style="width: 175px;">
                         <div class="position-relative">
                             <i class="ki-duotone ki-calendar fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
                                 <span class="path1"></span>
@@ -51,7 +51,7 @@
                                 placeholder="Filter by Date"
                                 id="filter-date"
                             />
-                            <i class="ki-duotone ki-cross fs-3 text-gray-600 position-absolute top-50 end-0 translate-middle-y me-2 z-index-3 cursor-pointer d-none" id="clear-date-btn">
+                            <i class="ki-duotone ki-cross fs-3 text-gray-600 position-absolute top-50 end-0 translate-middle-y me-2 cursor-pointer d-none" id="clear-date-btn" style="pointer-events: auto; z-index: 100;">
                                 <span class="path1"></span>
                                 <span class="path2"></span>
                             </i>
@@ -60,7 +60,7 @@
                     @endif
 
                     {{-- Status Filter --}}
-                    <div class="w-100 w-md-145px">
+                    <div style="width: 160px;">
                         <div class="position-relative">
                             <i class="ki-duotone ki-filter fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
                                 <span class="path1"></span>
@@ -147,7 +147,7 @@
                 },
                 columns: [
                     { data: 'reference_id', name: 'reference_id' },
-                    { data: 'user', name: 'user', orderable: false, searchable: false },
+                    { data: 'user', name: 'user', orderable: false, searchable: true },
                     { data: 'status', name: 'status' },
                     { data: 'date_time', name: 'date_time', orderable: false, searchable: false },
                     { data: 'location', name: 'location', orderable: false, searchable: false },
@@ -230,8 +230,12 @@
             });
 
             $('#clear-date-btn').on('click', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                fp.clear();
+                let fpInstance = document.querySelector('#filter-date')._flatpickr;
+                if (fpInstance) {
+                    fpInstance.clear();
+                }
             });
             @endif
 

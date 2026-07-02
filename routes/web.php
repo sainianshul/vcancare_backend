@@ -47,9 +47,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('/rejected', [NurseController::class, 'rejected'])->name('rejected');
         Route::get('/rejected/data', [NurseController::class, 'rejectedData'])->name('rejected.data');
         Route::get('/pending-count', [NurseController::class, 'pendingCount'])->name('pending-count');
+        Route::get('/deleted', [NurseController::class, 'deleted'])->name('deleted');
+        Route::get('/deleted/data', [NurseController::class, 'deletedData'])->name('deleted.data');
         Route::get('/{user}/edit', [NurseController::class, 'edit'])->name('edit');
         Route::post('/{user}/update', [NurseController::class, 'update'])->name('update');
         Route::get('/{user}', [NurseController::class, 'show'])->name('show');
+        Route::delete('/{user}', [NurseController::class, 'destroy'])->name('destroy');
+        Route::post('/{user}/restore', [NurseController::class, 'restore'])->name('restore');
         Route::get('/{user}/stats', [NurseController::class, 'stats'])->name('stats');
         Route::get('/{user}/application', [NurseController::class, 'showApplication'])->name('show-application');
         Route::get('/{user}/reviews', [NurseController::class, 'reviews'])->name('reviews');
@@ -93,6 +97,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
         Route::get('blocked', [PatientController::class, 'blocked'])->name('blocked');
         Route::get('blocked/data', [PatientController::class, 'blockedData'])->name('blocked.data');
+        Route::get('deleted', [PatientController::class, 'deleted'])->name('deleted');
+        Route::get('deleted/data', [PatientController::class, 'deletedData'])->name('deleted.data');
         Route::post('{patient}/unblock', [PatientController::class, 'unblock'])->name('unblock');
 
         Route::get('{patient}', [PatientController::class, 'show'])->name('show');
@@ -106,6 +112,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
         Route::get('{patient}/edit', [PatientController::class, 'edit'])->name('edit');
         Route::post('{patient}', [PatientController::class, 'update'])->name('update');
         Route::delete('{patient}', [PatientController::class, 'destroy'])->name('destroy');
+        Route::post('{patient}/restore', [PatientController::class, 'restore'])->name('restore');
     });
 
     // PEOPLE — Login History

@@ -75,8 +75,8 @@
                             <!--begin::Input group-->
                             <div class="mb-7">
                                 <label class="required form-label text-gray-900 fw-semibold">Full Name</label>
-                                <input type="text" name="name" class="form-control text-gray-900 border border-gray-300 bg-transparent @error('name') is-invalid @enderror"
-                                    value="{{ old('name') }}" placeholder="Enter full name" />
+                                <input type="text" name="name" class="form-control text-gray-900 bg-transparent @error('name') is-invalid border-danger @else border border-gray-300 @enderror"
+                                    value="{{ old('name') }}" placeholder="Enter full name" required />
                                 @error('name')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
@@ -89,8 +89,8 @@
                                 <label class="required form-label text-gray-900 fw-semibold">Phone Number</label>
                                 <div class="position-relative">
                                     <i class="ki-outline ki-phone fs-2 position-absolute top-50 translate-middle-y ms-4 text-gray-600"></i>
-                                    <input type="text" name="phone" class="form-control text-gray-900 border border-gray-300 bg-transparent ps-12 @error('phone') is-invalid @enderror"
-                                        value="{{ old('phone') }}" placeholder="Enter phone number" />
+                                    <input type="text" name="phone" class="form-control text-gray-900 bg-transparent ps-12 @error('phone') is-invalid border-danger @else border border-gray-300 @enderror"
+                                        value="{{ old('phone') }}" placeholder="Enter phone number" required pattern="[0-9+]*" oninput="this.value = this.value.replace(/[^0-9+]/g, '')" />
                                 </div>
                                 @error('phone')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -104,7 +104,7 @@
                                 <label class="form-label text-gray-900 fw-semibold">Email Address</label>
                                 <div class="position-relative">
                                     <i class="ki-outline ki-sms fs-2 position-absolute top-50 translate-middle-y ms-4 text-gray-900"></i>
-                                    <input type="email" name="email" class="form-control text-gray-900 border border-gray-300 bg-transparent ps-12 @error('email') is-invalid @enderror"
+                                    <input type="email" name="email" class="form-control text-gray-900 bg-transparent ps-12 @error('email') is-invalid border-danger @else border border-gray-300 @enderror"
                                         placeholder="Enter email address" value="{{ old('email') }}" />
                                 </div>
                                 @error('email')

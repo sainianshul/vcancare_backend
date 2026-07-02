@@ -21,7 +21,7 @@
         ]" />
             </div>
             <div class="d-flex align-items-center gap-2 gap-lg-3">
-                <a href="{{ url()->previous() }}" class="btn btn-sm btn-light fw-semibold border border-gray-300">
+                <a href="javascript:history.back()" class="btn btn-sm btn-light fw-semibold border border-gray-300">
                     <i class="ki-outline ki-arrow-left fs-4 me-1"></i>Back
                 </a>
             </div>

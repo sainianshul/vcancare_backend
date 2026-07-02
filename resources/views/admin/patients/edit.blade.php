@@ -78,9 +78,12 @@
                             <!--begin::Input group-->
                             <div class="mb-7">
                                 <label class="required form-label text-gray-900 fw-semibold">Full Name</label>
-                                <input type="text" class="form-control text-gray-900 border border-gray-300 bg-transparent"
-                                    value="{{ $patient->name }}" disabled readonly />
-                                <div class="text-gray-600 fs-7 mt-2">Name is linked to their mobile authentication and cannot be edited.</div>
+                                <input type="text" name="name" class="form-control text-gray-900 bg-transparent @error('name') is-invalid border-danger @else border border-gray-300 @enderror"
+                                    value="{{ old('name', $patient->name) }}" required />
+                                @error('name')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                <div class="text-gray-600 fs-7 mt-2">Update the patient's full name.</div>
                             </div>
                             <!--end::Input group-->
 
@@ -89,8 +92,8 @@
                                 <label class="required form-label text-gray-900 fw-semibold">Phone Number</label>
                                 <div class="position-relative">
                                     <i class="ki-outline ki-phone fs-2 position-absolute top-50 translate-middle-y ms-4 text-gray-600"></i>
-                                    <input type="text" name="phone" class="form-control text-gray-900 border border-gray-300 bg-transparent ps-12 @error('phone') is-invalid @enderror"
-                                        value="{{ old('phone', $patient->phone) }}" />
+                                    <input type="text" name="phone" class="form-control text-gray-900 bg-transparent ps-12 @error('phone') is-invalid border-danger @else border border-gray-300 @enderror"
+                                        value="{{ old('phone', $patient->phone) }}" required pattern="[0-9+]*" oninput="this.value = this.value.replace(/[^0-9+]/g, '')" />
                                 </div>
                                 @error('phone')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -104,9 +107,12 @@
                                 <label class="form-label text-gray-900 fw-semibold">Email Address</label>
                                 <div class="position-relative">
                                     <i class="ki-outline ki-sms fs-2 position-absolute top-50 translate-middle-y ms-4 text-gray-900"></i>
-                                    <input type="email" name="email" class="form-control text-gray-900 border border-gray-300 bg-transparent ps-12"
+                                    <input type="email" name="email" class="form-control text-gray-900 bg-transparent ps-12 @error('email') is-invalid border-danger @else border border-gray-300 @enderror"
                                         placeholder="Enter email address" value="{{ old('email', $patient->email) }}" />
                                 </div>
+                                @error('email')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 <div class="text-gray-600 fs-7 mt-2">Optional email address for communication and notifications.</div>
                             </div>
                             <!--end::Input group-->

@@ -187,12 +187,13 @@ class LoginHistoryDataTable extends DataTable
                 ';
             })
 
-            // ── Search Only By User Name ──────────────────────────
+            // ── Search By User Name or Phone ──────────────────────────
             ->filterColumn('user', function ($query, $keyword) {
 
                 $query->whereHas('user', function ($q) use ($keyword) {
 
-                    $q->where('name', 'LIKE', "%{$keyword}%");
+                    $q->where('name', 'LIKE', "%{$keyword}%")
+                      ->orWhere('phone', 'LIKE', "%{$keyword}%");
                 });
             })
 
@@ -228,12 +229,13 @@ class LoginHistoryDataTable extends DataTable
             ->with('user')
             ->select('login_histories.*');
 
-        // ── Search Only By User Name ─────────────────────────────
+        // ── Search By User Name or Phone ─────────────────────────────
         if ($search = request('search.value')) {
 
             $query->whereHas('user', function ($q) use ($search) {
 
-                $q->where('name', 'LIKE', "%{$search}%");
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('phone', 'LIKE', "%{$search}%");
             });
         }
 

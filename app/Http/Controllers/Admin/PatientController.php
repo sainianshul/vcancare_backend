@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\DataTables\Booking\BookingDataTable;
 use App\DataTables\PatientDataTable;
+use App\DataTables\DeletedPatientDataTable;
 use App\DataTables\BlockedPatientDataTable;
 use App\DataTables\Request\RequestDataTable;
 use App\Http\Controllers\Controller;
@@ -71,12 +72,14 @@ class PatientController extends Controller
         abort_unless($patient->isUser(), 404);
 
         $request->validate([
+            'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20|unique:users,phone,' . $patient->id,
             'email' => 'nullable|email|unique:users,email,' . $patient->id,
             'status' => 'required|integer|in:' . implode(',', array_keys(User::getStatusList())),
         ]);
 
         $patient->update([
+            'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
             'status' => $request->status,
@@ -116,6 +119,27 @@ class PatientController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Patient unblocked successfully.']);
     }
+
+    public function deleted(DeletedPatientDataTable $dataTable)
+    {
+        return $dataTable->render('admin.patients.deleted');
+    }
+
+    public function deletedData(DeletedPatientDataTable $dataTable)
+    {
+        return $dataTable->ajax();
+    }
+
+    public function restore($id)
+    {
+        $patient = User::onlyTrashed()->findOrFail($id);
+        abort_unless($patient->isUser(), 404);
+
+        $patient->restore();
+
+        return response()->json(['success' => true, 'message' => 'Patient restored successfully.']);
+    }
+
     public function stats(User $patient)
     {
         $totalRequests = CareRequest::where('user_id', $patient->id)->count();
