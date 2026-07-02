@@ -18,7 +18,7 @@
             
             <!--begin::Actions-->
             <div class="d-flex align-items-center gap-2 gap-lg-3">
-                <a href="{{ url()->previous() }}" class="btn btn-sm btn-light fw-bold fs-7">
+                <a href="javascript:history.back()" class="btn btn-sm btn-light fw-bold fs-7">
                     <i class="ki-outline ki-arrow-left fs-5 me-1"></i>Back
                 </a>
             </div>

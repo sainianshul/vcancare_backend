@@ -18,6 +18,11 @@ class RequestDataTable extends DataTable
             })
             
             // ── User Info ─────────────────────────────────────────────
+            ->filterColumn('user', function($query, $keyword) {
+                $query->whereHas('user', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
 
             ->addColumn('user', function (CareRequest $request) {
                 $user = $request->user;

@@ -429,7 +429,7 @@
             </div>
             <div class="card shadow-sm border border-gray-200">
                 <div class="card-body">
-                    <x-comments type="{{ \App\Models\Booking::class }}" :model-id="$booking->id" />
+                    <x-comments type="{{ \App\Models\Comment::TYPE_BOOKING }}" :model-id="$booking->id" />
                 </div>
             </div>
         </div>

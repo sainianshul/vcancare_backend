@@ -9,7 +9,7 @@
     <div class="card-body pt-4 pb-8">
         
         {{-- Add Comment Form --}}
-        <form action="{{ route('admin.comments.store') }}" method="POST" class="mb-8">
+        <form action="{{ route('admin.comments.store') }}" method="POST" class="mb-8 add-comment-form">
             @csrf
             <input type="hidden" name="commentable_type" value="{{ $type }}">
             <input type="hidden" name="commentable_id" value="{{ $modelId }}">
@@ -23,7 +23,7 @@
                 <div class="flex-grow-1">
                     <textarea name="body" class="form-control form-control-solid bg-transparent border border-gray-300 text-gray-900 px-4 py-3" rows="2" placeholder="Add a new note or comment..." required style="resize: none;"></textarea>
                     <div class="mt-3 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-sm btn-light-primary border border-primary fw-bold px-6 py-2 shadow-sm transition-all">
+                        <button type="submit" class="btn btn-sm btn-light-primary border border-primary fw-bold px-6 py-2 shadow-sm transition-all btn-post-comment">
                             Post Note
                         </button>
                     </div>
@@ -79,6 +79,34 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
+        
+        // Handle add comment via AJAX to prevent browser history back-button issues
+        $('.add-comment-form').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var btn = form.find('.btn-post-comment');
+            var originalText = btn.html();
+            
+            btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop('disabled', true);
+            
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        // Reload the page smoothly by replacing the current state
+                        window.location.replace(window.location.href);
+                    }
+                },
+                error: function(xhr) {
+                    btn.html(originalText).prop('disabled', false);
+                    toastr.error('Failed to post comment.');
+                }
+            });
+        });
+
+        // Handle delete comment via AJAX
         $('.btn-delete-comment').on('click', function(e) {
             e.preventDefault();
             var form = $(this).closest('form');
@@ -97,7 +125,19 @@
                 buttonsStyling: false,
             }).then(function(result) {
                 if (result.isConfirmed) {
-                    form.submit();
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST', // the form contains _method=DELETE
+                        data: form.serialize(),
+                        success: function(response) {
+                            if (response.success) {
+                                window.location.replace(window.location.href);
+                            }
+                        },
+                        error: function(xhr) {
+                            toastr.error('Failed to delete comment.');
+                        }
+                    });
                 }
             });
         });

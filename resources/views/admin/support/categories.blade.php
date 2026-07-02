@@ -20,6 +20,14 @@
                         </h3>
                     </div>
                     <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+                        <div class="d-flex align-items-center position-relative">
+                            <i class="ki-duotone ki-magnifier fs-5 text-gray-900 position-absolute ms-4 z-index-3">
+                                <span class="path1"></span><span class="path2"></span>
+                            </i>
+                            <input type="text" id="dt-search"
+                                class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
+                                placeholder="Search categories..." />
+                        </div>
                         <button type="button" class="btn btn-primary btn-sm fw-semibold btn-flex btn-center" data-bs-toggle="modal" data-bs-target="#kt_modal_add_category">
                             <i class="ki-outline ki-plus-square fs-5 me-1"></i> Add Category
                         </button>
@@ -31,7 +39,7 @@
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_categories_table">
                             <thead>
                                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
-                                    <th class="w-50px">ID</th>
+                                    <th class="w-50px">S.No</th>
                                     <th class="min-w-200px">Name</th>
                                     <th class="min-w-100px text-center">Status</th>
                                     <th class="min-w-150px">Created At</th>
@@ -42,7 +50,7 @@
                             <tbody class="fw-semibold text-gray-600">
                                 @forelse($categories as $category)
                                     <tr>
-                                        <td>{{ $category->id }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td class="text-gray-900 fw-bold">{{ $category->name }}</td>
                                         <td class="text-center">
                                             @if($category->status)
@@ -173,6 +181,35 @@
     </div>
 
 @endsection
+
+@push('datatables_css')
+    @include('admin.layouts.partials._datatable-cdn-css')
+@endpush
+
+@push('datatables_js')
+    @include('admin.layouts.partials._datatable-cdn-js')
+    <script>
+        $(function () {
+            var table = $('#kt_categories_table').DataTable({
+                pageLength: 15,
+                lengthMenu: [[10, 15, 25, 50, -1], [10, 15, 25, 50, "All"]],
+                order: [], // Disable initial sorting to keep S.No sequential
+                columnDefs: [
+                    { orderable: false, targets: [0, 5] }
+                ],
+                dom:
+                    "<'row'<'col-12'tr>>" +
+                    "<'row align-items-center mt-3 pt-3 flex-nowrap'" +
+                    "<'col-sm-12 col-md-5'i>" +
+                    "<'col-sm-12 col-md-7 d-flex justify-content-md-end align-items-center gap-3'lp>>",
+            });
+
+            $('#dt-search').on('input', function () {
+                table.search($(this).val()).draw();
+            });
+        });
+    </script>
+@endpush
 
 @push('scripts')
 <script>

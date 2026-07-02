@@ -18,7 +18,7 @@
         {{-- ── HEADER ───────────────────────────────────────────────────────── --}}
         <div class="d-flex flex-wrap flex-stack gap-5 gap-lg-10">
             <div class="d-flex align-items-center gap-3">
-                <a href="{{ url()->previous() }}" class="btn btn-icon btn-light btn-active-secondary btn-sm border border-gray-200">
+                <a href="javascript:history.back()" class="btn btn-icon btn-light btn-active-secondary btn-sm border border-gray-200">
                     <i class="ki-outline ki-arrow-left fs-4 text-gray-700"></i>
                 </a>
                 <h1 class="fw-bold text-gray-900 fs-3 mb-0">

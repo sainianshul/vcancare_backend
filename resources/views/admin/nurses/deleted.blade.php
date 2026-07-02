@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
-@section('title', 'All Nurses')
+@section('title', 'Deleted Nurses')
 
 @section('content')
 
     <x-breadcrumb :items="[
             ['label' => 'Nurses', 'url' => route('admin.nurses.index')],
-            ['label' => 'All Nurses'],
+            ['label' => 'Deleted Nurses'],
         ]" />
 
     <div class="card shadow-sm">
@@ -20,44 +20,14 @@
                     </i>
                     <input type="text" id="dt-search"
                         class="form-control form-control-transparent border border-gray-800 text-gray-900 w-250px ps-11 pe-4 fs-7 fw-semibold shadow-sm"
-                        placeholder="Search nurses..." />
+                        placeholder="Search deleted nurses..." />
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-
                     {{-- Refresh Button --}}
                     <button type="button" class="btn btn-icon btn-light btn-active-light-primary border border-gray-300 w-35px h-35px" id="refresh-table-btn" data-bs-toggle="tooltip" title="Refresh">
                         <i class="ki-outline ki-arrows-circle fs-3"></i>
                     </button>
-
-                    {{-- Status Filter — only All page --}}
-                    <div style="width: 160px;">
-                        <div class="position-relative">
-                            <i
-                                class="ki-duotone ki-filter fs-5 text-gray-900 position-absolute top-50 start-0 translate-middle-y ms-4 z-index-3">
-                                <span class="path1"></span><span class="path2"></span>
-                            </i>
-                            <select id="filter-profile-status"
-                                class="form-select form-select-transparent border border-gray-800 text-gray-900 form-select-sm fw-semibold ps-11 shadow-sm"
-                                data-control="select2" data-placeholder="All Status" data-allow-clear="true"
-                                data-hide-search="true">
-                                <option></option>
-                                @foreach (\App\Models\NurseProfile::getStatusList() as $value => $label)
-                                    <option value="{{ $value }}">{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-
-                    {{-- Add Nurse — only All page --}}
-                    <a href="{{ route('admin.nurses.create') }}" class="btn btn-sm btn-primary fw-semibold btn-flex btn-center">
-                        <i class="ki-duotone ki-plus-square fs-5 me-1">
-                            <span class="path1"></span><span class="path2"></span><span class="path3"></span>
-                        </i>
-                        Add Nurse
-                    </a>
-
                 </div>
             </div>
         </div>
@@ -73,7 +43,7 @@
                             <th class="min-w-160px">Location</th>
                             <th class="min-w-140px">Bookings</th>
                             <th class="min-w-170px">Profile Status</th>
-                            <th class="min-w-140px">Joined</th>
+                            <th class="min-w-140px">Deleted At</th>
                             <th class="text-end min-w-120px pe-3">Actions</th>
                         </tr>
                     </thead>
@@ -103,10 +73,7 @@
                 serverSide: true,
                 processing: false,
                 ajax: {
-                    url: '{{ route('admin.nurses.data') }}',
-                    data: function (d) {
-                        d.profile_status = $('#filter-profile-status').val();
-                    }
+                    url: '{{ route('admin.nurses.deleted.data') }}'
                 },
                 columns: [
                     { data: null, name: 'id', render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }, orderable: false, searchable: false },
@@ -114,7 +81,7 @@
                     { data: 'location', name: 'location', orderable: false, searchable: false },
                     { data: 'bookings', name: 'bookings', orderable: false, searchable: false },
                     { data: 'profile_status', name: 'profile_status', orderable: false, searchable: false },
-                    { data: 'created_at', name: 'created_at' },
+                    { data: 'deleted_at', name: 'deleted_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end pe-3' },
                 ],
                 order: [[5, 'desc']],
@@ -161,43 +128,31 @@
                 searchTimer = setTimeout(function () { table.search(q).draw(); }, 400);
             });
 
-            // Status filter
-            $('#filter-profile-status').on('change', function () { table.ajax.reload(); });
-
             // Refresh Button
             $('#refresh-table-btn').on('click', function () { 
-                table.ajax.reload(null, false);
-                toastr.options = {
-                    "closeButton": true,
-                    "progressBar": true,
-                    "positionClass": "toastr-top-right",
-                    "timeOut": "3000"
-                };
-                toastr.success('Refreshed successfully.');
+                table.ajax.reload(function() {
+                    toastr.success('Refreshed successfully.');
+                }, false); 
             });
 
-
-            // Delete
-            $(document).on('click', '.btn-delete', function () {
+            // Restore
+            $(document).on('click', '.btn-restore', function () {
                 var id = $(this).data('id');
                 Swal.fire({
-                    title: 'Delete Nurse?',
-                    text: 'This action cannot be undone.',
-                    icon: 'warning',
+                    title: 'Restore Nurse?',
+                    text: 'This nurse will be active again.',
+                    icon: 'question',
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, Delete',
-                    customClass: { confirmButton: 'btn btn-danger', cancelButton: 'btn btn-light ms-2' },
+                    confirmButtonText: 'Yes, Restore',
+                    customClass: { confirmButton: 'btn btn-success', cancelButton: 'btn btn-light ms-2' },
                     buttonsStyling: false,
                 }).then(function (r) {
                     if (!r.isConfirmed) return;
-                    $.post('/admin/nurses/' + id, { _method: 'DELETE', _token: '{{ csrf_token() }}' })
-                        .done(function () { table.ajax.reload(null, false); toastr.success('Nurse deleted.'); })
+                    $.post('/admin/nurses/' + id + '/restore', { _token: '{{ csrf_token() }}' })
+                        .done(function () { table.ajax.reload(null, false); toastr.success('Nurse restored.'); })
                         .fail(function () { toastr.error('Something went wrong.'); });
                 });
             });
         });
     </script>
 @endpush
-
-
-
