@@ -35,7 +35,7 @@
                 <table id="nurses-table" class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3 w-100">
                     <thead>
                         <tr class="text-start text-gray-900 fw-medium fs-7 text-uppercase gs-0 border-bottom border-gray-200 border-1">
-                            <th class="w-50px">#</th>
+                            <th class="w-50px">S.No</th>
                             <th class="min-w-320px">Nurse</th>
                             <th class="min-w-160px">Location</th>
                             <th class="min-w-170px">Profile Status</th>
@@ -70,7 +70,7 @@
                 processing: false,
                 ajax: { url: '{{ route('admin.nurses.pending_approval.data') }}' },
                 columns: [
-                    { data: 'id', name: 'id', searchable: false },
+                    { data: null, name: 'id', render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }, orderable: false, searchable: false },
                     { data: 'nurse', name: 'nurse', orderable: false },
                     { data: 'location', name: 'location', orderable: false, searchable: false },
                     { data: 'profile_status', name: 'profile_status', orderable: false, searchable: false },
